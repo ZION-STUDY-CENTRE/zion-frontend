@@ -41,7 +41,7 @@ export function ThankYouPage() {
             <div className="p-4 border rounded-lg">
               <Mail className="mx-auto text-blue-700 mb-2" size={24} />
               <p className="text-sm text-gray-600">Email Us</p>
-              <p className="font-semibold text-gray-900">info@zionstudycentre.com</p>
+              <p className="font-semibold text-gray-900">zionstudycenter@gmail.com</p>
             </div>
             <div className="p-4 border rounded-lg">
               <Phone className="mx-auto text-blue-700 mb-2" size={24} />

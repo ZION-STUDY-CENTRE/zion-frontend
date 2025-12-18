@@ -3,6 +3,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Label } from "../components/ui/label";
+import MapEmbed from "../components/MapEmbed";
 
 export function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
@@ -10,6 +11,10 @@ export function ContactPage() {
     // Handle form submission
     alert("Thank you for your message! We'll get back to you soon.");
   };
+
+  const officeAddress = "Zion Study Centre, ZION TOWERS OPPOSITE MTN OFFICE ALONG GENERAL HOSPITAL KUBWA Abuja, FCT Off nadrem supermarket before UBA, Kubwa";
+  const officeLat = 9.149028;
+  const officeLng = 7.279051;
 
   return (
     <div className="min-h-screen">
@@ -68,7 +73,7 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Email Us</h3>
-                    <p className="text-gray-600 text-sm">info@zionstudycentre.com</p>
+                    <p className="text-gray-600 text-sm">zionstudycenter@gmail.com</p>
                     <p className="text-gray-600 text-sm">admissions@zionstudycentre.com</p>
                   </div>
                 </div>
@@ -161,13 +166,9 @@ export function ContactPage() {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="bg-gray-300 rounded-lg overflow-hidden" style={{ height: "400px" }}>
-            <div className="w-full h-full flex items-center justify-center text-gray-600">
-              <div className="text-center">
-                <MapPin size={48} className="mx-auto mb-2" />
-                <p>Map Location</p>
-                <p className="text-sm">(Google Maps integration would go here)</p>
-              </div>
-            </div>
+            <div className="order-2 lg:order-1">
+            <MapEmbed lat={officeLat} lng={officeLng} address={officeAddress} height="450px" />
+          </div>
           </div>
         </div>
       </section>

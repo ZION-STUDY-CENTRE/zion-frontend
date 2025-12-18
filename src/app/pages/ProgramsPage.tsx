@@ -1,9 +1,39 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CourseCard } from "../components/CourseCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Button } from "../components/ui/button";
 
 export function ProgramsPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Determine active tab from URL
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path.includes("/technology")) return "technology";
+    if (path.includes("/international-exams")) return "international";
+    if (path.includes("/secondary-exams")) return "secondary";
+    return "all";
+  };
+
+  const activeTab = getActiveTab();
+
+  const handleTabChange = (value: string) => {
+    switch (value) {
+      case "technology":
+        navigate("/programs/technology");
+        break;
+      case "international":
+        navigate("/programs/international-exams");
+        break;
+      case "secondary":
+        navigate("/programs/secondary-exams");
+        break;
+      default:
+        navigate("/programs");
+    }
+  };
+
   const technologyCourses = [
     {
       id: "web-dev",
@@ -109,7 +139,7 @@ export function ProgramsPage() {
       {/* Programs Section */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <Tabs defaultValue="all" className="w-full">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto mb-12">
               <TabsTrigger value="all">All Programs</TabsTrigger>
               <TabsTrigger value="technology">Technology</TabsTrigger>

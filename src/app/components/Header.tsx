@@ -18,12 +18,13 @@ export function Header() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 h-[17vh]">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 min-h-[17vh]">
       {/* Top Bar */}
       <div className="bg-blue-900 text-white py-2 px-4">
         <div className="container mx-auto flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
-            <span>📧 info@zionstudycentre.com</span>
+            <span className="text-xl font-bold hidden lg:block xl:hidden">Zion Study Center</span>
+            <span>📧 zionstudycenter@gmail.com</span>
             <span className="hidden sm:inline">📞 +234 123 456 7890</span>
           </div>
           <div className="flex items-center gap-2">
@@ -40,7 +41,7 @@ export function Header() {
             <div className="w-14 h-14 flex items-center justify-center">
               <img src={logo} className="h-full w-full object-cover" alt="" />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col lg:hidden xl:flex">
               <span className="font-bold text-xl text-blue-900">Zion Study Centre</span>
               <span className="text-xs text-gray-600">Excellence in Education</span>
             </div>
@@ -107,12 +108,12 @@ export function Header() {
               Admissions
             </Link>
             <Link
-              to="/instructors"
+              to="/gallery"
               className={`hover:text-blue-700 transition-colors ${
-                isActive("/instructors") ? "text-blue-700 font-semibold" : "text-gray-700"
+                isActive("/gallery") ? "text-blue-700 font-semibold" : "text-gray-700"
               }`}
             >
-              Instructors
+              Gallery
             </Link>
             <Link
               to="/contact"
@@ -159,8 +160,8 @@ export function Header() {
               <Link to="/admissions" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
                 Admissions
               </Link>
-              <Link to="/instructors" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
-                Instructors
+              <Link to="/gallery" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
+                Gallery
               </Link>
               <Link to="/contact" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
                 Contact

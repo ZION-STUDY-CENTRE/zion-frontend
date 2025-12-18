@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import imageOne from "../../assets/imageOne.png";
 import { Button } from "../components/ui/button";
 import { CourseCard } from "../components/CourseCard";
 import {
@@ -102,20 +103,27 @@ export function HomePage() {
     },
   ];
 
+  const heroImage = "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080";
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-white">
-        <div className="container mx-auto px-4 py-20 md:py-28">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+      <section className="relative text-white bg-cover h-[83vh]"
+        style={{
+          backgroundImage: `url(${heroImage})`
+        }}
+      >
+        
+        <div className="container relative mx-auto px-4 py-20 md:py-28 z-10">
+          <div className="grid items-center justify-center">
+            <div className="text-center">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                 Transform Your Future Through Quality Education
               </h1>
               <p className="text-xl md:text-2xl mb-8 text-blue-100">
                 Leading multi-disciplinary educational institution for computer training, international exams, and academic excellence.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                 <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-lg" asChild>
                   <Link to="/register">
                     Register Now <ArrowRight className="ml-2" />
@@ -126,15 +134,10 @@ export function HomePage() {
                 </Button>
               </div>
             </div>
-            <div className="hidden lg:block">
-              <img
-                src="https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Students studying"
-                className="rounded-lg shadow-2xl"
-              />
-            </div>
+           
           </div>
         </div>
+        <div className="absolute inset-0 bg-black opacity-40 z-0"></div>
       </section>
 
       {/* Stats Section */}
@@ -250,13 +253,21 @@ export function HomePage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-16 md:py-24 bg-blue-50">
-        <div className="container mx-auto px-4">
+      <section 
+        className="py-16 md:py-24 bg-fixed bg-cover bg-center relative"
+        style={{
+          backgroundImage: `url(${imageOne})`
+        }}
+      >
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black opacity-30"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Why Choose Zion Study Centre
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
               We are committed to providing quality education and training that delivers real results.
             </p>
           </div>

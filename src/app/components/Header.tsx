@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, Phone } from "lucide-react";
 import { Button } from "./ui/button";
+import logo from "../../assets/logo.png";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -17,7 +18,7 @@ export function Header() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 h-[17vh]">
       {/* Top Bar */}
       <div className="bg-blue-900 text-white py-2 px-4">
         <div className="container mx-auto flex justify-between items-center text-sm">
@@ -36,8 +37,8 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-12 h-12 bg-blue-700 rounded-lg flex items-center justify-center">
-              <span className="text-white text-xl font-bold">ZSC</span>
+            <div className="w-14 h-14 flex items-center justify-center">
+              <img src={logo} className="h-full w-full object-cover" alt="" />
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-xl text-blue-900">Zion Study Centre</span>

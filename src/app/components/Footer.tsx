@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
+import logo from "../../assets/logo.png";
 
 export function Footer() {
   return (
@@ -9,8 +10,8 @@ export function Footer() {
           {/* About Section */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">ZSC</span>
+              <div className="w-14 h-14 flex items-center justify-center">
+                <img src={logo} className="h-full w-full object-cover" alt="" />
               </div>
               <div>
                 <h3 className="font-bold text-lg">Zion Study Centre</h3>
@@ -55,23 +56,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/instructors" className="text-gray-400 hover:text-white transition-colors">
-                  Our Instructors
-                </Link>
-              </li>
-              <li>
-                <Link to="/testimonials" className="text-gray-400 hover:text-white transition-colors">
-                  Testimonials
-                </Link>
-              </li>
-              <li>
                 <Link to="/gallery" className="text-gray-400 hover:text-white transition-colors">
                   Gallery
-                </Link>
-              </li>
-              <li>
-                <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">
-                  FAQ
                 </Link>
               </li>
             </ul>
@@ -94,11 +80,6 @@ export function Footer() {
               <li>
                 <Link to="/programs/secondary-exams" className="text-gray-400 hover:text-white transition-colors">
                   Secondary School Preparation
-                </Link>
-              </li>
-              <li>
-                <Link to="/schedule" className="text-gray-400 hover:text-white transition-colors">
-                  Academic Calendar
                 </Link>
               </li>
               <li>
@@ -127,7 +108,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={16} className="text-blue-500 flex-shrink-0" />
-                <span className="text-gray-400">info@zionstudycentre.com</span>
+                <span className="text-gray-400">zionstudycenter@gmail.com</span>
               </li>
             </ul>
             <div className="mt-4 p-3 bg-gray-800 rounded-lg">
@@ -139,7 +120,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-          <p>&copy; 2024 Zion Study Centre. All rights reserved.</p>
+          <p>All Rights Reserved. © 2024 Zion Study Center & Leadership Academy</p>
           <div className="flex gap-4">
             <Link to="/privacy-policy" className="hover:text-white transition-colors">
               Privacy Policy

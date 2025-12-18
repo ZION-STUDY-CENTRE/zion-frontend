@@ -27,11 +27,7 @@ export default function App() {
             <Route path="/admissions" element={<RegisterPage />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
             {/* Placeholder routes for other pages */}
-            <Route path="/instructors" element={<ComingSoonPage title="Our Instructors" />} />
-            <Route path="/testimonials" element={<ComingSoonPage title="Student Testimonials" />} />
             <Route path="/gallery" element={<ComingSoonPage title="Gallery" />} />
-            <Route path="/faq" element={<ComingSoonPage title="FAQ" />} />
-            <Route path="/schedule" element={<ComingSoonPage title="Academic Calendar" />} />
             <Route path="/blog" element={<ComingSoonPage title="Blog & Resources" />} />
             <Route path="/privacy-policy" element={<ComingSoonPage title="Privacy Policy" />} />
             <Route path="/terms-conditions" element={<ComingSoonPage title="Terms & Conditions" />} />

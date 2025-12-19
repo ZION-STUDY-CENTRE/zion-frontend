@@ -8,10 +8,10 @@ const AboutSummaryComponent: React.FC = () => {
 
   return (
     <div className="bg-gray-50 py-16 flex justify-center">
-      <div className="container">
+      <div className="container px-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <h2 className="text-5xl font-serif text-gray-900">Welcome to Zion Study Centre</h2>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-6">
+          <h2 className="text-3xl md:text-5xl font-serif text-gray-900">Welcome to Zion Study Centre</h2>
           <button 
             onClick={handleNavigation}
             className="flex items-center gap-2 text-gray-700 hover:text-red-600 transition-colors group"
@@ -21,11 +21,11 @@ const AboutSummaryComponent: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex  gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column - Large Card */}
           <div 
             onClick={handleNavigation}
-            className=" cursor-pointer group flex-[55%]"
+            className="cursor-pointer group w-full lg:w-[55%]"
           >
             <div className="relative bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center">
               <img 
@@ -55,7 +55,7 @@ const AboutSummaryComponent: React.FC = () => {
           </div>
 
           {/* Right Column - Three Cards */}
-          <div className="space-y-8 flex-[45%]">
+          <div className="space-y-8 w-full lg:w-[45%]">
             {/* Mission Card */}
             <div 
               onClick={handleNavigation}

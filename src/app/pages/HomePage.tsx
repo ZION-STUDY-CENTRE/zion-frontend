@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Links } from "react-router-dom";
 import imageOne from "../../assets/imageOne.png";
 import { Button } from "../components/ui/button";
 import { CourseCard } from "../components/CourseCard";
@@ -32,6 +32,36 @@ import ParallaxSection from "../components/ParallaxSection";
 
 export function HomePage() {
   const featuredCourses = [
+    {
+      id: "web-development",
+      title: "Full Stack Web Development",
+      category: "Technology",
+      description: "Master modern web development with HTML, CSS, JavaScript, React, and Node.js",
+      duration: "6 months",
+      schedule: "Mon - Fri",
+      students: 250,
+      imageUrl: "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHRyYWluaW5nJTIwZWR1Y2F0aW9ufGVufDF8fHx8MTc2NTk4NjgyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    },
+    {
+      id: "ielts-preparation",
+      title: "IELTS Preparation Course",
+      category: "International Exams",
+      description: "Comprehensive IELTS training with expert instructors to achieve your target band score",
+      duration: "3 months",
+      schedule: "Mon, Wed, Fri",
+      students: 180,
+      imageUrl: "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+    },
+    {
+      id: "jamb-waec",
+      title: "JAMB & WAEC Preparation",
+      category: "Secondary School",
+      description: "Intensive preparation for JAMB and WAEC exams with proven success rates",
+      duration: "4 months",
+      schedule: "Mon - Sat",
+      students: 320,
+      imageUrl: "https://images.unsplash.com/photo-1639741660848-a07ebe5e2ce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmFkdWF0aW9uJTIwc3VjY2Vzc3xlbnwxfHx8fDE3NjU5NTUzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    },
     {
       id: "web-development",
       title: "Full Stack Web Development",
@@ -196,7 +226,7 @@ export function HomePage() {
       {/* Stats Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="flex flex-wrap gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center hover:scale-105 hover:shadow-md py-4 px-20 rounded-md w-fit mx-auto">
                 <div className="flex justify-center mb-3mx-auto">
@@ -217,28 +247,62 @@ export function HomePage() {
       {/* Programs Overview */}
       <OurPrograms />
 
-      {/* Featured Courses */}
-      <section className="py-16 md:py-24 bg-fixed bg-cover bg-center relative"
-      style={{
-          backgroundImage: `url(${imageOne})`
-        }}
-        >
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-blue-900 opacity-80"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Popular Courses
+{/* Featured Courses - News Style */}
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-3xl md:text-5xl text-gray-900">
+              OUR PROGRAMS
             </h2>
-            <p className="text-xl text-white max-w-2xl mx-auto">
-              Join thousands of students who have achieved success through our expert-led programs.
-            </p>
+            <Link to="/programs" className="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium transition-colors">
+              See all news and events
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredCourses.map((course) => (
-              <CourseCard key={course.id} {...course} />
-            ))}
+          <div className="mx-auto px-4">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[
+                Autoplay({
+                  delay: 3000,
+                }),
+              ]}
+              className="w-full relative"
+            >
+              <CarouselContent className="-ml-4">
+                {featuredCourses.map((course) => (
+                  <CarouselItem key={course.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                    <div className="bg-white group cursor-pointer h-full">
+                      <div className="aspect-[4/3] overflow-hidden">
+                        <img 
+                          src={course.imageUrl} 
+                          alt={course.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-xl font-serif text-gray-900 mb-4 leading-tight group-hover:text-red-600 transition-colors">
+                          {course.title}
+                        </h3>
+                        <div className="flex items-start gap-2 text-red-600 text-sm">
+                          <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex bg-blue-900 text-white rounded-none relative left-[35px] bottom-0" />
+              <CarouselNext className="hidden md:flex bg-blue-900 text-white rounded-none relative left-[80px] bottom-[31px]" />
+            </Carousel>
           </div>
         </div>
       </section>

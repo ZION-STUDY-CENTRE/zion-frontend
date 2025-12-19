@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, Phone } from "lucide-react";
+import { Menu, X, ChevronDown, Phone, Search } from "lucide-react";
 import { Button } from "./ui/button";
 import logo from "../../assets/logo.png";
+import { SearchCourse } from "./SearchCourse";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -13,13 +14,15 @@ import {
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 min-h-[17vh]">
-      {/* Top Bar */}
+    <>
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 xl:min-h-[13vh]">
+        {/* Top Bar */}
       <div className="bg-blue-900 text-white py-2 px-4">
         <div className="container mx-auto flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
@@ -127,6 +130,13 @@ export function Header() {
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-3">
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              className="p-2 text-gray-600 hover:text-blue-700 transition-colors"
+              aria-label="Search"
+            >
+              <Search size={20} />
+            </button>
             <Button variant="outline" asChild>
               <Link to="/contact">Enquire Now</Link>
             </Button>
@@ -136,12 +146,20 @@ export function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="lg:hidden flex items-center gap-2">
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              className="p-2 text-gray-600 hover:text-blue-700 transition-colors"
+            >
+              <Search size={24} />
+            </button>
+            <button
+              className="p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -179,5 +197,8 @@ export function Header() {
         )}
       </div>
     </header>
-  );
+      
+      {isSearchOpen && <SearchCourse onClose={() => setIsSearchOpen(false)} />}
+    </>
+  )
 }

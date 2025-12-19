@@ -41,6 +41,7 @@ export function HomePage() {
       schedule: "Mon - Fri",
       students: 250,
       imageUrl: "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHRyYWluaW5nJTIwZWR1Y2F0aW9ufGVufDF8fHx8MTc2NTk4NjgyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/technology"
     },
     {
       id: "ielts-preparation",
@@ -51,6 +52,7 @@ export function HomePage() {
       schedule: "Mon, Wed, Fri",
       students: 180,
       imageUrl: "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/international-exams"
     },
     {
       id: "jamb-waec",
@@ -61,9 +63,10 @@ export function HomePage() {
       schedule: "Mon - Sat",
       students: 320,
       imageUrl: "https://images.unsplash.com/photo-1639741660848-a07ebe5e2ce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmFkdWF0aW9uJTIwc3VjY2Vzc3xlbnwxfHx8fDE3NjU5NTUzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/secondary-exams"
     },
     {
-      id: "web-development",
+      id: "web-development-2",
       title: "Full Stack Web Development",
       category: "Technology",
       description: "Master modern web development with HTML, CSS, JavaScript, React, and Node.js",
@@ -71,9 +74,10 @@ export function HomePage() {
       schedule: "Mon - Fri",
       students: 250,
       imageUrl: "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHRyYWluaW5nJTIwZWR1Y2F0aW9ufGVufDF8fHx8MTc2NTk4NjgyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/technology"
     },
     {
-      id: "ielts-preparation",
+      id: "ielts-preparation-2",
       title: "IELTS Preparation Course",
       category: "International Exams",
       description: "Comprehensive IELTS training with expert instructors to achieve your target band score",
@@ -81,9 +85,10 @@ export function HomePage() {
       schedule: "Mon, Wed, Fri",
       students: 180,
       imageUrl: "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/international-exams"
     },
     {
-      id: "jamb-waec",
+      id: "jamb-waec-2",
       title: "JAMB & WAEC Preparation",
       category: "Secondary School",
       description: "Intensive preparation for JAMB and WAEC exams with proven success rates",
@@ -91,6 +96,7 @@ export function HomePage() {
       schedule: "Mon - Sat",
       students: 320,
       imageUrl: "https://images.unsplash.com/photo-1639741660848-a07ebe5e2ce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmFkdWF0aW9uJTIwc3VjY2Vzc3xlbnwxfHx8fDE3NjU5NTUzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/secondary-exams"
     },
   ];
 
@@ -278,7 +284,7 @@ export function HomePage() {
               <CarouselContent className="-ml-4">
                 {featuredCourses.map((course) => (
                   <CarouselItem key={course.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
-                    <div className="bg-white group cursor-pointer h-full">
+                    <Link to={course.path} className="block bg-white group cursor-pointer h-full">
                       <div className="aspect-[4/3] overflow-hidden">
                         <img 
                           src={course.imageUrl} 
@@ -290,13 +296,16 @@ export function HomePage() {
                         <h3 className="text-xl font-serif text-gray-900 mb-4 leading-tight group-hover:text-red-600 transition-colors">
                           {course.title}
                         </h3>
+                        <p className="text-gray-600 mb-6 flex-grow leading-relaxed hover:underline ">
+                          {course.description}
+                        </p>
                         <div className="flex items-start gap-2 text-red-600 text-sm">
                           <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                           </svg>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </CarouselItem>
                 ))}
               </CarouselContent>

@@ -260,12 +260,6 @@ export function HomePage() {
             <h2 className="text-3xl md:text-5xl text-gray-900">
               OUR PROGRAMS
             </h2>
-            <Link to="/programs" className="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium transition-colors">
-              See all news and events
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
           </div>
 
           <div className="mx-auto px-4">

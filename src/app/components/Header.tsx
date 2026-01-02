@@ -140,7 +140,7 @@ export function Header() {
             <Button variant="outline" asChild>
               <Link to="/contact">Enquire Now</Link>
             </Button>
-            <Button asChild className="bg-amber-600 hover:bg-amber-700">
+            <Button asChild className="bg-blue-900 border-blue-900 border-1 hover:bg-white hover:text-blue-900">
               <Link to="/register">Register</Link>
             </Button>
           </div>
@@ -188,7 +188,7 @@ export function Header() {
                 <Button variant="outline" asChild>
                   <Link to="/contact">Enquire Now</Link>
                 </Button>
-                <Button asChild className="bg-amber-600 hover:bg-amber-700">
+                <Button asChild className="bg-blue-900 border-blue-900 border-1 hover:bg-white hover:text-blue-900">
                   <Link to="/register">Register</Link>
                 </Button>
               </div>

@@ -8,6 +8,7 @@ import { ProgramsPage } from "./pages/ProgramsPage";
 import { ContactPage } from "./pages/ContactPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ThankYouPage } from "./pages/ThankYouPage";
+import { CourseDetailPage } from "./pages/CourseDetailPage";
 
 export default function App() {
   return (
@@ -31,7 +32,7 @@ export default function App() {
             <Route path="/blog" element={<ComingSoonPage title="Blog & Resources" />} />
             <Route path="/privacy-policy" element={<ComingSoonPage title="Privacy Policy" />} />
             <Route path="/terms-conditions" element={<ComingSoonPage title="Terms & Conditions" />} />
-            <Route path="/course/:id" element={<ComingSoonPage title="Course Details" />} />
+            <Route path="/course/:id" element={<CourseDetailPage />} />
           </Routes>
         </main>
         <Footer />

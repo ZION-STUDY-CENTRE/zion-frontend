@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CourseCard } from "../components/CourseCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Button } from "../components/ui/button";
+import { coursesData } from "../data/courses";
 
 export function ProgramsPage() {
   const location = useLocation();
@@ -34,95 +35,16 @@ export function ProgramsPage() {
     }
   };
 
-  const technologyCourses = [
-    {
-      id: "web-dev",
-      title: "Full Stack Web Development",
-      category: "Technology",
-      description: "Learn HTML, CSS, JavaScript, React, Node.js, and database management",
-      duration: "6 months",
-      schedule: "Mon, Wed, Fri",
-      students: 250,
-    },
-    {
-      id: "graphic-design",
-      title: "Graphic Design & Digital Marketing",
-      category: "Technology",
-      description: "Master Adobe Photoshop, Illustrator, and digital marketing strategies",
-      duration: "4 months",
-      schedule: "Tue, Thu, Sat",
-      students: 180,
-    },
-    {
-      id: "data-science",
-      title: "Data Science & Analytics",
-      category: "Technology",
-      description: "Python programming, machine learning, and data visualization",
-      duration: "5 months",
-      schedule: "Weekdays",
-      students: 150,
-    },
-  ];
+  const allCourses = Object.values(coursesData).map(course => ({
+    ...course,
+    duration: course.keyStats.duration,
+    description: course.description || course.shortDescription,
+    schedule: course.schedule || course.keyStats.studyMode,
+  }));
 
-  const internationalExams = [
-    {
-      id: "ielts",
-      title: "IELTS Preparation",
-      category: "International Exams",
-      description: "Comprehensive preparation for all IELTS sections - Listening, Reading, Writing, Speaking",
-      duration: "3 months",
-      schedule: "Mon, Wed, Fri",
-      students: 200,
-    },
-    {
-      id: "toefl",
-      title: "TOEFL Preparation",
-      category: "International Exams",
-      description: "Expert coaching for TOEFL iBT with practice tests and strategies",
-      duration: "3 months",
-      schedule: "Tue, Thu, Sat",
-      students: 150,
-    },
-    {
-      id: "sat-gre",
-      title: "SAT & GRE Coaching",
-      category: "International Exams",
-      description: "Intensive preparation for SAT and GRE with proven success strategies",
-      duration: "4 months",
-      schedule: "Weekdays",
-      students: 120,
-    },
-  ];
-
-  const secondaryExams = [
-    {
-      id: "jamb",
-      title: "JAMB UTME Preparation",
-      category: "Secondary School",
-      description: "Complete JAMB preparation covering all subjects and practice tests",
-      duration: "4 months",
-      schedule: "Mon - Sat",
-      students: 300,
-    },
-    {
-      id: "waec",
-      title: "WAEC Preparation",
-      category: "Secondary School",
-      description: "Thorough WAEC preparation with experienced teachers",
-      duration: "6 months",
-      schedule: "Mon - Sat",
-      students: 280,
-    },
-    {
-      id: "neco",
-      title: "NECO Preparation",
-      category: "Secondary School",
-      description: "Expert coaching for NECO examinations",
-      duration: "5 months",
-      schedule: "Mon - Sat",
-      students: 200,
-    },
-  ];
+  const technologyCourses = allCourses.filter(course => course.category === "Technology");
+  const internationalExams = allCourses.filter(course => course.category === "International Exams");
+  const secondaryExams = allCourses.filter(course => course.category === "Secondary School");
 
   return (
     <div className="min-h-screen">

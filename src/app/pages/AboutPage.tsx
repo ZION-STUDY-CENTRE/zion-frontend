@@ -1,11 +1,33 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { Target, Eye, Award, Users, TrendingUp, Heart } from "lucide-react";
+import { Target, Eye, Award, Users, TrendingUp, Heart, Tag } from "lucide-react";
+
+import heroImage from '../../assets/imageOne.png';
+import { useState } from "react";
 
 export function AboutPage() {
+
+   interface Card {
+    id: number,
+    image: string,
+    title: string,
+    description: string,
+    other?: string,
+    link?: string
+  }
+
+  interface Props {
+    Card: Card[]
+  }
+
+  const [isOpenModal, setisOpenModal] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<Card|null>(null)
+
+
+
   const values = [
     {
-      icon: Target,
+      icon: Tag,
       title: "Excellence",
       description: "We strive for the highest standards in education and training delivery.",
     },
@@ -26,70 +48,184 @@ export function AboutPage() {
     },
   ];
 
+  const findOutMore = [
+    {
+      id:1,
+      image: heroImage,
+      title: "Who are we",
+      description: "We strive for the highest standards in education and training delivery.",
+      other: 'modal',
+    },
+    {
+      id:2,
+      image: heroImage,
+      title: "What we do",
+      description: "Honesty and transparency in all our dealings with students and partners.",
+      other: 'modal',
+    },
+    {
+      id:3,
+      image: heroImage,
+      title: "What makes us unique",
+      description: "Every decision we make is focused on student success and wellbeing.",
+      other: 'modal',
+    },
+    {
+      id:4,
+      image: heroImage,
+      title: "Our Mission",
+      description: "o provide world-class education and professional training that equips students with the knowledge, skills, and confidence needed to excel in their academic pursuits and professional careers, while maintaining the highest standards of integrity and excellence.",
+      other: 'modal',
+    },
+    {
+      id:5,
+      image: heroImage,
+      title: "Our Vision",
+      description: "To be the leading multi-disciplinary educational institution in Nigeria and West Africa, recognized for our exceptional training quality, student success rates, and contribution to developing skilled professionals who drive societal and economic growth.",
+      other: 'modal',
+    },
+    {
+      id:6,
+      image: heroImage,
+      title: "Our History",
+      description: "Founded in 2009, Zion Study Centre began with a simple mission: to provide accessible, high-quality education and training to students and professionals seeking to advance their careers and academic achievements...",
+      other: 'page',
+      link: '/'
+    },
+  ];
+
+  const news = [
+    {
+      id:1,
+      image: heroImage,
+      title: "Best Training Institute Award",
+      description: "Recognized for excellence in professional training, 2022",
+    },
+    {
+      id:2,
+      image: heroImage,
+      title: "5,000+ Graduates",
+      description: "Honesty and transparency in all our dealings with students and partners.",
+    },
+    {
+      id:3,
+      image: heroImage,
+      title: "95% Success Rate",
+      description: "Consistent high performance in exam preparation and certification",
+    },
+  ];
+
+  const openModal = (card: Card) => {
+    setSelectedCard(card)
+    setisOpenModal(true)
+  };
+
+  const closeModal = () => {
+    setSelectedCard(null)
+    setisOpenModal(false)
+  };
+
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
       {/* Hero */}
-      <section className="bg-gradient-to-r from-blue-700 to-blue-900 text-white py-16 md:py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About Zion Study Centre</h1>
-          <p className="text-xl text-blue-100 max-w-3xl">
-            A trusted leader in multi-disciplinary education and professional training for over 15 years.
-          </p>
-        </div>
+      <section className="relative">
+        <article className="relative flex justify-center items-center bg-gradient-to-r from-blue-700 to-blue-900 h-[60vh] text-white py-16 md:py-20">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">About Us</h1>
+          <div className="absolute bottom-0 w-full bg-blue-900 p-4 text-white">
+            <ul className="flex gap-10">
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li className="hidden md:flex list-disc">
+                <Link to="#">About Us</Link>
+              </li>
+            </ul>
+          </div>
+        </article>
+        <figure className="h-[60vh] sticky top-0 -z-10">
+          <img src={heroImage} alt="image" className="w-full h-full" />
+        </figure>
+        <article className="bg-gray-50 flex justify-center py-6 text-center">
+          <div className="w-[90%] lg:w-[80%] py-4 lg:py-8">
+            <h1 className="font-normal italic text-2xl lg:text-3xl">What is Zion Study Centre</h1>
+            <p className="text-xl lg:text-2xl leading-9"><span className="font-medium">Zion study Centre and Leadership Academy (Limited) is a leading provider of</span> <i>structrued and sound education</i> in relationship to JAMB, International Certification and Technology. Although proudly rooted in <i>Abuja</i>, our commitment and impact are <i>global.</i></p>
+          </div>
+        </article>
       </section>
 
       {/* Our Story */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
-              <div className="space-y-4 text-gray-700">
-                <p>
-                  Founded in 2009, Zion Study Centre began with a simple mission: to provide accessible, high-quality education and training to students and professionals seeking to advance their careers and academic achievements.
-                </p>
-                <p>
-                  Over the past 15 years, we have grown from a small tutoring center to a comprehensive multi-disciplinary educational institution, serving thousands of students across various programs including computer technology, international exam preparation, and secondary school preparation.
-                </p>
-                <p>
-                  Our success is built on a foundation of experienced instructors, proven teaching methodologies, and an unwavering commitment to student success. We take pride in our 95% success rate and the countless lives we've transformed through quality education.
-                </p>
-              </div>
-            </div>
-            <div>
+      <section className="py-4">
+        <div className="container-fluid">
+          <div className="flex flex-col lg:flex-row-reverse">
+            <figure className="lg:flex-1 lg:h-[400px] bg-amber-700">
               <img
                 src="https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080"
                 alt="Students in classroom"
-                className="rounded-lg shadow-lg"
+                className="w-full h-full object-fill"
               />
+            </figure>
+
+            <div className="lg:flex-1 text-center p-8 lg:flex flex-col justify-center lg:h-[400px] bg-blue-700">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">The Study and Leadership Center of Your Dream</h2>
+              <div className="space-y-4 text-gray-300">
+                <p>
+                  Founded in 2009, Zion Study Centre began with a simple mission: to provide accessible, high-quality education and training to students and professionals seeking to advance their careers and academic achievements.
+                </p>
+                <button className="bg-transparent text-white py-2 px-8 border-1 border-white">Read More</button>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Mission & Vision */}
+      {/* Find Out More */}
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12">
-            <div className="bg-white p-8 md:p-10 rounded-lg shadow-md">
-              <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                <Target className="text-blue-700" size={32} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
-              <p className="text-gray-700">
-                To provide world-class education and professional training that equips students with the knowledge, skills, and confidence needed to excel in their academic pursuits and professional careers, while maintaining the highest standards of integrity and excellence.
-              </p>
-            </div>
+          <h1 className="text-2xl md:text-4xl text-gray-900 mb-12 font-bold">Find Out More</h1>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-4">
+           {
+            findOutMore.map((container: Card) => (
+              container.link ?
+              <Link to={container.link} key={container.id}>
+                <div className="cursor-pointer group">
+                  <figure className="h-[200px] mb-1">
+                    <img src={container.image} alt="image" className="w-full h-full"/>
+                  </figure>
+                  <div className="relative inline-block">
+                    <h3 className="group-hover:text-blue-700 transition text-xl font-medium font-serif mb-2 0">{container.title}</h3>
+                    <span
+                      className="absolute left-0 bottom-1 h-[2px] w-full bg-amber-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                  </div>
+                  <p className="text-gray-700">
+                    {container.description}
+                  </p>
+                  <div className="flex gap-1 items-center mt-2">
+                    <Tag className="fill-blue-500"/>
+                    <i className="text-sm text-blue-700">{container.other}</i>
+                  </div>
+                </div>
+              </Link> :
 
-            <div className="bg-white p-8 md:p-10 rounded-lg shadow-md">
-              <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-6">
-                <Eye className="text-green-700" size={32} />
+              <div className="cursor-pointer group" key={container.id} onClick={() => openModal(container)}>
+                <figure className="h-[200px] mb-1">
+                  <img src={container.image} alt="image" className="w-full h-full"/>
+                </figure>
+                <div className="relative inline-block">
+                  <h3 className="group-hover:text-blue-700 transition text-xl font-medium font-serif mb-2 0">{container.title}</h3>
+                  <span
+                    className="absolute left-0 bottom-1 h-[2px] w-full bg-amber-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                </div>
+                <p className="text-gray-700">
+                  {container.description}
+                </p>
+                <div className="flex gap-1 items-center mt-2">
+                  <Tag className="fill-blue-500"/>
+                  <i className="text-sm text-blue-700">{container.other}</i>
+                </div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
-              <p className="text-gray-700">
-                To be the leading multi-disciplinary educational institution in Nigeria and West Africa, recognized for our exceptional training quality, student success rates, and contribution to developing skilled professionals who drive societal and economic growth.
-              </p>
-            </div>
+            ))
+           } 
           </div>
         </div>
       </section>
@@ -121,29 +257,28 @@ export function AboutPage() {
       {/* Achievements */}
       <section className="py-16 md:py-24 bg-blue-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Achievements</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Milestones that demonstrate our commitment to educational excellence.
-            </p>
-          </div>
+           <h1 className="text-2xl md:text-3xl text-gray-900 mb-12 font-extrabold">Our Latest News and Achievement</h1>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <Award className="text-blue-700 mb-4" size={40} />
-              <h4 className="text-xl font-bold text-gray-900 mb-2">Best Training Institute Award</h4>
-              <p className="text-gray-600">Recognized for excellence in professional training, 2022</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <Users className="text-blue-700 mb-4" size={40} />
-              <h4 className="text-xl font-bold text-gray-900 mb-2">5,000+ Graduates</h4>
-              <p className="text-gray-600">Successfully trained and certified professionals across various fields</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <TrendingUp className="text-blue-700 mb-4" size={40} />
-              <h4 className="text-xl font-bold text-gray-900 mb-2">95% Success Rate</h4>
-              <p className="text-gray-600">Consistent high performance in exam preparation and certification</p>
-            </div>
+            {
+              news.map((element: Card) => (
+                <Link to={'#'} key={element.id}>
+                  <div className="cursor-pointer group">
+                    <figure className="h-[200px] mb-1">
+                      <img src={element.image} alt="image" className="w-full h-full transform duration-500 ease-out hover:scale-110"/>
+                    </figure>
+                    <div className="relative inline-block">
+                      <h3 className="group-hover:text-blue-700 transition text-xl font-medium font-serif mb-2 0">{element.title}</h3>
+                      <span
+                        className="absolute left-0 bottom-1 h-[2px] w-full bg-amber-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                    </div>
+                    <p className="text-gray-700">
+                      {element.description}
+                    </p>
+                  </div>
+                </Link> 
+              ))
+            } 
           </div>
         </div>
       </section>
@@ -167,6 +302,18 @@ export function AboutPage() {
           </div>
         </div>
       </section>
+
+      {
+        isOpenModal && selectedCard && (
+          <section className="fixed inset-0 bg-black/50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded shaodow-lg w-[400px]">
+              <h2 className="text-xl font-bold mb-2">{selectedCard.title}</h2>
+              <p className="mb-4">{selectedCard.description}</p>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer" onClick={closeModal}>Close</button>
+            </div>
+          </section>
+        )
+      }
     </div>
   );
 }

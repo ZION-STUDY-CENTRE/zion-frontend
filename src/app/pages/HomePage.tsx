@@ -1,7 +1,10 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, Links } from "react-router-dom";
 import imageOne from "../../assets/imageOne.png";
 import { Button } from "../components/ui/button";
 import { CourseCard } from "../components/CourseCard";
+import SearchCourse from "../components/SearchCourse";
+import ChooseZion from "../components/ChooseZion";
 import {
   Carousel,
   CarouselContent,
@@ -21,7 +24,11 @@ import {
   CircleCheck,
   ArrowRight,
   Star,
+  Search,
 } from "lucide-react";
+import AboutSummaryComponent from "../components/AboutSummary";
+import OurPrograms from "../components/OurPrograms";
+import ParallaxSection from "../components/ParallaxSection";
 
 export function HomePage() {
   const featuredCourses = [
@@ -34,6 +41,7 @@ export function HomePage() {
       schedule: "Mon - Fri",
       students: 250,
       imageUrl: "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHRyYWluaW5nJTIwZWR1Y2F0aW9ufGVufDF8fHx8MTc2NTk4NjgyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/technology"
     },
     {
       id: "ielts-preparation",
@@ -44,6 +52,7 @@ export function HomePage() {
       schedule: "Mon, Wed, Fri",
       students: 180,
       imageUrl: "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/international-exams"
     },
     {
       id: "jamb-waec",
@@ -54,6 +63,40 @@ export function HomePage() {
       schedule: "Mon - Sat",
       students: 320,
       imageUrl: "https://images.unsplash.com/photo-1639741660848-a07ebe5e2ce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmFkdWF0aW9uJTIwc3VjY2Vzc3xlbnwxfHx8fDE3NjU5NTUzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/secondary-exams"
+    },
+    {
+      id: "web-development-2",
+      title: "Full Stack Web Development",
+      category: "Technology",
+      description: "Master modern web development with HTML, CSS, JavaScript, React, and Node.js",
+      duration: "6 months",
+      schedule: "Mon - Fri",
+      students: 250,
+      imageUrl: "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHRyYWluaW5nJTIwZWR1Y2F0aW9ufGVufDF8fHx8MTc2NTk4NjgyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/technology"
+    },
+    {
+      id: "ielts-preparation-2",
+      title: "IELTS Preparation Course",
+      category: "International Exams",
+      description: "Comprehensive IELTS training with expert instructors to achieve your target band score",
+      duration: "3 months",
+      schedule: "Mon, Wed, Fri",
+      students: 180,
+      imageUrl: "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/international-exams"
+    },
+    {
+      id: "jamb-waec-2",
+      title: "JAMB & WAEC Preparation",
+      category: "Secondary School",
+      description: "Intensive preparation for JAMB and WAEC exams with proven success rates",
+      duration: "4 months",
+      schedule: "Mon - Sat",
+      students: 320,
+      imageUrl: "https://images.unsplash.com/photo-1639741660848-a07ebe5e2ce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmFkdWF0aW9uJTIwc3VjY2Vzc3xlbnwxfHx8fDE3NjU5NTUzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      path: "/programs/secondary-exams"
     },
   ];
 
@@ -132,24 +175,44 @@ export function HomePage() {
     },
   ];
 
-  const heroImage = "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080";
+  const heroImages = [
+    "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+    "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHRyYWluaW5nJTIwZWR1Y2F0aW9ufGVufDF8fHx8MTc2NTk4NjgyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+    "https://images.unsplash.com/photo-1639741660848-a07ebe5e2ce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmFkdWF0aW9uJTIwc3VjY2Vzc3xlbnwxfHx8fDE3NjU5NTUzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    imageOne
+  ];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative text-white bg-cover h-[83vh] bg-center flex justify-center items-end"
-        style={{
-          backgroundImage: `url(${heroImage})`
-        }}
-      >
+      <section className="group relative text-white h-[90vh] flex justify-center items-center overflow-hidden">
+        {heroImages.map((image, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out group-hover:scale-110 ${
+              index === currentImageIndex ? "opacity-100" : "opacity-0"
+            }`}
+            style={{ backgroundImage: `url(${image})` }}
+          />
+        ))}
         
         <div className="2xl:container flex relative mx-auto px-4 z-10">
           <div className="grid items-center ">
             <div className="">
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 leading-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl max-w-2xl font-bold mb-2 leading-tight">
                 Transform Your Future Through Quality Education
               </h1>
-              <p className="text-lg md:text-xl mb-2 text-blue-100">
+              <p className="text-lg md:text-xl mb-2 text-blue-100 max-w-xl">
                 Leading multi-disciplinary educational institution for computer training, international exams, and academic excellence.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4 mb-2">
@@ -163,11 +226,13 @@ export function HomePage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-100 z-0"></div>
       </section>
+      
+      <SearchCourse />
 
       {/* Stats Section */}
-      <section className="py-12 bg-white border-y">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="flex flex-wrap gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center hover:scale-105 hover:shadow-md py-4 px-20 rounded-md w-fit mx-auto">
                 <div className="flex justify-center mb-3mx-auto">
@@ -183,132 +248,73 @@ export function HomePage() {
         </div>
       </section>
 
+      <AboutSummaryComponent/>
+
       {/* Programs Overview */}
-      <section className="py-16 md:py-24  bg-blue-100">
+      <OurPrograms />
+
+{/* Featured Courses - News Style */}
+      <section className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our Programs
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-3xl md:text-5xl text-gray-900">
+              OUR PROGRAMS
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Comprehensive training programs designed for success in technology, international exams, and academic excellence.
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <Link to="/programs/technology" className="group">
-              <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-700 transition-colors">
-                  <BookOpen className="text-blue-700 group-hover:text-white transition-colors" size={32} />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  Technology & Computer Academy
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Professional training in web development, programming, digital marketing, graphic design, and more.
-                </p>
-                <span className="text-blue-700 font-semibold flex items-center gap-2">
-                  Learn More <ArrowRight size={16} />
-                </span>
-              </div>
-            </Link>
-
-            <Link to="/programs/international-exams" className="group">
-              <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-700 transition-colors">
-                  <GraduationCap className="text-green-700 group-hover:text-white transition-colors" size={32} />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  International Exams & Certifications
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Expert preparation for IELTS, TOEFL, SAT, GRE, GMAT, and Cambridge exams.
-                </p>
-                <span className="text-blue-700 font-semibold flex items-center gap-2">
-                  Learn More <ArrowRight size={16} />
-                </span>
-              </div>
-            </Link>
-
-            <Link to="/programs/secondary-exams" className="group">
-              <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 h-full">
-                <div className="w-16 h-16 bg-amber-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-amber-700 transition-colors">
-                  <Award className="text-amber-700 group-hover:text-white transition-colors" size={32} />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  Secondary & High School Exam Preparation
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Intensive preparation for WAEC, NECO, JAMB, and Cambridge IGCSE exams.
-                </p>
-                <span className="text-blue-700 font-semibold flex items-center gap-2">
-                  Learn More <ArrowRight size={16} />
-                </span>
-              </div>
-            </Link>
-          </div>
-
-          <div className="text-center">
-            <Button size="lg" variant="outline" asChild>
-              <Link to="/programs">View All Programs</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Courses */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Popular Courses
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Join thousands of students who have achieved success through our expert-led programs.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredCourses.map((course) => (
-              <CourseCard key={course.id} {...course} />
-            ))}
+          <div className="mx-auto px-4">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[
+                Autoplay({
+                  delay: 3000,
+                }),
+              ]}
+              className="w-full relative"
+            >
+              <CarouselContent className="-ml-4">
+                {featuredCourses.map((course) => (
+                  <CarouselItem key={course.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                    <Link to={course.path} className="block bg-white group cursor-pointer h-full">
+                      <div className="aspect-[4/3] overflow-hidden">
+                        <img 
+                          src={course.imageUrl} 
+                          alt={course.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-xl font-serif text-gray-900 mb-4 leading-tight group-hover:text-red-600 transition-colors">
+                          {course.title}
+                        </h3>
+                        <p className="text-gray-600 mb-6 flex-grow leading-relaxed hover:underline ">
+                          {course.description}
+                        </p>
+                        <div className="flex items-start gap-2 text-red-600 text-sm">
+                          <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                        </div>
+                      </div>
+                    </Link>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex bg-blue-900 text-white rounded-none relative left-[35px] bottom-0" />
+              <CarouselNext className="hidden md:flex bg-blue-900 text-white rounded-none relative left-[80px] bottom-[31px]" />
+            </Carousel>
           </div>
         </div>
       </section>
 
       {/* Why Choose Us */}
-      <section 
-        className="py-16 md:py-24 bg-fixed bg-cover bg-center relative"
-        style={{
-          backgroundImage: `url(${imageOne})`
-        }}
-      >
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-[midnightblue] opacity-50"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Why Choose Zion Study Centre
-            </h2>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-              We are committed to providing quality education and training that delivers real results.
-            </p>
-          </div>
+      <ChooseZion />
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {whyChooseUs.map((item, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                <div className="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <item.icon className="text-blue-700" size={28} />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-600">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Parallax Section */}
+      <ParallaxSection />
 
       {/* Testimonials */}
       <section className="py-16 md:py-24">
@@ -322,7 +328,7 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="mx-auto max-w-6xl px-4">
+          <div className="mx-auto px-4">
             <Carousel
               opts={{
                 align: "start",
@@ -335,7 +341,7 @@ export function HomePage() {
               ]}
               className="w-full relative"
             >
-              <CarouselContent className="-ml-4">
+              <CarouselContent className="">
                 {testimonials.map((testimonial, index) => (
                   <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
                     <div className="bg-white p-6 rounded-lg shadow-md h-full border">

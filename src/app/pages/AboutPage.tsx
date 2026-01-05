@@ -90,7 +90,7 @@ export function AboutPage() {
       title: "Our History",
       description: "Founded in 2009, Zion Study Centre began with a simple mission: to provide accessible, high-quality education and training to students and professionals seeking to advance their careers and academic achievements...",
       other: 'page',
-      link: './HistoryPage.tsx'
+      link: '/history'
     },
   ];
 

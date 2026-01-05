@@ -13,9 +13,14 @@ import {
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAboutUsDropdown, setIsAboutUsDropdown] = useState(false);
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleAboutUsMobileClick = () => {
+    return setIsAboutUsDropdown(!isAboutUsDropdown)
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 min-h-[17vh]">
@@ -57,14 +62,27 @@ export function Header() {
             >
               Home
             </Link>
-            <Link
-              to="/about"
-              className={`hover:text-blue-700 transition-colors ${
-                isActive("/about") ? "text-blue-700 font-semibold" : "text-gray-700"
-              }`}
-            >
-              About Us
-            </Link>
+           
+            {/* About us Dropdown */}
+            <div className="relative group">
+              <button className="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition-colors">
+                About <ChevronDown size={16} />
+              </button>
+              <div className="absolute top-full left-0 mt-2 w-64 bg-white shadow-lg rounded-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <Link
+                  to="/about"
+                  className="block px-4 py-2 hover:bg-blue-50 transition-colors"
+                >
+                  About Us
+                </Link>
+                <Link
+                  to="/history"
+                  className="block px-4 py-2 hover:bg-blue-50 transition-colors"
+                >
+                  Our History
+                </Link>
+              </div>
+            </div>
 
             {/* Programs Dropdown */}
             <div className="relative group">
@@ -151,9 +169,32 @@ export function Header() {
               <Link to="/" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
                 Home
               </Link>
-              <Link to="/about" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
-                About Us
-              </Link>
+
+              {/* About us Dropdown */}
+              <div className="relative group">
+                <p className="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition-colors" onClick={() => handleAboutUsMobileClick()}>
+                  About <ChevronDown size={16} />
+                </p>
+                {
+                  isAboutUsDropdown && (
+                    <div className="absolute top-full left-0 mt-2 w-64 bg-white shadow-lg rounded-lg py-2 transition-all duration-200">
+                      <Link
+                        to="/about"
+                        className="block px-4 py-2 hover:bg-blue-50 transition-colors"
+                      >
+                        About Us
+                      </Link>
+                      <Link
+                        to="/history"
+                        className="block px-4 py-2 hover:bg-blue-50 transition-colors"
+                      >
+                        Our History
+                      </Link>
+                    </div>
+                  )
+                }
+              </div>
+
               <Link to="/programs" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
                 Programs
               </Link>

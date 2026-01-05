@@ -8,6 +8,7 @@ import { ProgramsPage } from "./pages/ProgramsPage";
 import { ContactPage } from "./pages/ContactPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ThankYouPage } from "./pages/ThankYouPage";
+import HistoryPage from "./pages/HistoryPage";
 import { CourseDetailPage } from "./pages/CourseDetailPage";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/history" element={<HistoryPage />} />
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/programs/technology" element={<ProgramsPage />} />
             <Route path="/programs/international-exams" element={<ProgramsPage />} />

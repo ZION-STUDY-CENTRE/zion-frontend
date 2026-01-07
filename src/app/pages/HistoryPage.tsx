@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import zionBuilding from '../../assets/building.jpg';
 import Accordion from '../components/Accordion';
 
+import classRoom from '../../assets/287522350_1387577808421737_4478080586879130110_n.jpg';
+import pioneer from '../../assets/babat.jpg';
+
 const HistoryPage = () => {
 
     interface Card {
@@ -47,13 +50,13 @@ const HistoryPage = () => {
         },
         {
           id:2,
-          image: zionBuilding,
+          image: classRoom,
           title: "Pioneer Location",
           description: "Honesty and transparency in all our dealings with students and partners.",
         },
         {
           id:3,
-          image: zionBuilding,
+          image: pioneer,
           title: "Our Facilities",
           description: "Consistent high performance in exam preparation and certification",
         },
@@ -80,12 +83,12 @@ const HistoryPage = () => {
 
             <section className="bg-gray-50 flex justify-center py-6 text-center">
                 <div className="w-[90%] lg:w-[80%] py-4 lg:py-8">
-                    <p className="text-xl lg:text-2xl leading-9">The Zion Study Center and Leadership Academy is unlike many other institution. Our commitment to widening access has shaped our history, from our foundation in 2000 to the present day.</p>
+                    <p className="text-xl lg:text-3xl leading-9">The Zion Study Center and Leadership Academy is unlike many other institution. Our commitment to widening access has shaped our history, from our foundation in 2000 to the present day.</p>
                 </div>
             </section>
 
             <section className="relative bg-no-repeat bg-cover bg-top bg-fixed" style={{backgroundImage: `url(${zionBuilding})`}}>
-                <div className="relative z-2 py-8 md:py-20">
+                <div className="relative z-2 py-8 md:py-24">
                     <h2 className="text-2xl md:text-3xl text-blue-400 font-extrabold pl-4 md:pl-26 mb-4 md:mb-8 ">Our History</h2>
                     <div className="text-center text-white/90 w-[90%] md:w-[70%] mx-auto ">
                         <p className="text-xl font-medium lg:leading-12">
@@ -103,7 +106,7 @@ const HistoryPage = () => {
             </section>
 
             <section className="py-16 md:py-24 bg-blue-50">
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto px-26">
                     <h1 className="text-2xl md:text-3xl text-gray-900 mb-12 font-extrabold">Our Timeline</h1>
                     <div className="px-8">
                         <Accordion items={timelineData} />
@@ -112,7 +115,7 @@ const HistoryPage = () => {
             </section>
 
             <section className="py-16 md:py-24 bg-blue-50">
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto px-16">
                     <h1 className="text-2xl md:text-3xl text-gray-900 mb-12 font-extrabold">In This Section</h1>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -120,7 +123,7 @@ const HistoryPage = () => {
                         history.map((element: Card) => (
                             <Link to={'#'} key={element.id}>
                             <div className="cursor-pointer group">
-                                <figure className="h-[200px] mb-3">
+                                <figure className="h-[250px] mb-3">
                                 <img src={element.image} alt="image" className="w-full h-full transform duration-500 ease-out hover:scale-110"/>
                                 </figure>
                                 <div className="relative inline-block">

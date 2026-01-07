@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { WhatsAppFloat } from "./components/WhatsAppFloat";
@@ -10,16 +10,41 @@ import { RegisterPage } from "./pages/RegisterPage";
 import { ThankYouPage } from "./pages/ThankYouPage";
 import HistoryPage from "./pages/HistoryPage";
 import { CourseDetailPage } from "./pages/CourseDetailPage";
+import { LoginPage } from "./pages/LoginPage";
+import { AuthProvider } from "./context/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AdminDashboard } from "./pages/dashboard/AdminDashboard";
+import { InstructorDashboard } from "./pages/dashboard/InstructorDashboard";
+import { MediaManagerDashboard } from "./pages/MediaManagerDashboard";
+import { GalleryPage } from "./pages/GalleryPage";
+import BlogPostsComponent from "./pages/Blog";
+import { StudentDashboard } from "./pages/dashboard/StudentDashboard";
+
+// Layout for the public-facing website
+const WebsiteLayout = () => {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <Footer />
+      <WhatsAppFloat />
+    </div>
+  );
+};
 
 export default function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">
-          <Routes>
+      <AuthProvider>
+        <Routes>
+          {/* Public Website Routes */}
+          <Route element={<WebsiteLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/blog" element={<BlogPostsComponent />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/programs/technology" element={<ProgramsPage />} />
@@ -29,16 +54,50 @@ export default function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/admissions" element={<RegisterPage />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
-            {/* Placeholder routes for other pages */}
-            <Route path="/gallery" element={<ComingSoonPage title="Gallery" />} />
-            <Route path="/blog" element={<ComingSoonPage title="Blog & Resources" />} />
+            <Route path="/course/:id" element={<CourseDetailPage />} />
+            {/* Placeholder routes */}
             <Route path="/privacy-policy" element={<ComingSoonPage title="Privacy Policy" />} />
             <Route path="/terms-conditions" element={<ComingSoonPage title="Terms & Conditions" />} />
-            <Route path="/course/:id" element={<CourseDetailPage />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+          </Route>
+
+          {/* System Routes (Standalone) */}
+          <Route path="/login" element={<LoginPage />} />
+          
+          {/* Dashboard Routes (Protected) */}
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/instructor/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={['instructor']}>
+                <InstructorDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/student/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={['student']}>
+                <StudentDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/media/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={['media-manager']}>
+                <MediaManagerDashboard />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 }

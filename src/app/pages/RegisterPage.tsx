@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { sendEmail } from "../services/api";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -9,13 +11,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { CircleCheck } from "lucide-react";
+import { CircleCheck, Loader2 } from "lucide-react";
 
 export function RegisterPage() {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      address: '',
+      programCategory: '',
+      program: '',
+      schedule: '',
+      additional: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration
-    window.location.href = "/thank-you";
+    setIsLoading(true);
+
+    try {
+      await sendEmail('admission', formData);
+      window.location.href = "/thank-you";
+    } catch (error) {
+      console.error(error);
+      alert('Failed to submit application. Please contact us directly.');
+      setIsLoading(false);
+    }
+  };
+
+  const handleChange = (id: string, value: string) => {
+    setFormData(prev => ({ ...prev, [id]: value }));
   };
 
   return (
@@ -83,28 +110,28 @@ export function RegisterPage() {
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
                           <Label htmlFor="firstName">First Name *</Label>
-                          <Input id="firstName" required className="mt-1" />
+                          <Input id="firstName" value={formData.firstName} onChange={(e) => handleChange('firstName', e.target.value)} required className="mt-1" />
                         </div>
                         <div>
                           <Label htmlFor="lastName">Last Name *</Label>
-                          <Input id="lastName" required className="mt-1" />
+                          <Input id="lastName" value={formData.lastName} onChange={(e) => handleChange('lastName', e.target.value)} required className="mt-1" />
                         </div>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-6 mt-6">
                         <div>
                           <Label htmlFor="email">Email Address *</Label>
-                          <Input id="email" type="email" required className="mt-1" />
+                          <Input id="email" type="email" value={formData.email} onChange={(e) => handleChange('email', e.target.value)} required className="mt-1" />
                         </div>
                         <div>
                           <Label htmlFor="phone">Phone Number *</Label>
-                          <Input id="phone" type="tel" required className="mt-1" />
+                          <Input id="phone" type="tel" value={formData.phone} onChange={(e) => handleChange('phone', e.target.value)} required className="mt-1" />
                         </div>
                       </div>
 
                       <div className="mt-6">
                         <Label htmlFor="address">Address *</Label>
-                        <Textarea id="address" rows={3} required className="mt-1" />
+                        <Textarea id="address" rows={3} value={formData.address} onChange={(e) => handleChange('address', e.target.value)} required className="mt-1" />
                       </div>
                     </div>
 
@@ -114,7 +141,7 @@ export function RegisterPage() {
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
                           <Label htmlFor="programCategory">Program Category *</Label>
-                          <Select required>
+                          <Select required onValueChange={(value) => handleChange('programCategory', value)}>
                             <SelectTrigger className="mt-1">
                               <SelectValue placeholder="Select category" />
                             </SelectTrigger>
@@ -127,7 +154,7 @@ export function RegisterPage() {
                         </div>
                         <div>
                           <Label htmlFor="specificCourse">Specific Course *</Label>
-                          <Select required>
+                          <Select required onValueChange={(value) => handleChange('program', value)}>
                             <SelectTrigger className="mt-1">
                               <SelectValue placeholder="Select course" />
                             </SelectTrigger>
@@ -145,7 +172,7 @@ export function RegisterPage() {
 
                       <div className="mt-6">
                         <Label htmlFor="schedule">Preferred Schedule *</Label>
-                        <Select required>
+                        <Select required onValueChange={(value) => handleChange('schedule', value)}>
                           <SelectTrigger className="mt-1">
                             <SelectValue placeholder="Select schedule" />
                           </SelectTrigger>
@@ -163,32 +190,23 @@ export function RegisterPage() {
                         <Textarea
                           id="additionalInfo"
                           rows={4}
+                          value={formData.additional}
+                          onChange={(e) => handleChange('additional', e.target.value)}
                           placeholder="Tell us about your goals, experience, or any questions you have..."
                           className="mt-1"
                         />
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <input type="checkbox" id="terms" required className="w-4 h-4" />
-                      <Label htmlFor="terms" className="text-sm">
-                        I agree to the{" "}
-                        <a href="/terms-conditions" className="text-blue-700 underline">
-                          Terms & Conditions
-                        </a>{" "}
-                        and{" "}
-                        <a href="/privacy-policy" className="text-blue-700 underline">
-                          Privacy Policy
-                        </a>
-                      </Label>
-                    </div>
+
 
                     <Button
                       type="submit"
                       size="lg"
                       className="w-full bg-blue-700 hover:bg-blue-800"
+                      disabled={isLoading}
                     >
-                      Submit Registration
+                      {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</> : 'Submit Registration'}
                     </Button>
                   </form>
                 </div>

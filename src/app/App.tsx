@@ -16,7 +16,7 @@ export default function App() {
     <Router>
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1">
+        <main className="flex-1 cormorant-garamond">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />

@@ -203,9 +203,9 @@ export function ContactPage() {
       </section>
 
       {/* Map Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="bg-gray-300 rounded-lg overflow-hidden" style={{ height: "400px" }}>
+      <section className=" bg-gray-50">
+        <div className="container-fluid">
+          <div className="bg-black/20 rounded-lg overflow-hidden" >
             <div className="order-2 lg:order-1">
             <MapEmbed lat={officeLat} lng={officeLng} address={officeAddress} height="450px" />
           </div>

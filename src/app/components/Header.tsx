@@ -121,20 +121,28 @@ export function Header() {
             </div>
 
             <Link
-              to="/admissions"
-              className={`hover:text-blue-700 transition-colors ${
-                isActive("/admissions") ? "text-blue-700 font-semibold" : "text-gray-700"
-              }`}
-            >
-              Admissions
-            </Link>
-            <Link
               to="/gallery"
               className={`hover:text-blue-700 transition-colors ${
                 isActive("/gallery") ? "text-blue-700 font-semibold" : "text-gray-700"
               }`}
             >
               Gallery
+            </Link>
+            <Link
+              to="/blog"
+              className={`hover:text-blue-700 transition-colors ${
+                isActive("/blog") ? "text-blue-700 font-semibold" : "text-gray-700"
+              }`}
+            >
+              Blog
+            </Link>
+            <Link
+              to="/admissions"
+              className={`hover:text-blue-700 transition-colors ${
+                isActive("/admissions") ? "text-blue-700 font-semibold" : "text-gray-700"
+              }`}
+            >
+              Admissions
             </Link>
             <Link
               to="/contact"

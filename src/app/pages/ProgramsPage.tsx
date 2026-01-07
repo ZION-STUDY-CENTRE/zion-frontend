@@ -1,12 +1,29 @@
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CourseCard } from "../components/CourseCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Button } from "../components/ui/button";
-import { coursesData } from "../data/courses";
+import { getPrograms, Program } from "../services/api";
 
 export function ProgramsPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const data = await getPrograms();
+        setPrograms(data);
+      } catch (error) {
+        console.error("Failed to fetch programs", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPrograms();
+  }, []);
 
   // Determine active tab from URL
   const getActiveTab = () => {
@@ -35,16 +52,22 @@ export function ProgramsPage() {
     }
   };
 
-  const allCourses = Object.values(coursesData).map(course => ({
-    ...course,
-    duration: course.keyStats.duration,
-    description: course.description || course.shortDescription,
-    schedule: course.schedule || course.keyStats.studyMode,
-  }));
+  const technologyCourses = programs.filter(course => course.category === "Technology");
+  const internationalExams = programs.filter(course => course.category === "International Exams");
+  const secondaryExams = programs.filter(course => course.category === "Secondary School");
 
-  const technologyCourses = allCourses.filter(course => course.category === "Technology");
-  const internationalExams = allCourses.filter(course => course.category === "International Exams");
-  const secondaryExams = allCourses.filter(course => course.category === "Secondary School");
+  // Helper to map Program to CourseCard props
+  // The API already maps 'code' to 'id' for us
+  const mapToCard = (course: Program) => ({
+    id: course.id || course.code, 
+    title: course.title,
+    category: course.category,
+    description: course.description || course.shortDescription,
+    duration: course.keyStats.duration,
+    schedule: course.schedule || course.keyStats.studyMode,
+    students: course.students,
+    imageUrl: course.imageUrl || course.heroImage
+  });
 
   return (
     <div className="min-h-screen">
@@ -70,65 +93,76 @@ export function ProgramsPage() {
             </TabsList>
 
             <TabsContent value="all" className="space-y-16">
-              {/* Technology */}
-              <div>
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Technology & Computer Academy</h2>
-                    <p className="text-gray-600">Professional training in modern technology skills</p>
+              {loading ? (
+                <div className="text-center py-12">Loading programs...</div>
+              ) : programs.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                    <p className="text-xl">No programs found.</p>
+                    <p className="text-sm mt-2">Please check back later or contact support.</p>
+                </div>
+              ) : (
+                <>
+                {/* Technology */}
+                <div>
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h2 className="text-3xl font-bold text-gray-900 mb-2">Technology & Computer Academy</h2>
+                      <p className="text-gray-600">Professional training in modern technology skills</p>
+                    </div>
+                    <Button variant="outline" asChild>
+                      <Link to="/programs/technology">View All</Link>
+                    </Button>
                   </div>
-                  <Button variant="outline" asChild>
-                    <Link to="/programs/technology">View All</Link>
-                  </Button>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {technologyCourses.map((course) => (
+                      <CourseCard key={course._id} {...mapToCard(course)} />
+                    ))}
+                  </div>
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {technologyCourses.map((course) => (
-                    <CourseCard key={course.id} {...course} />
-                  ))}
-                </div>
-              </div>
 
-              {/* International Exams */}
-              <div>
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">International Exams</h2>
-                    <p className="text-gray-600">Expert preparation for global examinations</p>
+                {/* International Exams */}
+                <div>
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h2 className="text-3xl font-bold text-gray-900 mb-2">International Exams</h2>
+                      <p className="text-gray-600">Expert preparation for global examinations</p>
+                    </div>
+                    <Button variant="outline" asChild>
+                      <Link to="/programs/international-exams">View All</Link>
+                    </Button>
                   </div>
-                  <Button variant="outline" asChild>
-                    <Link to="/programs/international-exams">View All</Link>
-                  </Button>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {internationalExams.map((course) => (
+                      <CourseCard key={course._id} {...mapToCard(course)} />
+                    ))}
+                  </div>
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {internationalExams.map((course) => (
-                    <CourseCard key={course.id} {...course} />
-                  ))}
-                </div>
-              </div>
 
-              {/* Secondary Exams */}
-              <div>
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Secondary & High School Preparation</h2>
-                    <p className="text-gray-600">Intensive coaching for academic success</p>
+                {/* Secondary Exams */}
+                <div>
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h2 className="text-3xl font-bold text-gray-900 mb-2">Secondary & High School Preparation</h2>
+                      <p className="text-gray-600">Intensive coaching for academic success</p>
+                    </div>
+                    <Button variant="outline" asChild>
+                      <Link to="/programs/secondary-exams">View All</Link>
+                    </Button>
                   </div>
-                  <Button variant="outline" asChild>
-                    <Link to="/programs/secondary-exams">View All</Link>
-                  </Button>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {secondaryExams.map((course) => (
+                      <CourseCard key={course._id} {...mapToCard(course)} />
+                    ))}
+                  </div>
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {secondaryExams.map((course) => (
-                    <CourseCard key={course.id} {...course} />
-                  ))}
-                </div>
-              </div>
+                </>
+              )}
             </TabsContent>
 
             <TabsContent value="technology">
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {technologyCourses.map((course) => (
-                  <CourseCard key={course.id} {...course} />
+                  <CourseCard key={course._id} {...mapToCard(course)} />
                 ))}
               </div>
             </TabsContent>
@@ -136,7 +170,7 @@ export function ProgramsPage() {
             <TabsContent value="international">
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {internationalExams.map((course) => (
-                  <CourseCard key={course.id} {...course} />
+                  <CourseCard key={course._id} {...mapToCard(course)} />
                 ))}
               </div>
             </TabsContent>
@@ -144,7 +178,7 @@ export function ProgramsPage() {
             <TabsContent value="secondary">
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {secondaryExams.map((course) => (
-                  <CourseCard key={course.id} {...course} />
+                  <CourseCard key={course._id} {...mapToCard(course)} />
                 ))}
               </div>
             </TabsContent>

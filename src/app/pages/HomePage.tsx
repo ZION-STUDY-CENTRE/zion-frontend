@@ -30,75 +30,35 @@ import AboutSummaryComponent from "../components/AboutSummary";
 import OurPrograms from "../components/OurPrograms";
 import ParallaxSection from "../components/ParallaxSection";
 
+import { getBlogPosts, BlogPost, getPrograms, Program } from "../services/api";
+
 export function HomePage() {
-  const featuredCourses = [
-    {
-      id: "web-development",
-      title: "Full Stack Web Development",
-      category: "Technology",
-      description: "Master modern web development with HTML, CSS, JavaScript, React, and Node.js",
-      duration: "6 months",
-      schedule: "Mon - Fri",
-      students: 250,
-      imageUrl: "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHRyYWluaW5nJTIwZWR1Y2F0aW9ufGVufDF8fHx8MTc2NTk4NjgyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      path: "/programs/technology"
-    },
-    {
-      id: "ielts-preparation",
-      title: "IELTS Preparation Course",
-      category: "International Exams",
-      description: "Comprehensive IELTS training with expert instructors to achieve your target band score",
-      duration: "3 months",
-      schedule: "Mon, Wed, Fri",
-      students: 180,
-      imageUrl: "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
-      path: "/programs/international-exams"
-    },
-    {
-      id: "jamb-waec",
-      title: "JAMB & WAEC Preparation",
-      category: "Secondary School",
-      description: "Intensive preparation for JAMB and WAEC exams with proven success rates",
-      duration: "4 months",
-      schedule: "Mon - Sat",
-      students: 320,
-      imageUrl: "https://images.unsplash.com/photo-1639741660848-a07ebe5e2ce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmFkdWF0aW9uJTIwc3VjY2Vzc3xlbnwxfHx8fDE3NjU5NTUzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      path: "/programs/secondary-exams"
-    },
-    {
-      id: "web-development-2",
-      title: "Full Stack Web Development",
-      category: "Technology",
-      description: "Master modern web development with HTML, CSS, JavaScript, React, and Node.js",
-      duration: "6 months",
-      schedule: "Mon - Fri",
-      students: 250,
-      imageUrl: "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHRyYWluaW5nJTIwZWR1Y2F0aW9ufGVufDF8fHx8MTc2NTk4NjgyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      path: "/programs/technology"
-    },
-    {
-      id: "ielts-preparation-2",
-      title: "IELTS Preparation Course",
-      category: "International Exams",
-      description: "Comprehensive IELTS training with expert instructors to achieve your target band score",
-      duration: "3 months",
-      schedule: "Mon, Wed, Fri",
-      students: 180,
-      imageUrl: "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
-      path: "/programs/international-exams"
-    },
-    {
-      id: "jamb-waec-2",
-      title: "JAMB & WAEC Preparation",
-      category: "Secondary School",
-      description: "Intensive preparation for JAMB and WAEC exams with proven success rates",
-      duration: "4 months",
-      schedule: "Mon - Sat",
-      students: 320,
-      imageUrl: "https://images.unsplash.com/photo-1639741660848-a07ebe5e2ce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmFkdWF0aW9uJTIwc3VjY2Vzc3xlbnwxfHx8fDE3NjU5NTUzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      path: "/programs/secondary-exams"
-    },
-  ];
+  const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
+  const [programs, setPrograms] = useState<Program[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [posts, programsData] = await Promise.all([
+          getBlogPosts(),
+          getPrograms()
+        ]);
+        
+        if (posts.length > 0) {
+           // Sort by date descending
+           const sorted = [...posts].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+           setLatestPost(sorted[0]);
+        }
+        
+        if (programsData) {
+          setPrograms(programsData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data for homepage", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const stats = [
     { icon: Users, value: "5,000+", label: "Students Trained" },
@@ -177,9 +137,6 @@ export function HomePage() {
 
   const heroImages = [
     "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
-    "https://images.unsplash.com/photo-1569653402334-2e98fbaa80ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMHRyYWluaW5nJTIwZWR1Y2F0aW9ufGVufDF8fHx8MTc2NTk4NjgyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    "https://images.unsplash.com/photo-1639741660848-a07ebe5e2ce0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmFkdWF0aW9uJTIwc3VjY2Vzc3xlbnwxfHx8fDE3NjU5NTUzMjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    imageOne
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -195,31 +152,37 @@ export function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="group relative text-white h-[90vh] flex justify-center items-center overflow-hidden">
+      <section className="group relative text-white h-[70vh] flex justify-start items-end overflow-hidden">
         {heroImages.map((image, index) => (
           <div
             key={index}
-            className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out group-hover:scale-110 ${
+            className={`absolute inset-0 bg-cover bg-start transition-all duration-1000 ease-in-out group-hover:scale-110 ${
               index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
-            style={{ backgroundImage: `url(${image})` }}
+            style={{ backgroundImage: `url(${latestPost ? latestPost.image : image})` }}
           />
         ))}
         
-        <div className="2xl:container flex relative mx-auto px-4 z-10">
-          <div className="grid items-center ">
+        <div className="2xl:container flex relative px-4 z-10 mx-auto mb-10">
+          <div className="grid items-end ">
             <div className="">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl max-w-2xl font-bold mb-2 leading-tight">
-                Transform Your Future Through Quality Education
-              </h1>
-              <p className="text-lg md:text-xl mb-2 text-blue-100 max-w-xl">
-                Leading multi-disciplinary educational institution for computer training, international exams, and academic excellence.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center gap-4 mb-2">
-                <Button size="lg" variant="outline" className="hover:bg-white hover:text-blue-900 bg-blue-900 text-white text-lg" asChild>
-                  <Link to="/programs">View Programs</Link>
-                </Button>
-              </div>
+              
+               <div className="relative inline-block">
+                <Link to="/blog" className="block group/link">
+                {
+                  latestPost && 
+                    <span className="inline-block bg-blue-900 text-white text-xs px-2 py-1 mb-2 font-bold uppercase tracking-wider rounded-sm">
+                      Latest News
+                    </span>
+                }
+                  
+                  <h3 className="text-3xl lg:text-4xl mb-1 font-bold leading-tight ">
+                    {latestPost ? latestPost.shortDescription : "Zion Study Center & Leadership Academy"}
+                  </h3>
+                </Link>
+                  <span
+                    className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                </div>
             </div>
            
           </div>
@@ -276,12 +239,12 @@ export function HomePage() {
               className="w-full relative"
             >
               <CarouselContent className="-ml-4">
-                {featuredCourses.map((course) => (
-                  <CarouselItem key={course.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
-                    <Link to={course.path} className="block bg-white group cursor-pointer h-full">
+                {programs.map((course) => (
+                  <CarouselItem key={course._id} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                    <Link to={`/course/${course.id}`} className="block bg-white group cursor-pointer h-full">
                       <div className="aspect-[4/3] overflow-hidden">
                         <img 
-                          src={course.imageUrl} 
+                          src={course.heroImage || course.imageUrl} 
                           alt={course.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
@@ -290,8 +253,8 @@ export function HomePage() {
                         <h3 className="text-xl font-serif text-gray-900 mb-4 leading-tight group-hover:text-red-600 transition-colors">
                           {course.title}
                         </h3>
-                        <p className="text-gray-600 mb-6 flex-grow leading-relaxed hover:underline ">
-                          {course.description}
+                        <p className="text-gray-600 mb-6 flex-grow leading-relaxed hover:underline line-clamp-3">
+                          {course.shortDescription || course.description}
                         </p>
                         <div className="flex items-start gap-2 text-red-600 text-sm">
                           <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

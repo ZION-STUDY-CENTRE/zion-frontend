@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   Clock, 
@@ -12,21 +12,52 @@ import {
   Download
 } from 'lucide-react';
 import { Button } from "../components/ui/button";
-import { coursesData } from '../data/courses';
+import { getProgramBySlug, Program } from '../services/api';
 
 export function CourseDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const [course, setCourse] = useState<Program | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  const course = (id && coursesData[id]) ? coursesData[id] : coursesData["default"];
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    getProgramBySlug(id)
+      .then(data => {
+        setCourse(data);
+        setError(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setError(true);
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
 
-  // If it's the default but we have a specific ID, try to make the title look a bit better
-  if (course === coursesData["default"] && id) {
-    course.title = id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white font-sans">
+        <div className="text-xl text-gray-600">Loading course details...</div>
+      </div>
+    );
+  }
+
+  if (error || !course) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white font-sans flex-col gap-4">
+        <h1 className="text-2xl font-bold text-gray-900">Course Not Found</h1>
+        <p className="text-gray-600">The course you are looking for does not exist or has been removed.</p>
+        <Button asChild>
+          <Link to="/programs">Browse All Programs</Link>
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -35,7 +66,7 @@ export function CourseDetailPage() {
       <div className="relative h-[60vh] min-h-[500px] bg-gray-900 text-white overflow-hidden">
         <div className="absolute inset-0">
           <img 
-            src={course.heroImage} 
+            src={course.heroImage || course.imageUrl} 
             alt={course.title} 
             className="w-full h-full object-cover opacity-40"
           />
@@ -51,7 +82,7 @@ export function CourseDetailPage() {
               {course.title}
             </h1>
             <p className="text-xl md:text-2xl text-gray-200 max-w-2xl leading-relaxed">
-              {course.shortDescription}
+              {course.shortDescription || course.description}
             </p>
           </div>
         </div>
@@ -68,7 +99,7 @@ export function CourseDetailPage() {
             <section>
               <h2 className="text-3xl font-serif font-bold text-gray-900 mb-6">Overview</h2>
               <div className="prose prose-lg text-gray-600 leading-relaxed">
-                <p>{course.overview}</p>
+                <p>{course.overview || course.description}</p>
                 <p className="mt-4">
                   At Zion Study Centre, we believe in a holistic approach to education. This course not only covers the technical aspects but also focuses on soft skills, critical thinking, and professional development to ensure you are well-rounded and ready for the challenges of the modern workplace.
                 </p>
@@ -79,7 +110,7 @@ export function CourseDetailPage() {
             <section>
               <h2 className="text-3xl font-serif font-bold text-gray-900 mb-8">Course Structure</h2>
               <div className="grid gap-6">
-                {course.modules.map((module, index) => (
+                {course.modules && course.modules.map((module, index) => (
                   <div key={index} className="bg-gray-50 border border-gray-100 rounded-xl p-6 hover:shadow-md transition-shadow">
                     <div className="flex items-start gap-4">
                       <div className="bg-blue-100 p-3 rounded-lg text-blue-700 mt-1">
@@ -100,7 +131,7 @@ export function CourseDetailPage() {
               <h2 className="text-3xl font-serif font-bold text-gray-900 mb-6">Entry Requirements</h2>
               <div className="bg-white border-l-4 border-red-600 p-8 shadow-sm">
                 <ul className="space-y-4">
-                  {course.entryRequirements.map((req, index) => (
+                  {course.entryRequirements && course.entryRequirements.map((req, index) => (
                     <li key={index} className="flex items-start gap-3 text-gray-700">
                       <CheckCircle2 className="text-red-600 flex-shrink-0 mt-1" size={20} />
                       <span>{req}</span>
@@ -117,7 +148,7 @@ export function CourseDetailPage() {
                 Graduates of this program are well-equipped to pursue various roles in the industry, including:
               </p>
               <div className="flex flex-wrap gap-3">
-                {course.careerOpportunities.map((career, index) => (
+                {course.careerOpportunities && course.careerOpportunities.map((career, index) => (
                   <span key={index} className="bg-blue-50 text-blue-800 px-4 py-2 rounded-full font-medium text-sm">
                     {career}
                   </span>

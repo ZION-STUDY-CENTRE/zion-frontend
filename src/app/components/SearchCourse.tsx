@@ -111,7 +111,7 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
           <h1 className="text-6xl font-serif text-white mb-4 leading-tight">
             Join the Zion class
           </h1>
-          <p className="text-white text-lg mb-6">Study with us in 2026</p>
+          <p className="text-white text-lg mb-6">Study with us</p>
           <button className="text-white border-b-2 border-red-500 pb-1 hover:border-red-400 transition-colors">
             Find out more
           </button>
@@ -125,7 +125,7 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
               placeholder="Search for courses"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-white px-6 py-4 text-gray-800 placeholder-gray-500 focus:outline-none"
+              className="flex-1 bg-white px-6 py-8 text-gray-800 placeholder-gray-500 focus:outline-none"
             />
             <button
               type="submit"

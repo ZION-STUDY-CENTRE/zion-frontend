@@ -1,4 +1,6 @@
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { useState } from "react";
+import { sendEmail } from "../services/api";
+import { MapPin, Phone, Mail, Clock, Loader2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
@@ -6,10 +8,38 @@ import { Label } from "../components/ui/label";
 import MapEmbed from "../components/MapEmbed";
 
 export function ContactPage() {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+      name: '',
+      email: '',
+      phone: '',
+      subject: '',
+      message: ''
+  });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    alert("Thank you for your message! We'll get back to you soon.");
+    setStatus('loading');
+
+    try {
+      await sendEmail('contact', formData);
+      setStatus('success');
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' }); // Reset form
+      alert('Message sent successfully!');
+    } catch (error) {
+      console.error(error);
+      setStatus('error');
+      alert('Failed to send message. Please try again.');
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+        ...prev,
+        // Map id to state key. The input ids match the state keys except fullName -> name
+        [id === 'fullName' ? 'name' : id]: value
+    }));
   };
 
   const officeAddress = "Zion Study Centre, ZION TOWERS OPPOSITE MTN OFFICE ALONG GENERAL HOSPITAL KUBWA Abuja, FCT Off nadrem supermarket before UBA, Kubwa";
@@ -102,6 +132,8 @@ export function ContactPage() {
                       <Label htmlFor="fullName">Full Name *</Label>
                       <Input
                         id="fullName"
+                        value={formData.name}
+                        onChange={handleInputChange}
                         placeholder="Enter your full name"
                         required
                         className="mt-1"
@@ -111,6 +143,8 @@ export function ContactPage() {
                       <Label htmlFor="email">Email Address *</Label>
                       <Input
                         id="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
                         type="email"
                         placeholder="your.email@example.com"
                         required
@@ -124,6 +158,8 @@ export function ContactPage() {
                       <Label htmlFor="phone">Phone Number *</Label>
                       <Input
                         id="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
                         type="tel"
                         placeholder="+234 123 456 7890"
                         required
@@ -134,6 +170,8 @@ export function ContactPage() {
                       <Label htmlFor="subject">Subject *</Label>
                       <Input
                         id="subject"
+                        value={formData.subject}
+                        onChange={handleInputChange}
                         placeholder="What is this about?"
                         required
                         className="mt-1"
@@ -145,6 +183,8 @@ export function ContactPage() {
                     <Label htmlFor="message">Message *</Label>
                     <Textarea
                       id="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
                       placeholder="Tell us more about your inquiry..."
                       rows={6}
                       required
@@ -152,8 +192,8 @@ export function ContactPage() {
                     />
                   </div>
 
-                  <Button type="submit" size="lg" className="w-full md:w-auto bg-blue-700 hover:bg-blue-800">
-                    Send Message
+                  <Button type="submit" size="lg" className="w-full md:w-auto bg-blue-700 hover:bg-blue-800" disabled={status === 'loading'}>
+                    {status === 'loading' ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...</> : 'Send Message'}
                   </Button>
                 </form>
               </div>

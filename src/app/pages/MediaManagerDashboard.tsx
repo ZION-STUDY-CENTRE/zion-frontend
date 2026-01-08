@@ -9,6 +9,9 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { ChangePasswordDialog } from '../components/ChangePasswordDialog';
+import { Pagination } from '../components/Pagination';
+
+const ITEMS_PER_PAGE = 10;
 
 export const MediaManagerDashboard = () => {
     const { user, token } = useAuth();
@@ -24,6 +27,14 @@ export const MediaManagerDashboard = () => {
     // Search State
     const [blogSearchQuery, setBlogSearchQuery] = useState('');
     const [gallerySearchQuery, setGallerySearchQuery] = useState('');
+
+    const [currentPageBlog, setCurrentPageBlog] = useState(1);
+    const [currentPageGallery, setCurrentPageGallery] = useState(1);
+
+    const paginate = (items: any[], pageNumber: number) => {
+        const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;
+        return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    };
 
     const refreshData = async () => {
         try {
@@ -287,7 +298,7 @@ export const MediaManagerDashboard = () => {
                                 </div>
                             </div>
                             <div className="grid gap-4">
-                                {filteredPosts.map(post => (
+                                {paginate(filteredPosts, currentPageBlog).map(post => (
                                     <Card key={post._id} className="p-4 flex justify-between items-center">
                                         <div>
                                             <h4 className="font-bold">{post.title}</h4>
@@ -300,6 +311,13 @@ export const MediaManagerDashboard = () => {
                                 ))}
                                 {filteredPosts.length === 0 && <p className="text-gray-500">No blog posts found.</p>}
                             </div>
+                            {filteredPosts.length > 0 && (
+                                <Pagination 
+                                    currentPage={currentPageBlog}
+                                    totalPages={Math.ceil(filteredPosts.length / ITEMS_PER_PAGE)}
+                                    onPageChange={setCurrentPageBlog}
+                                />
+                            )}
                         </div>
                     </TabsContent>
 
@@ -351,7 +369,7 @@ export const MediaManagerDashboard = () => {
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                {filteredGalleryItems.map(item => (
+                                {paginate(filteredGalleryItems, currentPageGallery).map(item => (
                                     <Card key={item._id} className="overflow-hidden">
                                         <div className="aspect-[4/3] relative group">
                                             <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
@@ -368,6 +386,13 @@ export const MediaManagerDashboard = () => {
                                 ))}
                                 {filteredGalleryItems.length === 0 && <p className="text-gray-500 col-span-full">No gallery items found.</p>}
                             </div>
+                            {filteredGalleryItems.length > 0 && (
+                                <Pagination 
+                                    currentPage={currentPageGallery}
+                                    totalPages={Math.ceil(filteredGalleryItems.length / ITEMS_PER_PAGE)}
+                                    onPageChange={setCurrentPageGallery}
+                                />
+                            )}
                         </div>
                     </TabsContent>
                 </Tabs>

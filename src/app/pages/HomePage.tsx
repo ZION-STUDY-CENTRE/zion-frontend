@@ -23,6 +23,7 @@ import {
   TrendingUp,
   CircleCheck,
   ArrowRight,
+  ArrowUp,
   Star,
   Search,
 } from "lucide-react";
@@ -35,6 +36,7 @@ import { getBlogPosts, BlogPost, getPrograms, Program } from "../services/api";
 export function HomePage() {
   const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +61,15 @@ export function HomePage() {
     };
     fetchData();
   }, []);
+
+  useEffect(()=>{
+     const onScroll = () => {
+      setOffset(window.scrollY);
+    };
+
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
   const stats = [
     { icon: Users, value: "5,000+", label: "Students Trained" },
@@ -153,6 +164,7 @@ export function HomePage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="group relative text-white h-[70vh] flex justify-start items-end overflow-hidden">
+
         {heroImages.map((image, index) => (
           <div
             key={index}
@@ -190,6 +202,13 @@ export function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-100 z-0"></div>
       </section>
       
+      <p className={` ${offset > 400 ? "block" : "hidden"} bg-blue-900 text-white w-10 h-10 rounded-full fixed z-100 flex items-center justify-center bottom-5 left-1/2 hover:scale-110 cursor-pointer shadow-xl animate-bounce scroll-smooth`} onClick={(e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }}>{<ArrowUp />}</p>
+
+
+
       <SearchCourse />
 
       {/* Stats Section */}

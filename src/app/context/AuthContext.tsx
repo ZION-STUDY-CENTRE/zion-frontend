@@ -23,7 +23,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // API URL - Change this to your Render URL later for production
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = 'https://zionstudycentrewebsitebackend.onrender.com/api/auth';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);

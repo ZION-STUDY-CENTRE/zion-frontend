@@ -4,12 +4,24 @@ import { CourseCard } from "../components/CourseCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Button } from "../components/ui/button";
 import { getPrograms, Program } from "../services/api";
+import { Pagination } from "../components/Pagination";
+
+const ITEMS_PER_PAGE = 10;
 
 export function ProgramsPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [currentPageTech, setCurrentPageTech] = useState(1);
+  const [currentPageInt, setCurrentPageInt] = useState(1);
+  const [currentPageSec, setCurrentPageSec] = useState(1);
+
+  const paginate = (items: any[], pageNumber: number) => {
+      const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;
+      return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  };
 
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -114,7 +126,7 @@ export function ProgramsPage() {
                     </Button>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {technologyCourses.map((course) => (
+                    {technologyCourses.slice(0, 6).map((course) => (
                       <CourseCard key={course._id} {...mapToCard(course)} />
                     ))}
                   </div>
@@ -132,7 +144,7 @@ export function ProgramsPage() {
                     </Button>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {internationalExams.map((course) => (
+                    {internationalExams.slice(0, 6).map((course) => (
                       <CourseCard key={course._id} {...mapToCard(course)} />
                     ))}
                   </div>
@@ -150,7 +162,7 @@ export function ProgramsPage() {
                     </Button>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {secondaryExams.map((course) => (
+                    {secondaryExams.slice(0, 6).map((course) => (
                       <CourseCard key={course._id} {...mapToCard(course)} />
                     ))}
                   </div>
@@ -160,27 +172,48 @@ export function ProgramsPage() {
             </TabsContent>
 
             <TabsContent value="technology">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {technologyCourses.map((course) => (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                {paginate(technologyCourses, currentPageTech).map((course) => (
                   <CourseCard key={course._id} {...mapToCard(course)} />
                 ))}
               </div>
+              {technologyCourses.length > 0 && (
+                <Pagination 
+                    currentPage={currentPageTech}
+                    totalPages={Math.ceil(technologyCourses.length / ITEMS_PER_PAGE)}
+                    onPageChange={setCurrentPageTech}
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="international">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {internationalExams.map((course) => (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                {paginate(internationalExams, currentPageInt).map((course) => (
                   <CourseCard key={course._id} {...mapToCard(course)} />
                 ))}
               </div>
+               {internationalExams.length > 0 && (
+                <Pagination 
+                    currentPage={currentPageInt}
+                    totalPages={Math.ceil(internationalExams.length / ITEMS_PER_PAGE)}
+                    onPageChange={setCurrentPageInt}
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="secondary">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {secondaryExams.map((course) => (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                {paginate(secondaryExams, currentPageSec).map((course) => (
                   <CourseCard key={course._id} {...mapToCard(course)} />
                 ))}
               </div>
+               {secondaryExams.length > 0 && (
+                <Pagination 
+                    currentPage={currentPageSec}
+                    totalPages={Math.ceil(secondaryExams.length / ITEMS_PER_PAGE)}
+                    onPageChange={setCurrentPageSec}
+                />
+              )}
             </TabsContent>
           </Tabs>
         </div>

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Filter, Loader2 } from 'lucide-react';
 import { getBlogPosts, BlogPost } from '../services/api';
+import { Pagination } from '../components/Pagination';
+
+const ITEMS_PER_PAGE = 10;
 
 const BlogPostsComponent = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -8,6 +11,12 @@ const BlogPostsComponent = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState('upcoming-event');
   const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const paginate = (items: any[], pageNumber: number) => {
+      const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;
+      return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  };
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -148,13 +157,20 @@ const BlogPostsComponent = () => {
           {/* Posts */}
           <div>
             {filteredPosts.length > 0 ? (
-              filteredPosts.map(post => (
+              paginate(filteredPosts, currentPage).map(post => (
                 <PostCard key={post.id} post={post} />
               ))
             ) : (
               <div className="text-center py-12 text-gray-500">
                 No posts found for this department.
               </div>
+            )}
+            {filteredPosts.length > 0 && (
+                <Pagination 
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(filteredPosts.length / ITEMS_PER_PAGE)}
+                    onPageChange={setCurrentPage}
+                />
             )}
           </div>
         </div>

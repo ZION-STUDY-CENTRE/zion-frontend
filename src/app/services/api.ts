@@ -49,7 +49,7 @@ export interface GalleryItem {
   category?: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://zionstudycentrewebsitebackend.onrender.com/api';
 
 export const getPrograms = async (): Promise<Program[]> => {
   const response = await fetch(`${API_URL}/programs`);
@@ -221,6 +221,77 @@ export const deleteGalleryItem = async (id: string, token: string): Promise<void
         const error = await response.json();
         throw new Error(error.msg || 'Failed to delete gallery item');
     }
+};
+
+// --- User Management API ---
+
+export const getUsers = async (token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to fetch users');
+    return await response.json();
+};
+
+export const getInstructorsList = async (token: string): Promise<any[]> => {
+    const response = await fetch(`${API_URL}/users/instructors`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error('Failed to fetch instructors');
+    return await response.json();
+};
+
+export const registerUser = async (userData: any, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify(userData)
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Failed to register user');
+    return data;
+};
+
+export const updateUser = async (userId: string, userData: any, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+        method: 'PUT',
+        headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify(userData)
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.msg || 'Failed to update user');
+    return data;
+};
+
+export const reactivateUser = async (userId: string, durationMonths: number, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/users/${userId}/reactivate`, {
+        method: 'PUT',
+        headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ durationMonths })
+    });
+    if (!response.ok) throw new Error('Failed to reactivate user');
+    return await response.json();
+};
+
+export const deleteUser = async (userId: string, token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.msg || 'Failed to delete user');
+    }
+    return true;
 };
 
 export const sendEmail = async (type: 'contact' | 'admission', data: any) => {

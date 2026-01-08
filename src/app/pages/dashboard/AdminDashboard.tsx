@@ -12,7 +12,21 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Pencil, Trash2, Plus, X, Lock, RefreshCw, Trash } from "lucide-react";
 import { ChangePasswordDialog } from '../../components/ChangePasswordDialog';
 import { ProgramForm } from '../../components/dashboard/ProgramForm';
-import { Program, getPrograms, createProgram, updateProgram, deleteProgram } from '../../services/api';
+import { 
+    Program, 
+    getPrograms, 
+    createProgram, 
+    updateProgram, 
+    deleteProgram,
+    getUsers,
+    getInstructorsList,
+    registerUser,
+    updateUser,
+    reactivateUser,
+    deleteUser
+} from '../../services/api';
+
+import { Pagination } from "../../components/Pagination";
 
 interface UserSummary {
   _id: string;
@@ -24,6 +38,8 @@ interface UserSummary {
   programDuration?: number;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 export function AdminDashboard() {
   const { user, logout } = useAuth();
   const [programs, setPrograms] = useState<Program[]>([]);
@@ -31,6 +47,13 @@ export function AdminDashboard() {
   const [allUsers, setAllUsers] = useState<UserSummary[]>([]);
   const [loadingPrograms, setLoadingPrograms] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
+
+  // Pagination States
+  const [currentPagePrograms, setCurrentPagePrograms] = useState(1);
+  const [currentPageAdmins, setCurrentPageAdmins] = useState(1);
+  const [currentPageInstructors, setCurrentPageInstructors] = useState(1);
+  const [currentPageMediaManagers, setCurrentPageMediaManagers] = useState(1);
+  const [currentPageStudents, setCurrentPageStudents] = useState(1);
 
   // New Program State
   const [creatingProgram, setCreatingProgram] = useState(false);
@@ -82,12 +105,9 @@ export function AdminDashboard() {
     setLoadingUsers(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/users', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setAllUsers(data);
+      if (token) {
+          const data = await getUsers(token);
+          setAllUsers(data);
       }
     } catch (error) {
       console.error(error);
@@ -99,11 +119,8 @@ export function AdminDashboard() {
   const fetchInstructors = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/users/instructors', {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await response.json();
-        if (response.ok) {
+        if (token) {
+            const data = await getInstructorsList(token);
             setInstructors(data);
         }
       } catch (error) {
@@ -148,6 +165,8 @@ export function AdminDashboard() {
     setMessage(null);
     try {
       const token = localStorage.getItem('token');
+      if (!token) throw new Error("Not authenticated");
+
       const payload: any = { ...newUser };
       
       // Remove enrolledProgram/duration if role is not student
@@ -158,25 +177,15 @@ export function AdminDashboard() {
 
       console.log('Sending payload:', payload); // Debugging
 
-      const response = await fetch('http://localhost:5000/api/auth/register', { // Note: using auth register endpoint
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` 
-        },
-        body: JSON.stringify(payload)
-      });
+      const data = await registerUser(payload, token);
       
-      const data = await response.json();
-      if (response.ok) {
-        setMessage({ type: 'success', text: `User ${data.user.name} registered successfully with default password!` });
-        setNewUser({ name: '', email: '', password: '', role: 'student', enrolledProgram: '', durationMonths: 3 });
-        fetchUsers(); // Refresh user list
-      } else {
-        setMessage({ type: 'error', text: data.message || 'Failed to register user' });
-      }
-    } catch (error) {
-       setMessage({ type: 'error', text: 'Server error' });
+      setMessage({ type: 'success', text: `User ${data.user.name} registered successfully with default password!` });
+      setNewUser({ name: '', email: '', password: '', role: 'student', enrolledProgram: '', durationMonths: 3 });
+      fetchUsers(); // Refresh user list
+
+    } catch (error: any) {
+       console.error(error);
+       setMessage({ type: 'error', text: error.message || 'Failed to register user' });
     } finally {
       setRegisteringUser(false);
     }
@@ -230,28 +239,18 @@ export function AdminDashboard() {
     
     try {
         const token = localStorage.getItem('token');
+        if (!token) throw new Error("Not authenticated");
+
         const payload: any = { name: editUserForm.name, email: editUserForm.email };
         if (editUserForm.newPassword) payload.password = editUserForm.newPassword;
 
-        const response = await fetch(`http://localhost:5000/api/users/${editingUser._id}`, {
-            method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}` 
-            },
-            body: JSON.stringify(payload)
-        });
+        await updateUser(editingUser._id, payload, token);
 
-        const data = await response.json();
-        if (response.ok) {
-            setMessage({ type: 'success', text: 'User details updated successfully!' });
-            fetchUsers();
-            setIsEditUserDialogOpen(false);
-        } else {
-            setMessage({ type: 'error', text: data.msg || 'Failed to update user' });
-        }
-    } catch (error) {
-        setMessage({ type: 'error', text: 'Server error' });
+        setMessage({ type: 'success', text: 'User details updated successfully!' });
+        fetchUsers();
+        setIsEditUserDialogOpen(false);
+    } catch (error: any) {
+        setMessage({ type: 'error', text: error.message || 'Failed to update user' });
     }
   };
 
@@ -259,25 +258,17 @@ export function AdminDashboard() {
     if (!userToReactivate) return;
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/users/${userToReactivate._id}/reactivate`, {
-            method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}` 
-            },
-            body: JSON.stringify({ durationMonths: parseFloat(reactivationDuration) })
-        });
+        if (!token) throw new Error("Not authenticated");
+
+        await reactivateUser(userToReactivate._id, parseFloat(reactivationDuration), token);
         
-        if (response.ok) {
-            setMessage({ type: 'success', text: 'User reactivated successfully' });
-            fetchUsers();
-            setIsReactivateDialogOpen(false);
-            setUserToReactivate(null);
-        } else {
-            setMessage({ type: 'error', text: 'Failed to reactivate user' });
-        }
-    } catch (error) {
-        setMessage({ type: 'error', text: 'Server error' });
+        setMessage({ type: 'success', text: 'User reactivated successfully' });
+        fetchUsers();
+        setIsReactivateDialogOpen(false);
+        setUserToReactivate(null);
+
+    } catch (error: any) {
+        setMessage({ type: 'error', text: error.message || 'Failed to reactivate user' });
     }
   };
 
@@ -285,22 +276,16 @@ export function AdminDashboard() {
     if (!userToDelete) return;
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/users/${userToDelete._id}`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        if (!token) throw new Error("Not authenticated");
 
-        if (response.ok) {
-            setMessage({ type: 'success', text: 'User deleted successfully' });
-            fetchUsers();
-            setIsDeleteDialogOpen(false);
-            setUserToDelete(null);
-        } else {
-            const data = await response.json();
-            setMessage({ type: 'error', text: data.msg || 'Failed to delete user' });
-        }
-    } catch (error) {
-        setMessage({ type: 'error', text: 'Server error' });
+        await deleteUser(userToDelete._id, token);
+
+        setMessage({ type: 'success', text: 'User deleted successfully' });
+        fetchUsers();
+        setIsDeleteDialogOpen(false);
+        setUserToDelete(null);
+    } catch (error: any) {
+        setMessage({ type: 'error', text: error.message || 'Failed to delete user' });
     }
   };
 
@@ -353,6 +338,7 @@ export function AdminDashboard() {
   };
 
   const getFilteredStudents = () => {
+    // ... existing logic ...
     return allUsers.filter(u => {
         if (u.role !== 'student') return false;
         
@@ -360,13 +346,7 @@ export function AdminDashboard() {
         if (studentSearch && !u.name.toLowerCase().includes(studentSearch.toLowerCase()) && !u.email.toLowerCase().includes(studentSearch.toLowerCase())) return false;
         
         // Program Filter
-        // Students have program embedded in u.program { _id, name } ideally, or we match by name if backend only sends name
-        // The UserSummary interface says program?: { name: string }, let's check what actual object is.
-        // Actually getAllUsers population returns program object.
-        // If the backend `program` field is populated, it usually has _id and name. 
-        // We'll trust the filtering by checking properties.
         if (studentProgramFilter !== 'all') {
-             // Accessing the program ID
              const userProgId = u.program?._id; 
              if (userProgId !== studentProgramFilter) return false;
         }
@@ -381,6 +361,13 @@ export function AdminDashboard() {
         return true;
     });
   };
+
+  // Helper for pagination slicing
+  const paginate = (items: any[], page: number) => {
+      const start = (page - 1) * ITEMS_PER_PAGE;
+      return items.slice(start, start + ITEMS_PER_PAGE);
+  };
+
 
   return (
     <div className="container mx-auto p-6 space-y-8">
@@ -441,7 +428,7 @@ export function AdminDashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {programs.map((prog) => (
+                      {paginate(programs, currentPagePrograms).map((prog) => (
                         <TableRow key={prog._id}>
                           <TableCell className="font-medium">{prog.title}</TableCell>
                           <TableCell>{prog.category}</TableCell>
@@ -459,6 +446,11 @@ export function AdminDashboard() {
                         </TableRow>
                       ))}
                     </TableBody>
+                    <Pagination 
+                      currentPage={currentPagePrograms}
+                      totalPages={Math.ceil(programs.length / ITEMS_PER_PAGE)}
+                      onPageChange={setCurrentPagePrograms}
+                    />
                   </Table>
                 )}
               </CardContent>
@@ -621,7 +613,7 @@ export function AdminDashboard() {
                         <TableBody>
                           {getFilteredAdmins().length === 0 ? (
                             <TableRow><TableCell colSpan={4} className="text-center py-4">No admins found</TableCell></TableRow>
-                          ) : getFilteredAdmins().map((u) => (
+                          ) : paginate(getFilteredAdmins(), currentPageAdmins).map((u) => (
                             <TableRow key={u._id}>
                               <TableCell className="font-medium">{u.name}</TableCell>
                               <TableCell>{u.email}</TableCell>
@@ -635,6 +627,11 @@ export function AdminDashboard() {
                           ))}
                         </TableBody>
                       </Table>
+                      <Pagination 
+                        currentPage={currentPageAdmins}
+                        totalPages={Math.ceil(getFilteredAdmins().length / ITEMS_PER_PAGE)}
+                        onPageChange={setCurrentPageAdmins}
+                      />
                     </CardContent>
                    </Card>
                 </TabsContent>
@@ -659,7 +656,7 @@ export function AdminDashboard() {
                         <TableBody>
                           {allUsers.filter(u => u.role === 'media-manager').length === 0 ? (
                             <TableRow><TableCell colSpan={4} className="text-center py-4">No media managers found</TableCell></TableRow>
-                          ) : allUsers.filter(u => u.role === 'media-manager').map((u) => (
+                          ) : paginate(allUsers.filter(u => u.role === 'media-manager'), currentPageMediaManagers).map((u) => (
                             <TableRow key={u._id}>
                               <TableCell className="font-medium">{u.name}</TableCell>
                               <TableCell>{u.email}</TableCell>
@@ -681,6 +678,11 @@ export function AdminDashboard() {
                           ))}
                         </TableBody>
                       </Table>
+                      <Pagination 
+                        currentPage={currentPageMediaManagers}
+                        totalPages={Math.ceil(allUsers.filter(u => u.role === 'media-manager').length / ITEMS_PER_PAGE)}
+                        onPageChange={setCurrentPageMediaManagers}
+                      />
                     </CardContent>
                    </Card>
                 </TabsContent>
@@ -724,7 +726,7 @@ export function AdminDashboard() {
                         <TableBody>
                           {getFilteredInstructors().length === 0 ? (
                             <TableRow><TableCell colSpan={4} className="text-center py-4">No instructors found</TableCell></TableRow>
-                          ) : getFilteredInstructors().map((u) => (
+                          ) : paginate(getFilteredInstructors(), currentPageInstructors).map((u) => (
                             <TableRow key={u._id}>
                               <TableCell className="font-medium">{u.name}</TableCell>
                               <TableCell>{u.email}</TableCell>
@@ -746,6 +748,11 @@ export function AdminDashboard() {
                           ))}
                         </TableBody>
                       </Table>
+                      <Pagination 
+                        currentPage={currentPageInstructors}
+                        totalPages={Math.ceil(getFilteredInstructors().length / ITEMS_PER_PAGE)}
+                        onPageChange={setCurrentPageInstructors}
+                      />
                     </CardContent>
                    </Card>
                 </TabsContent>
@@ -801,7 +808,7 @@ export function AdminDashboard() {
                         <TableBody>
                           {getFilteredStudents().length === 0 ? (
                             <TableRow><TableCell colSpan={6} className="text-center py-4">No students found</TableCell></TableRow>
-                          ) : getFilteredStudents().map((u) => {
+                          ) : paginate(getFilteredStudents(), currentPageStudents).map((u) => {
                             const active = isUserActive(u);
                             return (
                             <TableRow key={u._id}>
@@ -835,6 +842,11 @@ export function AdminDashboard() {
                           )})}
                         </TableBody>
                       </Table>
+                      <Pagination 
+                        currentPage={currentPageStudents}
+                        totalPages={Math.ceil(getFilteredStudents().length / ITEMS_PER_PAGE)}
+                        onPageChange={setCurrentPageStudents}
+                      />
                     </CardContent>
                    </Card>
                 </TabsContent>

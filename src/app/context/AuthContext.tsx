@@ -27,6 +27,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Check if user is logged in on mount
   useEffect(() => {
+    // START: Migration Cleanup (Remove this block after a few weeks)
+    if (localStorage.getItem('token')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    }
+    // END: Migration Cleanup
+
     const checkUser = async () => {
       try {
         const userData = await getMe();

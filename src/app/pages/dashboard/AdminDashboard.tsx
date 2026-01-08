@@ -104,11 +104,8 @@ export function AdminDashboard() {
   const fetchUsers = async () => {
     setLoadingUsers(true);
     try {
-      const token = localStorage.getItem('token');
-      if (token) {
-          const data = await getUsers(token);
-          setAllUsers(data);
-      }
+      const data = await getUsers();
+      setAllUsers(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -118,11 +115,8 @@ export function AdminDashboard() {
 
   const fetchInstructors = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const data = await getInstructorsList(token);
-            setInstructors(data);
-        }
+        const data = await getInstructorsList();
+        setInstructors(data);
       } catch (error) {
         console.error("Failed to fetch instructors", error);
       }
@@ -145,10 +139,8 @@ export function AdminDashboard() {
     setCreatingProgram(true);
     setMessage(null);
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error("Not authenticated");
       
-      await createProgram(data, token);
+      await createProgram(data);
       
       setMessage({ type: 'success', text: 'Program created successfully!' });
       fetchPrograms(); 
@@ -164,8 +156,6 @@ export function AdminDashboard() {
     setRegisteringUser(true);
     setMessage(null);
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error("Not authenticated");
 
       const payload: any = { ...newUser };
       
@@ -177,7 +167,7 @@ export function AdminDashboard() {
 
       console.log('Sending payload:', payload); // Debugging
 
-      const data = await registerUser(payload, token);
+      const data = await registerUser(payload);
       
       setMessage({ type: 'success', text: `User ${data.user.name} registered successfully with default password!` });
       setNewUser({ name: '', email: '', password: '', role: 'student', enrolledProgram: '', durationMonths: 3 });
@@ -200,10 +190,8 @@ export function AdminDashboard() {
     if (!editingProgram) return;
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error("Not authenticated");
       
-      await updateProgram(editingProgram._id, data, token);
+      await updateProgram(editingProgram._id, data);
       
       setMessage({ type: 'success', text: 'Program updated successfully!' });
       setIsEditDialogOpen(false);
@@ -216,9 +204,8 @@ export function AdminDashboard() {
   const handleDeleteProgram = async (id: string) => {
     if (!confirm("Are you sure you want to delete this program?")) return;
     try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error("Not authenticated");
-        await deleteProgram(id, token);
+        
+        await deleteProgram(id);
         setMessage({ type: 'success', text: 'Program deleted successfully' });
         fetchPrograms();
     } catch (error: any) {
@@ -238,13 +225,11 @@ export function AdminDashboard() {
     if (!editingUser) return;
     
     try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error("Not authenticated");
-
+        
         const payload: any = { name: editUserForm.name, email: editUserForm.email };
         if (editUserForm.newPassword) payload.password = editUserForm.newPassword;
 
-        await updateUser(editingUser._id, payload, token);
+        await updateUser(editingUser._id, payload);
 
         setMessage({ type: 'success', text: 'User details updated successfully!' });
         fetchUsers();
@@ -257,10 +242,8 @@ export function AdminDashboard() {
   const handleReactivateUser = async () => {
     if (!userToReactivate) return;
     try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error("Not authenticated");
-
-        await reactivateUser(userToReactivate._id, parseFloat(reactivationDuration), token);
+        
+        await reactivateUser(userToReactivate._id, parseFloat(reactivationDuration));
         
         setMessage({ type: 'success', text: 'User reactivated successfully' });
         fetchUsers();
@@ -275,10 +258,8 @@ export function AdminDashboard() {
   const handleDeleteUserConfirm = async () => {
     if (!userToDelete) return;
     try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error("Not authenticated");
-
-        await deleteUser(userToDelete._id, token);
+        
+        await deleteUser(userToDelete._id);
 
         setMessage({ type: 'success', text: 'User deleted successfully' });
         fetchUsers();

@@ -6,7 +6,6 @@ import { Textarea } from "../ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Program, uploadImage } from '../../services/api';
 import { Plus, Trash2, X, Loader2 } from "lucide-react";
-import { useAuth } from '../../context/AuthContext';
 
 interface ProgramFormProps {
   initialData?: Partial<Program>;
@@ -17,7 +16,6 @@ interface ProgramFormProps {
 }
 
 export function ProgramForm({ initialData, onSubmit, onCancel, isLoading, availableInstructors = [] }: ProgramFormProps) {
-  const { token } = useAuth();
   const [formData, setFormData] = useState<Partial<Program>>({
     title: '',
     code: '',
@@ -186,9 +184,8 @@ export function ProgramForm({ initialData, onSubmit, onCancel, isLoading, availa
 
     if (imageFile) {
       try {
-        if (!token) throw new Error("Authentication token missing");
         setUploading(true);
-        const imageUrl = await uploadImage(imageFile, token, 'programs');
+        const imageUrl = await uploadImage(imageFile, 'programs');
         finalData.heroImage = imageUrl;
         finalData.imageUrl = imageUrl; 
       } catch (error) {

@@ -3,6 +3,7 @@ import { Button } from "../components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { changeOwnPassword } from '../services/api';
 
 interface ChangePasswordDialogProps {
   isOpen: boolean;
@@ -24,29 +25,14 @@ export function ChangePasswordDialog({ isOpen, onClose }: ChangePasswordDialogPr
     setLoading(true);
     setMsg(null);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/users/change-password', {
-        method: 'PUT',
-        headers: { 
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` 
-        },
-        body: JSON.stringify({ 
-            currentPassword: passwords.current,
-            newPassword: passwords.new
-        })
-      });
+      await changeOwnPassword(passwords.current, passwords.new);
       
-      const data = await response.json();
-      if (response.ok) {
-        setMsg({ type: 'success', text: 'Password changed successfully' });
-        setPasswords({ current: '', new: '', confirm: '' });
-        setTimeout(onClose, 2000);
-      } else {
-        setMsg({ type: 'error', text: data.msg || 'Failed to change password' });
-      }
-    } catch (err) {
-      setMsg({ type: 'error', text: 'Server error' });
+      setMsg({ type: 'success', text: 'Password changed successfully' });
+      setPasswords({ current: '', new: '', confirm: '' });
+      setTimeout(onClose, 2000);
+
+    } catch (err: any) {
+      setMsg({ type: 'error', text: err.message || 'Server error' });
     } finally {
       setLoading(false);
     }

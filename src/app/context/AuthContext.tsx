@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import { getMe, logoutUser } from '../services/api';
 
 // Types
 interface User {
@@ -13,60 +13,53 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
   loading: boolean;
-  login: (token: string, user: User) => void;
+  login: (user: User) => void;
   logout: () => void;
   updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// API URL - Change this to your Render URL later for production
-const API_URL = 'https://zionstudycentrewebsitebackend.onrender.com/api/auth';
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Check if user is logged in on mount
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-      // Set default Authorization header
-      axios.defaults.headers.common['x-auth-token'] = storedToken;
-    }
-    setLoading(false);
+    const checkUser = async () => {
+      try {
+        const userData = await getMe();
+        setUser(userData);
+      } catch (error) {
+        // Not logged in or session expired
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkUser();
   }, []);
 
-  const login = (newToken: string, newUser: User) => {
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(newUser));
-    setToken(newToken);
+  const login = (newUser: User) => {
     setUser(newUser);
-    axios.defaults.headers.common['x-auth-token'] = newToken;
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
+  const logout = async () => {
+    try {
+        await logoutUser();
+    } catch (e) {
+        console.error("Logout failed", e);
+    }
     setUser(null);
-    delete axios.defaults.headers.common['x-auth-token'];
   };
 
   const updateUser = (updatedUser: User) => {
-    localStorage.setItem('user', JSON.stringify(updatedUser));
     setUser(updatedUser);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

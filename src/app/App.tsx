@@ -15,7 +15,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AdminDashboard } from "./pages/dashboard/AdminDashboard";
 import { InstructorDashboard } from "./pages/dashboard/InstructorDashboard";
-import { MediaManagerDashboard } from "./pages/MediaManagerDashboard";
+import { MediaManagerDashboard } from "./pages/dashboard/MediaManagerDashboard";
 import { GalleryPage } from "./pages/GalleryPage";
 import BlogPostsComponent from "./pages/Blog";
 import { StudentDashboard } from "./pages/dashboard/StudentDashboard";

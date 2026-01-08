@@ -146,64 +146,103 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="space-y-1">
-          <div className="flex justify-center mb-4">
-            <div className="h-12 w-12 rounded-full bg-blue-900 flex items-center justify-center">
-              <Lock className="h-6 w-6 text-white" />
+    <div className="min-h-screen flex bg-white font-sans">
+      {/* Left Side - Image Background */}
+      <div 
+        className="hidden md:flex md:w-3/5 lg:w-2/3 bg-cover bg-center relative items-center justify-center"
+        style={{
+          backgroundImage: 'url(/src/assets/building.jpg)',
+          backgroundPosition: 'center',
+          backgroundSize: 'cover'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="relative z-10 text-center text-white space-y-6 px-8">
+          <div className="flex items-center justify-center gap-4">
+            <img src="/src/assets/logo.png" alt="Zion Logo" className="h-16 w-16 object-contain" />
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight">
+              Zion Study Center
+            </h1>
+          </div>
+          <div className="h-1 w-20 bg-white mx-auto"></div>
+          <p className="text-lg md:text-xl text-gray-100 font-light tracking-wide">
+            Excellence in Educational Development
+          </p>
+        </div>
+      </div>
+
+      {/* Right Side - Form */}
+      <div className="w-full md:w-2/5 lg:w-1/3 flex flex-col items-center justify-center p-6 sm:p-8 bg-gradient-to-b from-gray-50 to-white">
+        <div className="w-full max-w-sm">
+          <div className="space-y-8">
+            {/* Header - Centered */}
+            <div className="text-center space-y-4">
+              <img src="/src/assets/logo.png" alt="Zion Logo" className="h-12 w-12 object-contain mx-auto" />
+              <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome</h2>
+              <p className="text-gray-600 font-light text-base">Kindly log into your account</p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleLogin} className="space-y-5">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-gray-700 font-medium text-sm block">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="email"
+                    placeholder="name@example.com"
+                    type="email"
+                    className="h-11 pl-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white transition-colors"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-gray-700 font-medium text-sm block">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    className="h-11 pl-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white transition-colors"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full h-9 bg-blue-900 hover:bg-blue-950 text-white font-medium rounded-md transition-colors duration-150 mt-6 text-sm" 
+                disabled={isLoading}
+              >
+                {isLoading ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : null}
+                SIGN IN
+              </Button>
+            </form>
+
+            {/* Footer */}
+            <div className="text-center text-xs text-gray-500 pt-4 border-t border-gray-200">
+              <p className="font-light">© 2026 All rights reserved: Zion Study Center</p>
             </div>
           </div>
-          <CardTitle className="text-2xl text-center font-bold text-gray-900">Portal Login</CardTitle>
-          <CardDescription className="text-center">
-            Enter your credentials to access the Zion Management System
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="email"
-                  placeholder="name@example.com"
-                  className="pl-9"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="password"
-                  type="password"
-                  className="pl-9"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            <Button type="submit" className="w-full bg-blue-900 hover:bg-blue-800" disabled={isLoading}>
-              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Sign In
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-center text-sm text-gray-500">
-          <p>Protected area. Authorized personnel only.</p>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

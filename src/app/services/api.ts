@@ -51,6 +51,67 @@ export interface GalleryItem {
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://zionstudycentrewebsitebackend.onrender.com/api';
 
+// Concurrency handling for Token Refresh
+let isRefreshing = false;
+let refreshSubscribers: ((success: boolean) => void)[] = [];
+
+const subscribeTokenRefresh = (cb: (success: boolean) => void) => {
+  refreshSubscribers.push(cb);
+};
+
+const onRefreshed = (success: boolean) => {
+  refreshSubscribers.forEach((cb) => cb(success));
+  refreshSubscribers = [];
+};
+
+// Helper for credentials & Auto-Refresh
+const fetchWithCreds = async (url: string, options: RequestInit = {}): Promise<Response> => {
+    const response = await fetch(url, {
+        ...options,
+        credentials: 'include',
+    });
+
+    // Check for 401 (Unauthorized) which implies Token Expiration
+    if (response.status === 401 && !url.includes('/auth/refresh') && !url.includes('/auth/login')) {
+        if (!isRefreshing) {
+            isRefreshing = true;
+            try {
+                // Attempt to refresh token
+                const refreshRes = await fetch(`${API_URL}/auth/refresh`, { 
+                    method: 'POST', 
+                    credentials: 'include' 
+                });
+                
+                const success = refreshRes.ok;
+                isRefreshing = false;
+                onRefreshed(success);
+                
+                if (success) {
+                    // Retry original request with new cookies
+                    return fetch(url, { ...options, credentials: 'include' });
+                }
+            } catch (error) {
+                isRefreshing = false;
+                onRefreshed(false);
+            }
+            return response; // Return original 401 if refresh failed
+        }
+
+        // For subsequent requests that came in while refreshing
+        return new Promise<Response>((resolve) => {
+            subscribeTokenRefresh(async (success) => {
+                if (success) {
+                    resolve(await fetch(url, { ...options, credentials: 'include' }));
+                } else {
+                    resolve(response); // Resolve with original 401
+                }
+            });
+        });
+    }
+
+    return response;
+};
+
 export const getPrograms = async (): Promise<Program[]> => {
   const response = await fetch(`${API_URL}/programs`);
   if (!response.ok) {
@@ -94,12 +155,11 @@ export const getProgramBySlug = async (slug: string): Promise<Program> => {
     };
 };
 
-export const createProgram = async (programData: Partial<Program>, token: string): Promise<Program> => {
-    const response = await fetch(`${API_URL}/programs`, {
+export const createProgram = async (programData: Partial<Program>, token?: string): Promise<Program> => {
+    const response = await fetchWithCreds(`${API_URL}/programs`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(programData)
     });
@@ -111,12 +171,11 @@ export const createProgram = async (programData: Partial<Program>, token: string
     return await response.json();
 };
 
-export const updateProgram = async (id: string, programData: Partial<Program>, token: string): Promise<Program> => {
-    const response = await fetch(`${API_URL}/programs/${id}`, {
+export const updateProgram = async (id: string, programData: Partial<Program>, token?: string): Promise<Program> => {
+    const response = await fetchWithCreds(`${API_URL}/programs/${id}`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(programData)
     });
@@ -128,12 +187,9 @@ export const updateProgram = async (id: string, programData: Partial<Program>, t
     return await response.json();
 };
 
-export const deleteProgram = async (id: string, token: string): Promise<void> => {
-    const response = await fetch(`${API_URL}/programs/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
+export const deleteProgram = async (id: string, token?: string): Promise<void> => {
+    const response = await fetchWithCreds(`${API_URL}/programs/${id}`, {
+        method: 'DELETE'
     });
 
     if (!response.ok) {
@@ -141,15 +197,12 @@ export const deleteProgram = async (id: string, token: string): Promise<void> =>
     }
 };
 
-export const uploadImage = async (file: File, token: string, category: 'programs' | 'blog' | 'gallery' | 'general' = 'general'): Promise<string> => {
+export const uploadImage = async (file: File, category: 'programs' | 'blog' | 'gallery' | 'general' = 'general', token?: string): Promise<string> => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch(`${API_URL}/upload?category=${category}`, {
+    const response = await fetchWithCreds(`${API_URL}/upload?category=${category}`, {
         method: 'POST',
-        headers: {
-            'x-auth-token': token
-        },
         body: formData
     });
 
@@ -161,12 +214,11 @@ export const uploadImage = async (file: File, token: string, category: 'programs
     return data.imageUrl;
 };
 
-export const createBlogPost = async (postData: Partial<BlogPost>, token: string): Promise<BlogPost> => {
-    const response = await fetch(`${API_URL}/content/blog`, {
+export const createBlogPost = async (postData: Partial<BlogPost>, token?: string): Promise<BlogPost> => {
+    const response = await fetchWithCreds(`${API_URL}/content/blog`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'x-auth-token': token
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(postData)
     });
@@ -178,12 +230,11 @@ export const createBlogPost = async (postData: Partial<BlogPost>, token: string)
     return response.json();
 };
 
-export const createGalleryItem = async (itemData: Partial<GalleryItem>, token: string): Promise<GalleryItem> => {
-    const response = await fetch(`${API_URL}/content/gallery`, {
+export const createGalleryItem = async (itemData: Partial<GalleryItem>, token?: string): Promise<GalleryItem> => {
+    const response = await fetchWithCreds(`${API_URL}/content/gallery`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'x-auth-token': token
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(itemData)
     });
@@ -195,12 +246,9 @@ export const createGalleryItem = async (itemData: Partial<GalleryItem>, token: s
     return response.json();
 };
 
-export const deleteBlogPost = async (id: string, token: string): Promise<void> => {
-    const response = await fetch(`${API_URL}/content/blog/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'x-auth-token': token
-        }
+export const deleteBlogPost = async (id: string, token?: string): Promise<void> => {
+    const response = await fetchWithCreds(`${API_URL}/content/blog/${id}`, {
+        method: 'DELETE'
     });
 
     if (!response.ok) {
@@ -209,12 +257,9 @@ export const deleteBlogPost = async (id: string, token: string): Promise<void> =
     }
 };
 
-export const deleteGalleryItem = async (id: string, token: string): Promise<void> => {
-    const response = await fetch(`${API_URL}/content/gallery/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'x-auth-token': token
-        }
+export const deleteGalleryItem = async (id: string, token?: string): Promise<void> => {
+    const response = await fetchWithCreds(`${API_URL}/content/gallery/${id}`, {
+        method: 'DELETE'
     });
 
     if (!response.ok) {
@@ -225,28 +270,23 @@ export const deleteGalleryItem = async (id: string, token: string): Promise<void
 
 // --- User Management API ---
 
-export const getUsers = async (token: string): Promise<any[]> => {
-    const response = await fetch(`${API_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+export const getUsers = async (token?: string): Promise<any[]> => {
+    const response = await fetchWithCreds(`${API_URL}/users`);
     if (!response.ok) throw new Error('Failed to fetch users');
     return await response.json();
 };
 
-export const getInstructorsList = async (token: string): Promise<any[]> => {
-    const response = await fetch(`${API_URL}/users/instructors`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+export const getInstructorsList = async (token?: string): Promise<any[]> => {
+    const response = await fetchWithCreds(`${API_URL}/users/instructors`);
     if (!response.ok) throw new Error('Failed to fetch instructors');
     return await response.json();
 };
 
-export const registerUser = async (userData: any, token: string): Promise<any> => {
-    const response = await fetch(`${API_URL}/auth/register`, {
+export const registerUser = async (userData: any, token?: string): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}` 
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(userData)
     });
@@ -255,12 +295,11 @@ export const registerUser = async (userData: any, token: string): Promise<any> =
     return data;
 };
 
-export const updateUser = async (userId: string, userData: any, token: string): Promise<any> => {
-    const response = await fetch(`${API_URL}/users/${userId}`, {
+export const updateUser = async (userId: string, userData: any, token?: string): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/users/${userId}`, {
         method: 'PUT',
         headers: { 
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}` 
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(userData)
     });
@@ -269,12 +308,11 @@ export const updateUser = async (userId: string, userData: any, token: string): 
     return data;
 };
 
-export const reactivateUser = async (userId: string, durationMonths: number, token: string): Promise<any> => {
-    const response = await fetch(`${API_URL}/users/${userId}/reactivate`, {
+export const reactivateUser = async (userId: string, durationMonths: number, token?: string): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/users/${userId}/reactivate`, {
         method: 'PUT',
         headers: { 
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}` 
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({ durationMonths })
     });
@@ -282,16 +320,51 @@ export const reactivateUser = async (userId: string, durationMonths: number, tok
     return await response.json();
 };
 
-export const deleteUser = async (userId: string, token: string): Promise<any> => {
-    const response = await fetch(`${API_URL}/users/${userId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+export const deleteUser = async (userId: string, token?: string): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/users/${userId}`, {
+        method: 'DELETE'
     });
     if (!response.ok) {
         const data = await response.json();
         throw new Error(data.msg || 'Failed to delete user');
     }
     return true;
+};
+
+export const getMe = async (): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/auth/me`);
+    if (!response.ok) throw new Error('Failed to fetch current user');
+    return await response.json();
+};
+
+export const loginUser = async (credentials: any): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Login failed');
+    }
+    return await response.json();
+};
+
+export const changeInitialPassword = async (newPassword: string): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/auth/change-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPassword })
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Failed to update password');
+    }
+    return await response.json();
+};
+
+export const logoutUser = async (): Promise<void> => {
+    await fetchWithCreds(`${API_URL}/auth/logout`, { method: 'POST' });
 };
 
 export const sendEmail = async (type: 'contact' | 'admission', data: any) => {
@@ -312,3 +385,45 @@ export const sendEmail = async (type: 'contact' | 'admission', data: any) => {
         throw error;
     }
 };
+
+export const getStudentProgram = async () => {
+    const response = await fetchWithCreds(`${API_URL}/programs/student/my-program`);
+    if (response.status === 404) return null;
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Failed to fetch program');
+    }
+    return response.json();
+};
+
+export const getInstructorPrograms = async () => {
+    const response = await fetchWithCreds(`${API_URL}/programs/instructor`);
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Failed to fetch programs');
+    }
+    return response.json();
+};
+
+export const getProgramStudents = async (programId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/users/program/${programId}`);
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Failed to fetch students');
+    }
+    return response.json();
+};
+
+export const changeOwnPassword = async (currentPassword: string, newPassword: string) => {
+    const response = await fetchWithCreds(`${API_URL}/users/change-password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword })
+    });
+    if (!response.ok) {
+         const error = await response.json();
+        throw new Error(error.msg || 'Failed to change password');
+    }
+    return response.json();
+};
+

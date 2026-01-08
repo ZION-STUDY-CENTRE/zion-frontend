@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Badge } from "../../components/ui/badge";
 import { CalendarIcon, BookOpenIcon, UserIcon, Lock } from "lucide-react";
 import { ChangePasswordDialog } from "../../components/ChangePasswordDialog";
+import { getStudentProgram } from '../../services/api';
 
 interface Program {
   _id: string;
@@ -31,23 +32,18 @@ export function StudentDashboard() {
 
   const fetchMyProgram = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/programs/student/my-program', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await response.json();
+      // Use centralized API instead of direct fetch + localStorage
+      const data = await getStudentProgram();
       
-      if (response.ok) {
+      if (data) {
         setProgram(data);
       } else {
-        // If 404, it means not enrolled.
-        if (response.status !== 404) {
-             setError(data.msg || 'Failed to load program');
-        }
+        // null means 404/not enrolled (handled by getStudentProgram returning null on 404)
+        // If it was another error, getStudentProgram would throw.
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Server Error');
+      setError(err.message || 'Server Error');
     } finally {
       setLoading(false);
     }

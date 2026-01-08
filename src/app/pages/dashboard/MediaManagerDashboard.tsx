@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { createBlogPost, createGalleryItem, uploadImage, getPrograms, Program, getBlogPosts, getGalleryItems, deleteBlogPost, deleteGalleryItem, BlogPost, GalleryItem } from '../services/api';
+import { useAuth } from '../../context/AuthContext';
+import { createBlogPost, createGalleryItem, uploadImage, getPrograms, Program, getBlogPosts, getGalleryItems, deleteBlogPost, deleteGalleryItem, BlogPost, GalleryItem } from '../../services/api';
 import { Loader2, Upload, Plus, Image as ImageIcon, FileText, Trash2, Search } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Textarea } from '../components/ui/textarea';
-import { Label } from '../components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { ChangePasswordDialog } from '../components/ChangePasswordDialog';
-import { Pagination } from '../components/Pagination';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Textarea } from '../../components/ui/textarea';
+import { Label } from '../../components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { ChangePasswordDialog } from '../../components/ChangePasswordDialog';
+import { Pagination } from '../../components/Pagination';
 
 const ITEMS_PER_PAGE = 10;
 
 export const MediaManagerDashboard = () => {
-    const { user, token } = useAuth();
+    const { user } = useAuth();
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
@@ -76,13 +76,12 @@ export const MediaManagerDashboard = () => {
     const [galleryImage, setGalleryImage] = useState<File | null>(null);
 
     const handleImageUpload = async (file: File, category: 'blog' | 'gallery') => {
-        if (!token) throw new Error("No token");
-        return await uploadImage(file, token, category);
+        
+        return await uploadImage(file, category);
     };
 
     const handleBlogSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!token) return;
         setUploading(true);
         setMessage(null);
 
@@ -100,7 +99,7 @@ export const MediaManagerDashboard = () => {
                 type: blogType as any,
                 image: imageUrl,
                 timestamp: blogDate ? new Date(blogDate) : new Date()
-            }, token);
+            });
 
             setMessage({ type: 'success', text: 'Blog post created successfully!' });
             // Reset form
@@ -120,9 +119,8 @@ export const MediaManagerDashboard = () => {
 
     const handleDeletePost = async (id: string) => {
         if (!confirm('Are you sure you want to delete this post?')) return;
-        if (!token) return;
         try {
-            await deleteBlogPost(id, token);
+            await deleteBlogPost(id);
             setMessage({ type: 'success', text: 'Blog post deleted successfully' });
             refreshData();
         } catch (err: any) {
@@ -132,7 +130,6 @@ export const MediaManagerDashboard = () => {
 
     const handleGallerySubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!token) return;
         if (!galleryImage) {
             setMessage({ type: 'error', text: 'Please select an image' });
             return;
@@ -147,7 +144,7 @@ export const MediaManagerDashboard = () => {
             await createGalleryItem({
                 title: galleryTitle,
                 img: imageUrl
-            }, token);
+            });
 
             setMessage({ type: 'success', text: 'Gallery item uploaded successfully!' });
             setGalleryTitle('');
@@ -162,9 +159,8 @@ export const MediaManagerDashboard = () => {
 
     const handleDeleteGalleryItem = async (id: string) => {
         if (!confirm('Are you sure you want to delete this image?')) return;
-        if (!token) return;
         try {
-            await deleteGalleryItem(id, token);
+            await deleteGalleryItem(id);
             setMessage({ type: 'success', text: 'Image deleted successfully' });
             refreshData();
         } catch (err: any) {

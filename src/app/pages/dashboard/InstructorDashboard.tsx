@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Badge } from "../../components/ui/badge";
 import { Lock } from "lucide-react";
 import { ChangePasswordDialog } from "../../components/ChangePasswordDialog";
+import { getInstructorPrograms, getProgramStudents } from '../../services/api';
 
 interface Program {
   _id: string;
@@ -62,24 +63,15 @@ export function InstructorDashboard() {
 
   const fetchMyPrograms = async () => {
     try {
-      const token = localStorage.getItem('token');
       console.log('Fetching programs for instructor...');
       
-      const response = await fetch('http://localhost:5000/api/programs/instructor', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await response.json();
+      const data = await getInstructorPrograms();
       
-      console.log('Response status:', response.status);
-      console.log('Response data:', data);
+      // console.log('Response data:', data);
       
-      if (response.ok) {
-        setPrograms(data);
-        if (data.length > 0) {
-          setSelectedProgram(data[0]);
-        }
-      } else {
-        console.error('Failed to fetch programs:', data);
+      setPrograms(data);
+      if (data.length > 0) {
+        setSelectedProgram(data[0]);
       }
     } catch (error) {
       console.error('Error fetching programs:', error);
@@ -92,14 +84,8 @@ export function InstructorDashboard() {
 
   const fetchStudents = async (programId: string) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/users/program/${programId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setStudents(data);
-      }
+      const data = await getProgramStudents(programId);
+      setStudents(data);
     } catch (error) {
       console.error(error);
     }

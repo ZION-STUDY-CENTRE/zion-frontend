@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -8,6 +7,7 @@ import { Label } from "../components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Lock, Mail, Loader2 } from 'lucide-react';
+import { loginUser, changeInitialPassword } from '../services/api';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -27,22 +27,20 @@ export function LoginPage() {
     setIsLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', {
-        email,
-        password
-      });
-
-      const { token, user } = res.data;
-      login(token, user);
+      const data = await loginUser({ email, password });
+      
+      // Backend now returns { user: ... } but no token in body (it's in cookie)
+      const { user: userData } = data;
+      login(userData);
 
       // Check if first login
-      if (user.isFirstLogin) {
+      if (userData.isFirstLogin) {
         setShowChangePassword(true);
       } else {
-        redirectBasedOnRole(user.role);
+        redirectBasedOnRole(userData.role);
       }
     } catch (err: any) {
-      setError(err.response?.data?.msg || 'Login failed. Please check your credentials.');
+      setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
@@ -65,9 +63,7 @@ export function LoginPage() {
     setIsLoading(true);
 
     try {
-      await axios.post('http://localhost:5000/api/auth/change-password', {
-        newPassword
-      });
+      await changeInitialPassword(newPassword);
 
       // Update local user state
       if (user) {
@@ -76,7 +72,7 @@ export function LoginPage() {
         redirectBasedOnRole(user.role);
       }
     } catch (err: any) {
-      setError(err.response?.data?.msg || 'Failed to update password');
+      setError(err.message || 'Failed to update password');
     } finally {
       setIsLoading(false);
     }

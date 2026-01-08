@@ -344,10 +344,14 @@ export function AdminDashboard() {
   };
 
   // Helper for pagination slicing
-  const paginate = (items: any[], page: number) => {
-      const start = (page - 1) * ITEMS_PER_PAGE;
-      return items.slice(start, start + ITEMS_PER_PAGE);
+  const paginate = (items: any[], pageNumber: number) => {
+    const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;
+    return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPagePrograms, currentPageAdmins, currentPageInstructors, currentPageStudents, currentPageMediaManagers]);
 
 
   return (
@@ -399,6 +403,7 @@ export function AdminDashboard() {
                 ) : programs.length === 0 ? (
                   <p className="text-muted-foreground">No programs found.</p>
                 ) : (
+                  <>
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -427,12 +432,17 @@ export function AdminDashboard() {
                         </TableRow>
                       ))}
                     </TableBody>
+                  </Table>
+                  
+                  {/* Moved Pagination OUTSIDE Table */}
+                  <div className="mt-4">
                     <Pagination 
                       currentPage={currentPagePrograms}
                       totalPages={Math.ceil(programs.length / ITEMS_PER_PAGE)}
                       onPageChange={setCurrentPagePrograms}
                     />
-                  </Table>
+                  </div>
+                  </>
                 )}
               </CardContent>
             </Card>

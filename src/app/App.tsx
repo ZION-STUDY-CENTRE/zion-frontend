@@ -19,6 +19,7 @@ import { MediaManagerDashboard } from "./pages/MediaManagerDashboard";
 import { GalleryPage } from "./pages/GalleryPage";
 import BlogPostsComponent from "./pages/Blog";
 import { StudentDashboard } from "./pages/dashboard/StudentDashboard";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Layout for the public-facing website
 const WebsiteLayout = () => {
@@ -37,14 +38,11 @@ const WebsiteLayout = () => {
 export default function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AuthProvider>
         <Routes>
           {/* Public Website Routes */}
           <Route element={<WebsiteLayout />}>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 cormorant-garamond">
-          <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/gallery" element={<GalleryPage />} />

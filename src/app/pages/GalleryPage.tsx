@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { getGalleryItems, GalleryItem } from '../services/api';
+import { Pagination } from '../components/Pagination';
+
+const ITEMS_PER_PAGE = 10;
 
 // Algorithmic layout assignment
 // Returns a grid class string based on the index to create an irregular "masonry" feel
@@ -26,6 +29,12 @@ export function GalleryPage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const paginate = (items: any[], pageNumber: number) => {
+      const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;
+      return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  };
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -69,8 +78,8 @@ export function GalleryPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[250px] gap-4 grid-flow-dense">
-            {[...items].map((item, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[250px] gap-4 grid-flow-dense pb-8">
+            {paginate([...items], currentPage).map((item, index) => (
                 <div
                     key={item._id || index}
                     className={`relative overflow-hidden rounded-xl shadow-md group ${getSpanClass(index)} ${index === 0 ? 'md:col-start-1 md:row-start-1' : ''} transition-all duration-300 hover:scale-[1.02]`}
@@ -88,6 +97,13 @@ export function GalleryPage() {
                 </div>
             ))}
         </div>
+        {items.length > 0 && (
+             <Pagination 
+                currentPage={currentPage}
+                totalPages={Math.ceil(items.length / ITEMS_PER_PAGE)}
+                onPageChange={setCurrentPage}
+            />
+        )}
       </div>
     </div>
   );

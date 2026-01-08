@@ -36,6 +36,10 @@ export const MediaManagerDashboard = () => {
         return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
     };
 
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [currentPage]);
+
     const refreshData = async () => {
         try {
             const [postsData, galleryData] = await Promise.all([

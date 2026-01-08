@@ -13,10 +13,14 @@ const BlogPostsComponent = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const paginate = (items: any[], pageNumber: number) => {
-      const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;
-      return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  };
+    const paginate = (items: any[], pageNumber: number) => {
+        const startIndex = (pageNumber - 1) * ITEMS_PER_PAGE;
+        return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    };
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [currentPage]);
 
   useEffect(() => {
     const fetchPosts = async () => {

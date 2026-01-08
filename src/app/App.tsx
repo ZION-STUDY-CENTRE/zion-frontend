@@ -20,6 +20,7 @@ import { GalleryPage } from "./pages/GalleryPage";
 import BlogPostsComponent from "./pages/Blog";
 import { StudentDashboard } from "./pages/dashboard/StudentDashboard";
 import ScrollToTop from "./components/ScrollToTop";
+import { ScrollToTopButton } from "./components/ScrollToTopButton";
 
 // Layout for the public-facing website
 const WebsiteLayout = () => {
@@ -31,6 +32,7 @@ const WebsiteLayout = () => {
       </main>
       <Footer />
       <WhatsAppFloat />
+      <ScrollToTopButton />
     </div>
   );
 };

@@ -24,7 +24,7 @@ import ScrollToTop from "./components/ScrollToTop";
 // Layout for the public-facing website
 const WebsiteLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col cormorant-garamond">
       <Header />
       <main className="flex-1">
         <Outlet />

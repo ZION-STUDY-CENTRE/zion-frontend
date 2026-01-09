@@ -2,6 +2,19 @@ import React, { useEffect, useRef } from 'react';
 import logo from "../../assets/logo.png";
 import { Link } from 'react-router-dom';
 
+import image_1 from '../../assets/ict.jpg';
+import image_2 from '../../assets/CANON/IMG_5000.JPG'; 
+import image_3 from '../../assets/ZION IMG/IMG_9224.jpeg';
+import image_4 from '../../assets/CANON/EXPORTS/IMAGES/BABS-04.jpg';
+import image_5 from '../../assets/CANON/IMG_4935.JPG'; 
+import image_6 from '../../assets/CANON/IMG_4954.JPG';
+import image_7 from  '../../assets/CANON/IMG_5009.JPG';
+import image_8 from '../../assets/ict.jpg';
+import image_9 from '../../assets/ZION IMG/IMG_9222.jpeg'; 
+import image_10 from '../../assets/CANON/IMG_4925.JPG';
+import image_11 from '../../assets/ZION IMG/IMG_9220.jpeg'; 
+import image_12 from '../../assets/CANON/IMG_5012.JPG';
+
 const ParallaxSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const leftContentRef = useRef<HTMLDivElement>(null);
@@ -50,18 +63,18 @@ const ParallaxSection = () => {
   }, []);
 
   const galleryImages = [
-    { url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80", span: "col-span-1 row-span-2" },
-    { url: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=800&q=80", span: "col-span-1 row-span-2" },
-    { url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80", span: "col-span-2 row-span-1" },
-    { url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80", span: "col-span-1 row-span-1" },
-    { url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80", span: "col-span-1 row-span-2" },
-    { url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80", span: "col-span-1 row-span-1" },
-    { url: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80", span: "col-span-2 row-span-1" },
-    { url: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&q=80", span: "col-span-1 row-span-2" },
-    { url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80", span: "col-span-1 row-span-2" },
-    { url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80", span: "col-span-2 row-span-2" },
-    { url: "https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=800&q=80", span: "col-span-1 row-span-1" },
-    { url: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80", span: "col-span-1 row-span-1" },
+    { url: image_1, span: "col-span-1 row-span-2" },
+    { url: image_2, span: "col-span-1 row-span-2" },
+    { url: image_3, span: "col-span-2 row-span-1" },
+    { url: image_4, span: "col-span-1 row-span-1" },
+    { url: image_5, span: "col-span-1 row-span-2" },
+    { url: image_6, span: "col-span-1 row-span-1" },
+    { url: image_7, span: "col-span-2 row-span-1" },
+    { url: image_8, span: "col-span-1 row-span-2" },
+    { url: image_9, span: "col-span-1 row-span-2" },
+    { url: image_10, span: "col-span-2 row-span-2" },
+    { url: image_11, span: "col-span-1 row-span-1" },
+    { url: image_12, span: "col-span-1 row-span-1" },
   ];
 
   return (

@@ -38,7 +38,7 @@ export const MediaManagerDashboard = () => {
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [currentPage]);
+    }, [currentPageBlog]);
 
     const refreshData = async () => {
         try {

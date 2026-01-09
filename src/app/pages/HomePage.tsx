@@ -33,6 +33,10 @@ import ParallaxSection from "../components/ParallaxSection";
 
 import { getBlogPosts, BlogPost, getPrograms, Program } from "../services/api";
 
+import facilityImg from "../../assets/287522350_1387577808421737_4478080586879130110_n.jpg";
+
+import libraryImg from "../../assets/CANON/IMG_4994.JPG"; 
+
 export function HomePage() {
   const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
   const [programs, setPrograms] = useState<Program[]>([]);
@@ -147,6 +151,8 @@ export function HomePage() {
   ];
 
   const heroImages = [
+    facilityImg,
+    libraryImg,
     "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
   ];
 
@@ -155,7 +161,7 @@ export function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 5000);
+    }, 15000);
 
     return () => clearInterval(interval);
   }, []);
@@ -168,7 +174,7 @@ export function HomePage() {
         {heroImages.map((image, index) => (
           <div
             key={index}
-            className={`absolute inset-0 bg-cover bg-start transition-all duration-1000 ease-in-out group-hover:scale-110 ${
+            className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out group-hover:scale-110 ${
               index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
             style={{ backgroundImage: `url(${latestPost ? latestPost.image : image})` }}
@@ -202,12 +208,6 @@ export function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-100 z-0"></div>
       </section>
       
-      <p className={` ${offset > 400 ? "block" : "hidden"} bg-blue-900 text-white w-10 h-10 rounded-full fixed z-100 flex items-center justify-center bottom-5 left-1/2 hover:scale-110 cursor-pointer shadow-xl animate-bounce scroll-smooth`} onClick={(e) => {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }}>{<ArrowUp />}</p>
-
-
 
       <SearchCourse />
 

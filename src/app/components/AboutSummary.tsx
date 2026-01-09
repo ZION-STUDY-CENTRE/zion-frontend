@@ -1,6 +1,12 @@
 import React from 'react';
 import { ArrowRight, Mountain, Eye, GraduationCap } from 'lucide-react';
 
+import studentImage from '../../assets/ZION IMG/IMG_9218.jpeg';
+import zionBuildingImage from '../../assets/CANON/IMG_5019.JPG'; 
+import image2 from '../../assets/CANON/IMG_4947.JPG';  
+import image3 from '../../assets/CANON/IMG_4960.JPG';  
+ 
+
 const AboutSummaryComponent: React.FC = () => {
   const handleNavigation = () => {
     window.location.href = '/about';
@@ -29,7 +35,7 @@ const AboutSummaryComponent: React.FC = () => {
           >
             <div className="relative bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center">
               <img 
-                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&fit=crop"
+                src={zionBuildingImage}
                 alt="Students collaborating"
                 className="w-full h-full object-cover"
               />
@@ -63,7 +69,7 @@ const AboutSummaryComponent: React.FC = () => {
             >
               <div className="relative h-48 bg-gradient-to-br from-blue-100 to-teal-200">
                 <img 
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop"
+                  src={image2}
                   alt="Computer Science classroom"
                   className="w-full h-full object-cover"
                 />
@@ -89,7 +95,7 @@ const AboutSummaryComponent: React.FC = () => {
             >
               <div className="relative h-48 bg-gradient-to-br from-purple-100 to-pink-200">
                 <img 
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&h=400&fit=crop"
+                  src={image3}
                   alt="Professional accounting"
                   className="w-full h-full object-cover"
                 />
@@ -115,7 +121,7 @@ const AboutSummaryComponent: React.FC = () => {
             >
               <div className="relative h-48 bg-gradient-to-br from-green-100 to-emerald-200">
                 <img 
-                  src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&h=400&fit=crop"
+                  src={studentImage}
                   alt="Marketing strategy"
                   className="w-full h-full object-cover"
                 />

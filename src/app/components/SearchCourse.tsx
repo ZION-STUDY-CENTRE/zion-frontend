@@ -1,24 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, BookOpen, GraduationCap, Award, ArrowRight } from 'lucide-react';
+import { Search, X, BookOpen, GraduationCap, Award, ArrowRight, Image as ImageIcon } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { getPrograms, getGalleryItems, Program, GalleryItem } from '../services/api';
 
-const searchData = [
+// Only keep static pages here. Courses and Gallery items will be fetched.
+const staticSearchData = [
   { title: "Technology & Computer Academy", type: "Category", path: "/programs/technology", icon: BookOpen },
   { title: "International Exams", type: "Category", path: "/programs/international-exams", icon: GraduationCap },
   { title: "Secondary School Preparation", type: "Category", path: "/programs/secondary-exams", icon: Award },
-  { title: "Full Stack Web Development", type: "Course", path: "/programs/technology", icon: BookOpen },
-  { title: "Graphic Design & Digital Marketing", type: "Course", path: "/programs/technology", icon: BookOpen },
-  { title: "Data Science & Analytics", type: "Course", path: "/programs/technology", icon: BookOpen },
-  { title: "IELTS Preparation", type: "Course", path: "/programs/international-exams", icon: GraduationCap },
-  { title: "TOEFL Preparation", type: "Course", path: "/programs/international-exams", icon: GraduationCap },
-  { title: "SAT & GRE Coaching", type: "Course", path: "/programs/international-exams", icon: GraduationCap },
-  { title: "JAMB UTME Preparation", type: "Course", path: "/programs/secondary-exams", icon: Award },
-  { title: "WAEC Preparation", type: "Course", path: "/programs/secondary-exams", icon: Award },
-  { title: "NECO Preparation", type: "Course", path: "/programs/secondary-exams", icon: Award },
   { title: "About Us", type: "Page", path: "/about", icon: ArrowRight },
   { title: "Contact Us", type: "Page", path: "/contact", icon: ArrowRight },
   { title: "Register", type: "Page", path: "/register", icon: ArrowRight },
+  { title: "Admissions", type: "Page", path: "/register", icon: ArrowRight },
+  { title: "Gallery", type: "Page", path: "/gallery", icon: ArrowRight },
 ];
+
+interface SearchItem {
+  title: string;
+  type: string;
+  path: string;
+  icon: React.ElementType;
+}
 
 interface SearchCourseProps {
   onClose?: () => void;
@@ -26,14 +28,46 @@ interface SearchCourseProps {
 
 export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [results, setResults] = useState<typeof searchData>([]);
+  const [allItems, setAllItems] = useState<SearchItem[]>(staticSearchData);
+  const [results, setResults] = useState<SearchItem[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [programsData, galleryData] = await Promise.all([
+          getPrograms(),
+          getGalleryItems()
+        ]);
+
+        const programItems: SearchItem[] = programsData.map((program: Program) => ({
+          title: program.title,
+          type: "Course",
+          path: `/programs/${program.code || program._id}`,
+          icon: BookOpen
+        }));
+
+        const galleryItems: SearchItem[] = galleryData.map((item: GalleryItem) => ({
+          title: item.title,
+          type: "Gallery",
+          path: "/gallery", 
+          icon: ImageIcon
+        }));
+
+        setAllItems([...staticSearchData, ...programItems, ...galleryItems]);
+      } catch (error) {
+        console.error("Failed to fetch search data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     if (searchQuery.trim()) {
-      const filtered = searchData.filter(item => 
+      const filtered = allItems.filter(item => 
         item.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setResults(filtered);
@@ -42,7 +76,7 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
       setResults([]);
       setShowDropdown(false);
     }
-  }, [searchQuery]);
+  }, [searchQuery, allItems]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +85,7 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
     }
   };
 
-  const handleSelect = (item: typeof searchData[0]) => {
+  const handleSelect = (item: SearchItem) => {
     navigate(item.path);
     if (onClose) onClose();
     setSearchQuery('');

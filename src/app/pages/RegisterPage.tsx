@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { sendEmail } from "../services/api";
+import { useState, useEffect } from "react";
+import { sendEmail, getPrograms, Program } from "../services/api";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -26,6 +26,34 @@ export function RegisterPage() {
       additional: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [allPrograms, setAllPrograms] = useState<Program[]>([]);
+  const [availableCourses, setAvailableCourses] = useState<Program[]>([]);
+
+  // Fetch programs from backend
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const data = await getPrograms();
+        setAllPrograms(data);
+      } catch (error) {
+        console.error("Failed to fetch programs", error);
+      }
+    };
+    fetchPrograms();
+  }, []);
+
+  // Update available courses when category changes
+  useEffect(() => {
+    if (formData.programCategory) {
+      const filtered = allPrograms.filter(p => p.category === formData.programCategory);
+      setAvailableCourses(filtered);
+    } else {
+      setAvailableCourses([]);
+    }
+  }, [formData.programCategory, allPrograms]);
+
+  // Extract unique categories from loaded programs
+  const categories = Array.from(new Set(allPrograms.map(p => p.category)));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,30 +169,53 @@ export function RegisterPage() {
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
                           <Label htmlFor="programCategory">Program Category *</Label>
-                          <Select required onValueChange={(value) => handleChange('programCategory', value)}>
+                          <Select 
+                            required 
+                            value={formData.programCategory}
+                            onValueChange={(value) => {
+                              // Reset specific program when category changes
+                              setFormData(prev => ({ ...prev, programCategory: value, program: '' }));
+                            }}
+                          >
                             <SelectTrigger className="mt-1">
                               <SelectValue placeholder="Select category" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="technology">Technology & Computer Academy</SelectItem>
-                              <SelectItem value="international">International Exams</SelectItem>
-                              <SelectItem value="secondary">Secondary School Preparation</SelectItem>
+                              {categories.length > 0 ? (
+                                categories.map((category) => (
+                                  <SelectItem key={category} value={category}>
+                                    {category}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <div className="p-2 text-sm text-gray-500">Loading categories...</div>
+                              )}
                             </SelectContent>
                           </Select>
                         </div>
                         <div>
                           <Label htmlFor="specificCourse">Specific Course *</Label>
-                          <Select required onValueChange={(value) => handleChange('program', value)}>
+                          <Select 
+                            required 
+                            value={formData.program} 
+                            disabled={!formData.programCategory}
+                            onValueChange={(value) => handleChange('program', value)}
+                          >
                             <SelectTrigger className="mt-1">
-                              <SelectValue placeholder="Select course" />
+                              <SelectValue placeholder={formData.programCategory ? "Select course" : "Select category first"} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="web-dev">Web Development</SelectItem>
-                              <SelectItem value="graphic-design">Graphic Design</SelectItem>
-                              <SelectItem value="ielts">IELTS Preparation</SelectItem>
-                              <SelectItem value="toefl">TOEFL Preparation</SelectItem>
-                              <SelectItem value="jamb">JAMB Preparation</SelectItem>
-                              <SelectItem value="waec">WAEC Preparation</SelectItem>
+                              {availableCourses.length > 0 ? (
+                                availableCourses.map((course) => (
+                                  <SelectItem key={course._id} value={course.code || course.title}>
+                                    {course.title}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <div className="p-2 text-sm text-gray-500">
+                                  {formData.programCategory ? "No courses available" : "Select a category first"}
+                                </div>
+                              )}
                             </SelectContent>
                           </Select>
                         </div>

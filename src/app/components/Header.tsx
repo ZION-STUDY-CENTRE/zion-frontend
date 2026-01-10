@@ -224,11 +224,14 @@ export function Header() {
               <Link to="/programs" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
                 Programs
               </Link>
-              <Link to="/admissions" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
-                Admissions
+              <Link to="/blog" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
+                Blog
               </Link>
               <Link to="/gallery" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
                 Gallery
+              </Link>
+              <Link to="/admissions" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
+                Admissions
               </Link>
               <Link to="/contact" className="py-2 hover:text-blue-700" onClick={() => setMobileMenuOpen(false)}>
                 Contact

@@ -285,8 +285,8 @@ export function HomePage() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="hidden md:flex bg-blue-900 text-white rounded-none relative left-[35px] bottom-0" />
-              <CarouselNext className="hidden md:flex bg-blue-900 text-white rounded-none relative left-[80px] bottom-[31px]" />
+              <CarouselPrevious className="flex bg-blue-900 text-white rounded-none relative left-[35px] bottom-0" />
+              <CarouselNext className="flex bg-blue-900 text-white rounded-none relative left-[80px] bottom-[31px]" />
             </Carousel>
           </div>
         </div>

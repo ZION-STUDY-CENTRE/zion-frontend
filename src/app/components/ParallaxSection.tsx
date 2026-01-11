@@ -3,17 +3,17 @@ import logo from "../../assets/logo.png";
 import { Link } from 'react-router-dom';
 
 import image_1 from '../../assets/ict.jpg';
-import image_2 from '../../assets/CANON/IMG_5000.JPG'; 
-import image_3 from '../../assets/ZION IMG/IMG_9224.jpeg';
-import image_4 from '../../assets/CANON/EXPORTS/IMAGES/BABS-04.jpg';
-import image_5 from '../../assets/CANON/IMG_4935.JPG'; 
-import image_6 from '../../assets/CANON/IMG_4954.JPG';
-import image_7 from  '../../assets/CANON/IMG_5009.JPG';
+import image_2 from '../../assets/img5000.jpg'; 
+import image_3 from '../../assets/img9224.jpeg';
+import image_4 from '../../assets/babs04.jpg';
+import image_5 from '../../assets/img4935.jpg'; 
+import image_6 from '../../assets/img4954.jpg';
+import image_7 from  '../../assets/img5009.jpg';
 import image_8 from '../../assets/ict.jpg';
-import image_9 from '../../assets/ZION IMG/IMG_9222.jpeg'; 
-import image_10 from '../../assets/CANON/IMG_4925.JPG';
-import image_11 from '../../assets/ZION IMG/IMG_9220.jpeg'; 
-import image_12 from '../../assets/CANON/IMG_5012.JPG';
+import image_9 from '../../assets/img9222.jpeg'; 
+import image_10 from '../../assets/img4925.jpg';
+import image_11 from '../../assets/img9220.jpeg'; 
+import image_12 from '../../assets/img5012.jpg';
 
 const ParallaxSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);

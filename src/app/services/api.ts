@@ -378,10 +378,20 @@ export const sendEmail = async (type: 'contact' | 'admission', data: any) => {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to send email');
+            let errorMessage = 'Failed to send email';
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+                if (errorData.error) console.error("Server Error Details:", errorData.error);
+            } catch (e) {
+                // If response is not JSON
+                errorMessage = `Error ${response.status}: ${response.statusText}`;
+            }
+            throw new Error(errorMessage);
         }
         return await response.json();
     } catch (error) {
+        console.error("API sendEmail error:", error);
         throw error;
     }
 };

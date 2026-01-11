@@ -35,7 +35,7 @@ import { getBlogPosts, BlogPost, getPrograms, Program } from "../services/api";
 
 import facilityImg from "../../assets/287522350_1387577808421737_4478080586879130110_n.jpg";
 
-import libraryImg from "../../assets/CANON/IMG_4994.JPG"; 
+import libraryImg from "../../assets/img4494.jpg"; 
 
 export function HomePage() {
   const [latestPost, setLatestPost] = useState<BlogPost | null>(null);

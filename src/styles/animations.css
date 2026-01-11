@@ -1,0 +1,15 @@
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px); /* Start 50px higher (relative to current pos) */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -9,6 +9,10 @@ const staticSearchData = [
   { title: "International Exams", type: "Category", path: "/programs/international-exams", icon: GraduationCap },
   { title: "Secondary School Preparation", type: "Category", path: "/programs/secondary-exams", icon: Award },
   { title: "About Us", type: "Page", path: "/about", icon: ArrowRight },
+<<<<<<< HEAD
+=======
+  { title: "Blog", type: "Page", path: "/blog", icon: ArrowRight },
+>>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
   { title: "Contact Us", type: "Page", path: "/contact", icon: ArrowRight },
   { title: "Register", type: "Page", path: "/register", icon: ArrowRight },
   { title: "Admissions", type: "Page", path: "/register", icon: ArrowRight },
@@ -106,7 +110,11 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
   }, [wrapperRef]);
 
   return (
+<<<<<<< HEAD
     <div className="relative h-110 bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 ">
+=======
+    <div className="shadow-lg relative w-full h-110 bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 ">
+>>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
       {/* Close Button for Modal Context */}
       {onClose && (
         <button 
@@ -145,7 +153,10 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
           <h1 className="text-6xl font-serif text-white mb-4 leading-tight">
             Join the Zion class
           </h1>
+<<<<<<< HEAD
           <p className="text-white text-lg mb-6">Study with us</p>
+=======
+>>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
           <button className="text-white border-b-2 border-red-500 pb-1 hover:border-red-400 transition-colors">
             Find out more
           </button>

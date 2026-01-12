@@ -411,10 +411,27 @@ export const sendEmail = async (type: 'contact' | 'admission', data: any) => {
         });
 
         if (!response.ok) {
+<<<<<<< HEAD
             throw new Error('Failed to send email');
         }
         return await response.json();
     } catch (error) {
+=======
+            let errorMessage = 'Failed to send email';
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+                if (errorData.error) console.error("Server Error Details:", errorData.error);
+            } catch (e) {
+                // If response is not JSON
+                errorMessage = `Error ${response.status}: ${response.statusText}`;
+            }
+            throw new Error(errorMessage);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("API sendEmail error:", error);
+>>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
         throw error;
     }
 };
@@ -726,7 +743,11 @@ export interface Testimonial {
     course: string;
     rating: number;
     text: string;
+<<<<<<< HEAD
     image?: string;
+=======
+    image?: any;
+>>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
     approved?: boolean;
     createdAt?: string;
 }

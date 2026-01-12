@@ -250,7 +250,29 @@ export function Header() {
       </div>
     </header>
       
+<<<<<<< HEAD
       {isSearchOpen && <SearchCourse onClose={() => setIsSearchOpen(false)} />}
+=======
+      {isSearchOpen && 
+        <div 
+          className="fixed h-screen w-screen top-0 left-0 z-[100] flex justify-center items-start pt-[10vh]"
+        >
+          <div 
+            className="absolute w-full h-full top-0 left-0 bg-black/70 backdrop-blur-sm animate-[fadeIn_0.6s_ease-out_forwards]"
+            onClick={() => setIsSearchOpen(false)}
+          ></div>
+          
+          <div 
+            className="w-[90%] relative z-10 animate-[slideDown_0.6s_cubic-bezier(0.16,1,0.3,1)_forwards]"
+            style={{ 
+              opacity: 0, 
+            }}
+          >
+            <SearchCourse onClose={() => setIsSearchOpen(false)} />
+          </div>
+        </div>
+      }
+>>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
     </>
   )
 }

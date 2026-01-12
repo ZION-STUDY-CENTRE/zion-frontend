@@ -139,7 +139,7 @@ export function HomePage() {
             className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out group-hover:scale-110 ${
               index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
-            style={{ backgroundImage: `url(${latestPost ? latestPost.image : image})` }}
+            style={{ backgroundImage: `url(${image})` }}
           />
         ))}
         
@@ -227,6 +227,7 @@ export function HomePage() {
                         <img 
                           src={course.heroImage || course.imageUrl} 
                           alt={course.title}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>

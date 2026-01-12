@@ -21,6 +21,8 @@ import BlogPostsComponent from "./pages/Blog";
 import { StudentDashboard } from "./pages/dashboard/StudentDashboard";
 import ScrollToTop from "./components/ScrollToTop";
 import { ScrollToTopButton } from "./components/ScrollToTopButton";
+import { PopUp } from "./components/PopUp";
+import adImage from "../assets/new1.jpg";
 
 // Layout for the public-facing website
 const WebsiteLayout = () => {
@@ -33,6 +35,12 @@ const WebsiteLayout = () => {
       <Footer />
       <WhatsAppFloat />
       <ScrollToTopButton />
+      <PopUp 
+        title="2024/2025 Admission is Now Open!"
+        image={adImage}
+        ctaLink="/register"
+        description="Join Zion Study Centre today for excellence in IJMB, JUPEB and NABTEB."
+      />
     </div>
   );
 };

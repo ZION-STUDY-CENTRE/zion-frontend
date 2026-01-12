@@ -31,10 +31,10 @@ const MapEmbed: React.FC<MapEmbedProps> = ({
 
   
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       <div
         style={{ width, height }}
-        className="overflow-hidden shadow-2xl"
+        className="overflow-hidden shadow-2xl w-full h-full"
       >
         <iframe
           title="Google Map"

@@ -7,11 +7,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Badge } from "../../components/ui/badge";
 import { Lock, Plus, BookOpen, FileText, Trash2, ArrowLeft } from "lucide-react";
 import { ChangePasswordDialog } from "../../components/ChangePasswordDialog";
+import { NotificationBell } from "../../components/NotificationBell";
+import { showConfirm, showSuccess, showError } from '../../../utils/sweetAlert';
 import { getInstructorPrograms, getProgramStudents, getAssignments, getQuizzes, getFileResources, deleteAssignment, deleteQuiz, getAssignmentSubmissions } from '../../services/api';
 import { AssignmentForm } from '../../components/dashboard/AssignmentForm';
 import { QuizForm } from '../../components/dashboard/QuizForm';
 import { FileUpload } from '../../components/dashboard/FileUpload';
 import { SubmissionView } from '../../components/dashboard/SubmissionView';
+import { ChatComponent } from '../../components/ChatComponent';
 
 interface Program {
   _id: string;
@@ -134,28 +137,37 @@ export function InstructorDashboard() {
   };
 
   const handleDeleteAssignment = async (assignmentId: string) => {
-    if (confirm('Are you sure you want to delete this assignment?')) {
-      try {
-        await deleteAssignment(assignmentId);
-        if (selectedProgram) {
-          fetchAssignments(selectedProgram._id);
-        }
-      } catch (error) {
-        console.error('Error deleting assignment:', error);
+    const confirmed = await showConfirm('Delete Assignment', 'Are you sure you want to delete this assignment?', 'Yes, delete it', 'Cancel');
+    if (!confirmed) return;
+    try {
+      await deleteAssignment(assignmentId);
+      showSuccess('Assignment deleted');
+      if (selectedProgram) {
+        fetchAssignments(selectedProgram._id);
       }
+    } catch (error: any) {
+      showError('Failed to delete', error.message || 'Error deleting assignment');
     }
   };
 
   const handleDeleteQuiz = async (quizId: string) => {
-    if (confirm('Are you sure you want to delete this quiz?')) {
-      try {
-        await deleteQuiz(quizId);
-        if (selectedProgram) {
-          fetchQuizzes(selectedProgram._id);
-        }
-      } catch (error) {
-        console.error('Error deleting quiz:', error);
+    const confirmed = await showConfirm('Delete Quiz', 'Are you sure you want to delete this quiz?', 'Yes, delete it', 'Cancel');
+    if (!confirmed) return;
+    try {
+      await deleteQuiz(quizId);
+      showSuccess('Quiz deleted');
+      if (selectedProgram) {
+        fetchQuizzes(selectedProgram._id);
       }
+    } catch (error: any) {
+      showError('Failed to delete', error.message || 'Error deleting quiz');
+    }
+  };
+
+  const handleLogout = async () => {
+    const confirmed = await showConfirm('Logout', 'Are you sure you want to logout?', 'Yes, logout', 'Cancel');
+    if (confirmed) {
+      await logout();
     }
   };
 
@@ -166,11 +178,12 @@ export function InstructorDashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Instructor Dashboard</h1>
           <p className="text-lg text-muted-foreground mt-2">Welcome back, {user?.name}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+            <NotificationBell />
             <Button onClick={() => setIsChangePasswordOpen(true)} variant="outline">
                 <Lock className="w-4 h-4 mr-2" /> Change Password
             </Button>
-            <Button onClick={logout} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700">
+            <Button onClick={handleLogout} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700">
                 Logout
             </Button>
         </div>
@@ -235,11 +248,12 @@ export function InstructorDashboard() {
               </div>
             ) : (
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-5">
                   <TabsTrigger value="students">Students</TabsTrigger>
                   <TabsTrigger value="assignments">Assignments</TabsTrigger>
                   <TabsTrigger value="quizzes">Quizzes</TabsTrigger>
                   <TabsTrigger value="files">Materials</TabsTrigger>
+                  <TabsTrigger value="chat">Chat</TabsTrigger>
                 </TabsList>
 
                 {/* Students Tab */}
@@ -443,7 +457,10 @@ export function InstructorDashboard() {
                     isInstructor={true}
                   />
                 </TabsContent>
-              </Tabs>
+                {/* Chat Tab */}
+                <TabsContent value="chat">
+                  <ChatComponent />
+                </TabsContent>              </Tabs>
             )}
           </div>
         </div>

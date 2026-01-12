@@ -1,10 +1,10 @@
 import React from 'react';
 import { ArrowRight, Mountain, Eye, GraduationCap } from 'lucide-react';
 
-import studentImage from '../../assets/ZION IMG/IMG_9218.jpeg';
-import zionBuildingImage from '../../assets/CANON/IMG_5019.JPG'; 
-import image2 from '../../assets/CANON/IMG_4947.JPG';  
-import image3 from '../../assets/CANON/IMG_4960.JPG';  
+import studentImage from '../../assets/378194467_780266214108063_4926751009964101269_n.jpg';
+import zionBuildingImage from '../../assets/banner/bk2.jpg'; 
+import image2 from '../../assets/banner/bk3.jpg';  
+import image3 from '../../assets/301968619_477799417688079_221370051454207794_n.jpg';  
  
 
 const AboutSummaryComponent: React.FC = () => {

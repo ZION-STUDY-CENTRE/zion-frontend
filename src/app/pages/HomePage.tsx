@@ -5,6 +5,8 @@ import { Button } from "../components/ui/button";
 import { CourseCard } from "../components/CourseCard";
 import SearchCourse from "../components/SearchCourse";
 import ChooseZion from "../components/ChooseZion";
+import { LazyImage } from "../components/LazyImage";
+import { getOptimizedImageUrl } from "../../utils/cloudinaryOptimization";
 import {
   Carousel,
   CarouselContent,
@@ -31,23 +33,24 @@ import AboutSummaryComponent from "../components/AboutSummary";
 import OurPrograms from "../components/OurPrograms";
 import ParallaxSection from "../components/ParallaxSection";
 
-import { getBlogPosts, BlogPost, getPrograms, Program } from "../services/api";
+import { getBlogPosts, BlogPost, getPrograms, Program, getTestimonials, Testimonial } from "../services/api";
 
 import facilityImg from "../../assets/287522350_1387577808421737_4478080586879130110_n.jpg";
-
-import libraryImg from "../../assets/img4494.jpg"; 
+import libraryImg from "../../assets/banner/bk.jpg"; 
 
 export function HomePage() {
   const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [posts, programsData] = await Promise.all([
+        const [posts, programsData, testimonialsData] = await Promise.all([
           getBlogPosts(),
-          getPrograms()
+          getPrograms(),
+          getTestimonials()
         ]);
         
         if (posts.length > 0) {
@@ -58,6 +61,10 @@ export function HomePage() {
         
         if (programsData) {
           setPrograms(programsData);
+        }
+
+        if (testimonialsData && testimonialsData.length > 0) {
+          setTestimonials(testimonialsData);
         }
       } catch (error) {
         console.error("Failed to fetch data for homepage", error);
@@ -102,51 +109,6 @@ export function HomePage() {
       icon: TrendingUp,
       title: "Proven Track Record",
       description: "Over 95% success rate with thousands of satisfied students and graduates.",
-    },
-  ];
-
-  const testimonials = [
-    {
-      name: "Amina Adeyemi",
-      course: "IELTS Preparation",
-      rating: 5,
-      text: "Thanks to Zion Study Centre, I achieved a band 7.5 in IELTS! The instructors were exceptional and the study materials were comprehensive.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100",
-    },
-    {
-      name: "Chukwudi Okonkwo",
-      course: "Web Development",
-      rating: 5,
-      text: "The web development course transformed my career. Now I'm working as a full-stack developer. Highly recommended!",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100",
-    },
-    {
-      name: "Blessing Michael",
-      course: "JAMB Preparation",
-      rating: 5,
-      text: "I scored 285 in JAMB after attending the preparation classes. The teachers know exactly what they're doing!",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100",
-    },
-    {
-      name: "Amina Adeyemi",
-      course: "IELTS Preparation",
-      rating: 5,
-      text: "Thanks to Zion Study Centre, I achieved a band 7.5 in IELTS! The instructors were exceptional and the study materials were comprehensive.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100",
-    },
-    {
-      name: "Chukwudi Okonkwo",
-      course: "Web Development",
-      rating: 5,
-      text: "The web development course transformed my career. Now I'm working as a full-stack developer. Highly recommended!",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100",
-    },
-    {
-      name: "Blessing Michael",
-      course: "JAMB Preparation",
-      rating: 5,
-      text: "I scored 285 in JAMB after attending the preparation classes. The teachers know exactly what they're doing!",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100",
     },
   ];
 
@@ -311,46 +273,62 @@ export function HomePage() {
           </div>
 
           <div className="mx-auto px-4">
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              plugins={[
-                Autoplay({
-                  delay: 4000,
-                }),
-              ]}
-              className="w-full relative"
-            >
-              <CarouselContent className="">
-                {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                    <div className="bg-white p-6 rounded-lg shadow-md h-full border">
-                      <div className="flex items-center mb-4">
-                        <img
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          className="w-12 h-12 rounded-full mr-3 object-cover"
-                        />
-                        <div>
-                          <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
-                          <p className="text-sm text-gray-600">{testimonial.course}</p>
+            {testimonials.length > 0 ? (
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                plugins={[
+                  Autoplay({
+                    delay: 4000,
+                  }),
+                ]}
+                className="w-full relative"
+              >
+                <CarouselContent className="">
+                  {testimonials.map((testimonial, index) => (
+                    <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                      <div className="bg-white p-6 rounded-lg shadow-md h-full border">
+                        <div className="flex items-center mb-4">
+                          <div className="w-12 h-12 rounded-full mr-3 overflow-hidden">
+                            {testimonial.image ? (
+                              <img
+                                src={getOptimizedImageUrl(testimonial.image, 'testimonial')}
+                                alt={testimonial.name}
+                                className="w-12 h-12 rounded-full object-cover"
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            ) : (
+                              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                {testimonial.name.charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
+                            <p className="text-sm text-gray-600">{testimonial.course}</p>
+                          </div>
                         </div>
+                        <div className="flex gap-1 mb-3">
+                          {[...Array(testimonial.rating)].map((_, i) => (
+                            <Star key={i} size={16} className="fill-amber-500 text-amber-500" />
+                          ))}
+                        </div>
+                        <p className="text-gray-700 italic">"{testimonial.text}"</p>
                       </div>
-                      <div className="flex gap-1 mb-3">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} size={16} className="fill-amber-500 text-amber-500" />
-                        ))}
-                      </div>
-                      <p className="text-gray-700 italic">"{testimonial.text}"</p>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2" />
-              <CarouselNext className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2" />
-            </Carousel>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2" />
+                <CarouselNext className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2" />
+              </Carousel>
+            ) : (
+              <div className="text-center py-12 bg-gray-100 rounded-lg">
+                <p className="text-gray-600 text-lg">No testimonials available yet.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>

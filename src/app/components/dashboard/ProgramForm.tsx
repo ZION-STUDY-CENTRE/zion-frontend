@@ -6,6 +6,7 @@ import { Textarea } from "../ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Program, uploadImage } from '../../services/api';
 import { Plus, Trash2, X, Loader2 } from "lucide-react";
+import { showError } from '../../../utils/sweetAlert';
 
 interface ProgramFormProps {
   initialData?: Partial<Program>;
@@ -190,7 +191,7 @@ export function ProgramForm({ initialData, onSubmit, onCancel, isLoading, availa
         finalData.imageUrl = imageUrl; 
       } catch (error) {
         console.error("Image upload failed", error);
-        alert("Failed to upload image. Please try again.");
+        showError('Upload Failed', 'Failed to upload image. Please try again.');
         setUploading(false);
         return;
       } finally {

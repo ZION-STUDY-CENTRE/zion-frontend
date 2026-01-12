@@ -201,17 +201,50 @@ export const uploadImage = async (file: File, category: 'programs' | 'blog' | 'g
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetchWithCreds(`${API_URL}/upload?category=${category}`, {
-        method: 'POST',
-        body: formData
+    console.log('📤 Starting image upload:', {
+        filename: file.name,
+        size: (file.size / 1024).toFixed(2) + ' KB',
+        type: file.type,
+        category: category,
+        apiUrl: `${API_URL}/upload?category=${category}`
     });
 
-    if (!response.ok) {
-        throw new Error('Failed to upload image');
-    }
+    try {
+        const response = await fetchWithCreds(`${API_URL}/upload?category=${category}`, {
+            method: 'POST',
+            body: formData
+        });
 
-    const data = await response.json();
-    return data.imageUrl;
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('❌ Upload failed:', {
+                status: response.status,
+                statusText: response.statusText,
+                error: errorData,
+                apiUrl: `${API_URL}/upload?category=${category}`
+            });
+            throw new Error(`Upload failed: ${response.status} ${response.statusText} - ${errorData.message || JSON.stringify(errorData)}`);
+        }
+
+        const data = await response.json();
+        
+        if (!data.imageUrl) {
+            console.error('❌ No image URL in response:', data);
+            throw new Error('No image URL returned from server');
+        }
+        
+        console.log('✅ Image uploaded successfully:', {
+            url: data.imageUrl,
+            category: data.category,
+            size: data.size,
+            public_id: data.public_id
+        });
+        
+        return data.imageUrl;
+    } catch (error) {
+        console.error('Image upload error:', error);
+        throw error;
+    }
 };
 
 export const createBlogPost = async (postData: Partial<BlogPost>, token?: string): Promise<BlogPost> => {
@@ -695,3 +728,197 @@ export const gradeAssignmentSubmission = async (submissionId: string, data: any)
     return response.json();
 };
 
+// Testimonials
+export interface Testimonial {
+    _id: string;
+    id?: string;
+    name: string;
+    course: string;
+    rating: number;
+    text: string;
+    image?: string;
+    approved?: boolean;
+    createdAt?: string;
+}
+
+export const getTestimonials = async () => {
+    const response = await fetch(`${API_URL}/testimonials`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if (!response.ok) {
+        throw new Error('Failed to fetch testimonials');
+    }
+    return response.json();
+};
+
+export const createTestimonial = async (data: Omit<Testimonial, '_id' | 'id'>) => {
+    const response = await fetchWithCreds(`${API_URL}/testimonials`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create testimonial');
+    }
+    return response.json();
+};
+
+export const updateTestimonial = async (id: string, data: Partial<Testimonial>) => {
+    const response = await fetchWithCreds(`${API_URL}/testimonials/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update testimonial');
+    }
+    return response.json();
+};
+
+export const deleteTestimonial = async (id: string) => {
+    const response = await fetchWithCreds(`${API_URL}/testimonials/${id}`, {
+        method: 'DELETE'
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to delete testimonial');
+    }
+    return response.json();
+};
+
+// ================== CHAT APIs ==================
+
+export const getConversations = async () => {
+    const response = await fetchWithCreds(`${API_URL}/chat/conversations`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch conversations');
+    }
+    return response.json();
+};
+
+export const getMessages = async (conversationId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/chat/conversations/${conversationId}/messages`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch messages');
+    }
+    return response.json();
+};
+
+export const createMessage = async (conversationId: string, text: string, fileUrl?: string, fileName?: string) => {
+    const url = `${API_URL}/chat/messages`;
+    console.log('[DEBUG] Creating message to:', url);
+    const response = await fetchWithCreds(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId, text, fileUrl, fileName })
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[ERROR] Response status:', response.status, 'Body:', errorText);
+        throw new Error(`Failed to send message: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+};
+
+export const getOrCreateConversation = async (userId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/chat/or-create/${userId}`);
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || 'Failed to get or create conversation');
+    }
+    return response.json();
+};
+
+export const createGroupConversation = async (name: string, participantIds: string[]) => {
+    const response = await fetchWithCreds(`${API_URL}/chat/group-conversation`, {
+        method: 'POST',
+        body: JSON.stringify({ name, participantIds })
+    });
+    if (!response.ok) {
+        throw new Error('Failed to create group conversation');
+    }
+    return response.json();
+};
+
+export const getAllUsersForChat = async () => {
+    const response = await fetchWithCreds(`${API_URL}/chat/users`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch users');
+    }
+    return response.json();
+};
+
+export const deleteConversation = async (conversationId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/chat/conversations/${conversationId}`, {
+        method: 'DELETE'
+    });
+    if (!response.ok) {
+        throw new Error('Failed to delete conversation');
+    }
+    return response.json();
+};
+
+// Notification APIs
+export const getNotifications = async () => {
+    const response = await fetchWithCreds(`${API_URL}/notifications`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch notifications');
+    }
+    return response.json();
+};
+
+export const getUnreadCount = async () => {
+    const response = await fetchWithCreds(`${API_URL}/notifications/unread/count`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch unread count');
+    }
+    return response.json();
+};
+
+export const markAsRead = async (notificationId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/notifications/${notificationId}/read`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) {
+        throw new Error('Failed to mark notification as read');
+    }
+    return response.json();
+};
+
+export const markAllAsRead = async () => {
+    const response = await fetchWithCreds(`${API_URL}/notifications/all/read`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) {
+        throw new Error('Failed to mark all as read');
+    }
+    return response.json();
+};
+
+export const deleteNotification = async (notificationId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/notifications/${notificationId}`, {
+        method: 'DELETE'
+    });
+    if (!response.ok) {
+        throw new Error('Failed to delete notification');
+    }
+    return response.json();
+};
+
+export const clearAllNotifications = async () => {
+    const response = await fetchWithCreds(`${API_URL}/notifications/all/clear`, {
+        method: 'DELETE'
+    });
+    if (!response.ok) {
+        throw new Error('Failed to clear notifications');
+    }
+    return response.json();
+};

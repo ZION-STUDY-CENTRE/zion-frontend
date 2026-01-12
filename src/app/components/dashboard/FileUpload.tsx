@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Alert, AlertDescription } from '../ui/alert';
 import { Loader2, Upload, Download, Trash2, FileUp } from 'lucide-react';
 import { uploadFileResource, deleteFileResource } from '../../services/api';
+import { showConfirm, showSuccess, showError } from '../../../utils/sweetAlert';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -111,13 +112,14 @@ export function FileUpload({ programId, files, onFileAdded, isInstructor }: File
   };
 
   const handleDelete = async (fileId: string) => {
-    if (confirm('Are you sure you want to delete this file?')) {
-      try {
-        await deleteFileResource(fileId);
-        onFileAdded();
-      } catch (err: any) {
-        setError(err.message || 'Failed to delete file');
-      }
+    const confirmed = await showConfirm('Delete File', 'Are you sure you want to delete this file?', 'Yes, delete it', 'Cancel');
+    if (!confirmed) return;
+    try {
+      await deleteFileResource(fileId);
+      showSuccess('File deleted successfully');
+      onFileAdded();
+    } catch (err: any) {
+      showError('Failed to delete', err.message || 'Failed to delete file');
     }
   };
 

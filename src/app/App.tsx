@@ -12,6 +12,8 @@ import HistoryPage from "./pages/HistoryPage";
 import { CourseDetailPage } from "./pages/CourseDetailPage";
 import { LoginPage } from "./pages/LoginPage";
 import { AuthProvider } from "./context/AuthContext";
+import { SocketProvider } from "./context/SocketContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AdminDashboard } from "./pages/dashboard/AdminDashboard";
 import { InstructorDashboard } from "./pages/dashboard/InstructorDashboard";
@@ -42,7 +44,9 @@ export default function App() {
     <Router>
       <ScrollToTop />
       <AuthProvider>
-        <Routes>
+        <SocketProvider>
+          <NotificationProvider>
+            <Routes>
           {/* Public Website Routes */}
           <Route element={<WebsiteLayout />}>
             <Route path="/" element={<HomePage />} />
@@ -100,7 +104,9 @@ export default function App() {
               </ProtectedRoute>
             } 
           />
-        </Routes>
+            </Routes>
+          </NotificationProvider>
+        </SocketProvider>
       </AuthProvider>
     </Router>
   );

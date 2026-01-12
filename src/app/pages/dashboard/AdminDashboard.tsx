@@ -11,6 +11,7 @@ import { Badge } from "../../components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog";
 import { Pencil, Trash2, Plus, X, Lock, RefreshCw, Trash } from "lucide-react";
 import { ChangePasswordDialog } from '../../components/ChangePasswordDialog';
+import { NotificationBell } from '../../components/NotificationBell';
 import { ProgramForm } from '../../components/dashboard/ProgramForm';
 import { 
     Program, 
@@ -27,6 +28,8 @@ import {
 } from '../../services/api';
 
 import { Pagination } from "../../components/Pagination";
+import { showSuccess, showError, showConfirm } from '../../../utils/sweetAlert';
+import { ChatComponent } from '../../components/ChatComponent';
 
 interface UserSummary {
   _id: string;
@@ -202,14 +205,15 @@ export function AdminDashboard() {
   };
 
   const handleDeleteProgram = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this program?")) return;
+    const confirmed = await showConfirm('Delete Program', 'Are you sure you want to delete this program?', 'Yes, delete it', 'Cancel');
+    if (!confirmed) return;
     try {
         
         await deleteProgram(id);
-        setMessage({ type: 'success', text: 'Program deleted successfully' });
+        showSuccess('Program deleted successfully');
         fetchPrograms();
     } catch (error: any) {
-        setMessage({ type: 'error', text: error.message });
+        showError('Failed to delete', error.message);
     }
   }
 
@@ -349,6 +353,13 @@ export function AdminDashboard() {
     return items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   };
 
+  const handleLogout = async () => {
+    const confirmed = await showConfirm('Logout', 'Are you sure you want to logout?', 'Yes, logout', 'Cancel');
+    if (confirmed) {
+      await logout();
+    }
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPagePrograms, currentPageAdmins, currentPageInstructors, currentPageStudents, currentPageMediaManagers]);
@@ -361,11 +372,12 @@ export function AdminDashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
           <p className="text-lg text-muted-foreground mt-2">Manage your institution from here.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+            <NotificationBell />
             <Button onClick={() => setIsChangePasswordOpen(true)} variant="outline">
                 <Lock className="w-4 h-4 mr-2" /> Change Password
             </Button>
-            <Button onClick={logout} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700">
+            <Button onClick={handleLogout} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700">
                 Logout
             </Button>
         </div>
@@ -382,6 +394,7 @@ export function AdminDashboard() {
           <TabsTrigger value="programs">Programs</TabsTrigger>
           <TabsTrigger value="users">Register Users</TabsTrigger>
           <TabsTrigger value="user-list">All Users</TabsTrigger>
+          <TabsTrigger value="chat">Chat</TabsTrigger>
         </TabsList>
         
         <TabsContent value="programs" className="space-y-4">
@@ -844,6 +857,11 @@ export function AdminDashboard() {
               </>
             )}
           </Tabs>
+        </TabsContent>
+
+        {/* Chat Tab */}
+        <TabsContent value="chat">
+          <ChatComponent />
         </TabsContent>
       </Tabs>
 

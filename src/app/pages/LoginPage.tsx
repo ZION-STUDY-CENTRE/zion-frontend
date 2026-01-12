@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import leftImage from "../../assets/building.jpg";
+import logo from "../../assets/logo.png";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Lock, Mail, Loader2 } from 'lucide-react';
@@ -170,7 +172,7 @@ export function LoginPage() {
       <div 
         className="hidden md:flex md:w-3/5 lg:w-2/3 bg-cover bg-center relative items-center justify-center"
         style={{
-          backgroundImage: 'url(/src/assets/building.jpg)',
+          backgroundImage: `url(${leftImage})`,
           backgroundPosition: 'center',
           backgroundSize: 'cover'
         }}
@@ -178,7 +180,7 @@ export function LoginPage() {
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 text-center text-white space-y-6 px-8">
           <div className="flex items-center justify-center gap-4">
-            <img src="/src/assets/logo.png" alt="Zion Logo" className="h-16 w-16 object-contain" />
+            <img src={logo} alt="Zion Logo" className="h-16 w-16 object-contain" />
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight">
               Zion Study Center
             </h1>

@@ -38,7 +38,7 @@ export interface BlogPost {
   description: string;
   shortDescription: string;
   timestamp: string | Date; // API returns string usually
-  image: string | null;
+  image: any;
 }
 
 export interface GalleryItem {

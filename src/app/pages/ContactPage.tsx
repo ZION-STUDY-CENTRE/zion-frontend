@@ -243,12 +243,10 @@ export function ContactPage() {
       </section>
 
       {/* Map Section */}
-      <section className=" bg-gray-50">
-        <div className="container-fluid">
-          <div className="bg-black/20 rounded-lg overflow-hidden" >
-            <div className="order-2 lg:order-1">
-            <MapEmbed lat={officeLat} lng={officeLng} address={officeAddress} height="450px" />
-          </div>
+      <section className="w-full bg-gray-50 py-12 md:py-0 md:h-screen md:max-h-screen md:min-h-screen flex flex-col md:m-0 md:p-0">
+        <div className="w-full h-full flex-1 px-0 md:m-0 md:p-0">
+          <div className="w-full h-64 sm:h-80 md:h-full md:max-h-screen overflow-hidden md:m-0 md:p-0">
+            <MapEmbed lat={officeLat} lng={officeLng} address={officeAddress} width="100%" />
           </div>
         </div>
       </section>

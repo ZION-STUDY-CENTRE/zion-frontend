@@ -5,6 +5,7 @@ import { Label } from '../ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Loader2, Download, Save } from 'lucide-react';
+import { showSuccess, showError } from '../../../utils/sweetAlert';
 import { getAssignmentSubmissions, gradeAssignmentSubmission } from '../../services/api';
 
 interface SubmissionViewProps {
@@ -74,9 +75,9 @@ export function SubmissionView({ assignmentId, onBack }: SubmissionViewProps) {
       ));
 
       setEditingId(null);
-      alert('Grade saved successfully!');
+      showSuccess('Grade saved successfully!');
     } catch (err: any) {
-      alert(err.message || 'Failed to save grade');
+      showError('Failed to save', err.message || 'Failed to save grade');
     } finally {
       setSaving(false);
     }

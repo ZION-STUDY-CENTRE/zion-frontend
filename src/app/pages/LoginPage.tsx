@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from "../components/ui/button";
@@ -18,8 +18,15 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   
-  const { login, updateUser, user } = useAuth();
+  const { login, updateUser, user, loading } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect to dashboard if user is already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      redirectBasedOnRole(user.role);
+    }
+  }, [user, loading]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,6 +148,18 @@ export function LoginPage() {
             </form>
           </CardContent>
         </Card>
+      </div>
+    );
+  }
+
+  // Show loading screen if auth is still loading and user exists (redirecting)
+  if (loading && user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">Redirecting to your dashboard...</p>
+        </div>
       </div>
     );
   }

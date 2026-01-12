@@ -14,6 +14,17 @@ import image_9 from '../../assets/425316029_889881139813236_713455906063210211_n
 import image_10 from '../../assets/banner/sat.jpg';
 import image_11 from '../../assets/banner/up.jpg'; 
 import image_12 from '../../assets/new1.jpg';
+import image_2 from '../../assets/img5000.jpg'; 
+import image_3 from '../../assets/img9224.jpeg';
+import image_4 from '../../assets/babs04.jpg';
+import image_5 from '../../assets/img4935.jpg'; 
+import image_6 from '../../assets/img4954.jpg';
+import image_7 from  '../../assets/img5009.jpg';
+import image_8 from '../../assets/ict.jpg';
+import image_9 from '../../assets/img9222.jpeg'; 
+import image_10 from '../../assets/img4925.jpg';
+import image_11 from '../../assets/img9220.jpeg'; 
+import image_12 from '../../assets/img5012.jpg';
 
 const ParallaxSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);

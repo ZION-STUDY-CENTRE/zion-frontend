@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { sendEmail } from "../services/api";
-import { MapPin, Phone, Mail, Clock, Loader2 } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Loader2, CircleCheck, ArrowRight } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
@@ -16,16 +17,22 @@ export function ContactPage() {
       message: ''
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [submittedSubject, setSubmittedSubject] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
 
     try {
+      // Capture subject before clearing form
+      const currentSubject = formData.subject;
+      
       await sendEmail('contact', formData);
+      
       setStatus('success');
+      setSubmittedSubject(currentSubject);
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' }); // Reset form
-      alert('Message sent successfully!');
+      // Alert removed in favor of UI change
     } catch (error) {
       console.error(error);
       setStatus('error');
@@ -124,79 +131,112 @@ export function ContactPage() {
 
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white p-8 rounded-lg shadow-md border">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="fullName">Full Name *</Label>
-                      <Input
-                        id="fullName"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Enter your full name"
-                        required
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Email Address *</Label>
-                      <Input
-                        id="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        type="email"
-                        placeholder="your.email@example.com"
-                        required
-                        className="mt-1"
-                      />
-                    </div>
+              {status === 'success' ? (
+                <div className="bg-white p-8 md:p-12 rounded-lg shadow-md border text-center h-full flex flex-col items-center justify-center">
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CircleCheck className="text-green-600" size={48} />
                   </div>
+                  
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                    Message Received!
+                  </h2>
+                  
+                  <p className="text-lg text-gray-600 mb-8">
+                    Thank you, we've received your message about <span className="font-semibold text-gray-900">"{submittedSubject}"</span>.
+                  </p>
 
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="phone">Phone Number *</Label>
-                      <Input
-                        id="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        type="tel"
-                        placeholder="+234 123 456 7890"
-                        required
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="subject">Subject *</Label>
-                      <Input
-                        id="subject"
-                        value={formData.subject}
-                        onChange={handleInputChange}
-                        placeholder="What is this about?"
-                        required
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="message">Message *</Label>
-                    <Textarea
-                      id="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      placeholder="Tell us more about your inquiry..."
-                      rows={6}
-                      required
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <Button type="submit" size="lg" className="w-full md:w-auto bg-blue-700 hover:bg-blue-800" disabled={status === 'loading'}>
-                    {status === 'loading' ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...</> : 'Send Message'}
+                  <Button asChild size="lg" className="bg-blue-700 hover:bg-blue-800">
+                    <Link to="/">
+                      <ArrowRight className="mr-2" size={20} />
+                      Back to Home
+                    </Link>
                   </Button>
-                </form>
-              </div>
+                  
+                  <div className="mt-6">
+                    <Button 
+                        variant="link" 
+                        onClick={() => setStatus('idle')} 
+                        className="text-gray-500 hover:text-gray-700"
+                    >
+                        Send another message
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white p-8 rounded-lg shadow-md border">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="fullName">Full Name *</Label>
+                        <Input
+                          id="fullName"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          placeholder="Enter your full name"
+                          required
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Email Address *</Label>
+                        <Input
+                          id="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          type="email"
+                          placeholder="your.email@example.com"
+                          required
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="phone">Phone Number *</Label>
+                        <Input
+                          id="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          type="tel"
+                          placeholder="+234 123 456 7890"
+                          required
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="subject">Subject *</Label>
+                        <Input
+                          id="subject"
+                          value={formData.subject}
+                          onChange={handleInputChange}
+                          placeholder="What is this about?"
+                          required
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="message">Message *</Label>
+                      <Textarea
+                        id="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        placeholder="Tell us more about your inquiry..."
+                        rows={6}
+                        required
+                        className="mt-1"
+                      />
+                    </div>
+
+                    <Button type="submit" size="lg" className="w-full md:w-auto bg-blue-700 hover:bg-blue-800" disabled={status === 'loading'}>
+                      {status === 'loading' ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...</> : 'Send Message'}
+                    </Button>
+                  </form>
+                </div>
+              )}
             </div>
           </div>
         </div>

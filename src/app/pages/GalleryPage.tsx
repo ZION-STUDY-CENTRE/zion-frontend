@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { getGalleryItems, GalleryItem } from '../services/api';
 import { Pagination } from '../components/Pagination';
+import { getOptimizedImageUrl } from '../../utils/cloudinaryOptimization';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -90,9 +91,11 @@ export function GalleryPage() {
                     className={`relative overflow-hidden rounded-xl shadow-md group ${getSpanClass(index)} ${index === 0 ? 'md:col-start-1 md:row-start-1' : ''} transition-all duration-300 hover:scale-[1.02]`}
                 >
                     <img 
-                        src={item.img} 
+                        src={getOptimizedImageUrl(item.img, 'gallery')} 
                         alt={item.title} 
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                        decoding="async"
                     />
                     <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-100">
                         <h3 className="text-white font-medium text-lg tracking-wide border-l-4 border-blue-500 pl-3">

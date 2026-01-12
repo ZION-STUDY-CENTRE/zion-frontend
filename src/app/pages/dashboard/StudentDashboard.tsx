@@ -6,8 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Badge } from "../../components/ui/badge";
 import { CalendarIcon, BookOpenIcon, UserIcon, Lock, Download, Clock, CheckCircle, Send } from "lucide-react";
 import { ChangePasswordDialog } from "../../components/ChangePasswordDialog";
+import { NotificationBell } from "../../components/NotificationBell";
 import { getStudentProgram, getAssignments, getQuizzes, getFileResources, getQuiz, submitAssignment, getMyAssignmentSubmission } from '../../services/api';
 import { QuizTake } from '../../components/dashboard/QuizTake';
+import { ChatComponent } from '../../components/ChatComponent';
+import { showSuccess, showError, showConfirm } from '../../../utils/sweetAlert';
 
 interface Program {
   _id: string;
@@ -126,9 +129,9 @@ export function StudentDashboard() {
         [assignmentId]: { file, url: data.imageUrl }
       }));
       
-      alert('File uploaded successfully! Now click "Turn In" to submit.');
+      showSuccess('Upload Complete!', 'File uploaded successfully! Now click "Turn In" to submit.');
     } catch (error: any) {
-      alert(error.message || 'File upload failed');
+      showError('Upload Failed', error.message || 'File upload failed');
     } finally {
       setUploadingFile(prev => ({ ...prev, [assignmentId]: false }));
     }
@@ -152,11 +155,18 @@ export function StudentDashboard() {
         [assignmentId]: submission
       }));
       
-      alert('Assignment submitted successfully!');
+      showSuccess('Success!', 'Assignment submitted successfully!');
     } catch (error: any) {
-      alert(error.message || 'Failed to submit assignment');
+      showError('Submission Failed', error.message || 'Failed to submit assignment');
     } finally {
       setSubmittingId(null);
+    }
+  };
+
+  const handleLogout = async () => {
+    const confirmed = await showConfirm('Logout', 'Are you sure you want to logout?', 'Yes, logout', 'Cancel');
+    if (confirmed) {
+      await logout();
     }
   };
 
@@ -167,11 +177,12 @@ export function StudentDashboard() {
             <h1 className="text-3xl font-bold tracking-tight">Student Portal</h1>
             <p className="text-lg text-muted-foreground mt-2">Welcome back, {user?.name}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+            <NotificationBell />
             <Button onClick={() => setIsChangePasswordOpen(true)} variant="outline">
                 <Lock className="w-4 h-4 mr-2" /> Change Password
             </Button>
-            <Button onClick={logout} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700">
+            <Button onClick={handleLogout} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700">
                 Logout
             </Button>
         </div>
@@ -225,11 +236,12 @@ export function StudentDashboard() {
             {/* Tabs for Materials/Assignments/Quizzes */}
             {program && (
                 <Tabs defaultValue="materials" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
+                    <TabsList className="grid w-full grid-cols-5">
                         <TabsTrigger value="materials">Study Materials</TabsTrigger>
                         <TabsTrigger value="assignments">Assignments</TabsTrigger>
                         <TabsTrigger value="quizzes">Quizzes</TabsTrigger>
                         <TabsTrigger value="progress">Progress</TabsTrigger>
+                        <TabsTrigger value="chat">Chat</TabsTrigger>
                     </TabsList>
 
                     {/* Study Materials Tab */}
@@ -569,6 +581,11 @@ export function StudentDashboard() {
                                 <p className="text-sm text-gray-600 italic pt-4 border-t">Keep working on your assignments and quizzes to improve your progress! Check your feedback in the Assignments and Quizzes tabs.</p>
                             </CardContent>
                         </Card>
+                    </TabsContent>
+
+                    {/* Chat Tab */}
+                    <TabsContent value="chat">
+                        <ChatComponent />
                     </TabsContent>
                 </Tabs>
             )}

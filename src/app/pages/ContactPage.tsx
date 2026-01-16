@@ -50,8 +50,8 @@ export function ContactPage() {
   };
 
   const officeAddress = "Zion Study Centre, ZION TOWERS OPPOSITE MTN OFFICE ALONG GENERAL HOSPITAL KUBWA Abuja, FCT Off nadrem supermarket before UBA, Kubwa";
-  const officeLat = 9.149028;
-  const officeLng = 7.279051;
+  const officeLat = 9.154515855422833;
+  const officeLng = 7.338470986492352;
 
   return (
     <div className="min-h-screen">

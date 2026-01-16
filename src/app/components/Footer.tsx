@@ -97,14 +97,13 @@ export function Footer() {
               <li className="flex items-start gap-2">
                 <MapPin size={16} className="text-blue-500 mt-1 flex-shrink-0" />
                 <span className="text-gray-400">
-                  123 Education Street,<br />
-                  Victoria Island, Lagos,<br />
-                  Nigeria
+                  ZION TOWERS OPPOSITE MTN OFFICE ALONG GENERAL HOSPITAL, <br/>
+                  KUBWA Abuja.
                 </span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} className="text-blue-500 flex-shrink-0" />
-                <span className="text-gray-400">+234 123 456 7890</span>
+                <span className="text-gray-400">+234 803 329 7541 OR +234 817 938 3426</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={16} className="text-blue-500 flex-shrink-0" />

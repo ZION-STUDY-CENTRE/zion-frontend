@@ -167,7 +167,7 @@ export function AboutPage() {
         </div>
         <article className="bg-gray-50 relative z-20 flex justify-center py-6 text-center ">
           <div className="w-[90%] lg:w-[80%] py-4 lg:py-8">
-            <p className="text-xl lg:text-4xl leading-9"><span className="font-medium">Zion study Centre and Leadership Academy (Limited) is a leading provider of</span> <i>structrued and sound education</i> in relationship to JAMB, International Certification and Technology. Although proudly rooted in <i>Abuja</i>, our commitment and impact are <i>global.</i></p>
+            <p className="text-xl lg:text-4xl leading-12"><span className="font-medium">Zion study Centre and Leadership Academy Limited was born in the year 2002 and incorporated after 10 years.</span> It's more than an extra-moral but a study center with a great vision. We are committed to providing quality education and training to individuals seeking to enhance their knowledge and skills in various fields. Our mission is to empower our students to achieve their academic and professional goals through innovative teaching methods, practical learning experiences, and a supportive learning environment.</p>
           </div>
         </article>
       </section>
@@ -190,7 +190,7 @@ export function AboutPage() {
                 <p>
                   Founded in 2009, Zion Study Centre began with a simple mission: to provide accessible, high-quality education and training to students and professionals seeking to advance their careers and academic achievements.
                 </p>
-                <button className="bg-transparent text-white py-2 px-8 border-1 border-white">Read More</button>
+                <Link to="/futures" className="inline-block bg-transparent text-white py-2 px-8 border border-white hover:bg-white hover:text-blue-700 transition duration-300">Read More</Link>
               </div>
             </div>
           </div>
@@ -273,7 +273,7 @@ export function AboutPage() {
       </section>
 
       {/* Achievements */}
-      <section className="py-16 md:py-24 bg-blue-50">
+      {/* <section className="py-16 md:py-24 bg-blue-50">
         <div className="container mx-auto px-4 lg:px-16">
            <h1 className="text-2xl md:text-3xl text-gray-900 mb-12 font-extrabold">Our Latest News and Achievement</h1>
 
@@ -299,7 +299,7 @@ export function AboutPage() {
             } 
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA */}
       <section className="py-16 md:py-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white">

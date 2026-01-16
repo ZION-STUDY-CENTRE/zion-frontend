@@ -9,7 +9,7 @@ import logo from "../../assets/logo.png";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Lock, Mail, Loader2 } from 'lucide-react';
-import { loginUser, changeInitialPassword } from '../services/api';
+import { loginUser, changeInitialPassword, resendVerificationEmail } from '../services/api';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -17,6 +17,7 @@ export function LoginPage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   
@@ -49,9 +50,29 @@ export function LoginPage() {
         redirectBasedOnRole(userData.role);
       }
     } catch (err: any) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      if (err.code === 'EMAIL_NOT_VERIFIED') {
+        setUnverifiedEmail(err.email || email);
+        setError('Please verify your email address before logging in.');
+      } else {
+        setError(err.message || 'Login failed. Please check your credentials.');
+      }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!unverifiedEmail) return;
+    setIsLoading(true);
+    try {
+        await resendVerificationEmail(unverifiedEmail);
+        alert('Verification email sent! Please check your inbox.');
+        setError(''); 
+        setUnverifiedEmail(null);
+    } catch (err: any) {
+        alert(err.message || 'Failed to send email');
+    } finally {
+        setIsLoading(false);
     }
   };
 
@@ -207,7 +228,20 @@ export function LoginPage() {
             <form onSubmit={handleLogin} className="space-y-5">
               {error && (
                 <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
+                  <AlertDescription className="flex flex-col gap-2">
+                       <span>{error}</span>
+                       {unverifiedEmail && (
+                           <Button 
+                               type="button" 
+                               variant="outline" 
+                               size="sm" 
+                               onClick={handleResendVerification}
+                               className="w-full mt-2 bg-white text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                           >
+                               {isLoading ? 'Sending...' : 'Resend Verification Email'}
+                           </Button>
+                       )}
+                  </AlertDescription>
                 </Alert>
               )}
 

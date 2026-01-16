@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import logo from '../../assets/logo.png';
 import { getGalleryItems, GalleryItem } from '../services/api';
 import { Pagination } from '../components/Pagination';
 import { getOptimizedImageUrl } from '../../utils/cloudinaryOptimization';
@@ -78,7 +79,10 @@ export function GalleryPage() {
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className=" mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-blue-900 mb-4">Zion Gallery</h1>
+          <h1 className="text-4xl font-extrabold text-blue-900 mb-4">ECHOES FROM</h1>
+          <h1 className="text-9xl font-extrabold text-blue-900 mb-4 flex items-center justify-center">ZI<img src={logo} alt="Zion Logo" className="inline-block w-32 h-32 -mr-1" />N</h1>
+          
+          <h1 className="text-4xl font-extrabold text-blue-200 mb-4">Photo Gallery</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Experience the vibrant atmosphere of Zion Study Centre through moments captured around our campus.
           </p>

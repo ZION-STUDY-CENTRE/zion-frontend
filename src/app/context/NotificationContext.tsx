@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { getNotifications, getUnreadCount, markAsRead, markAllAsRead } from '../services/api';
+import { getNotifications, getUnreadCount, markAsRead, markAllAsRead, deleteNotification } from '../services/api';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
 
@@ -21,6 +21,7 @@ interface NotificationContextType {
   fetchUnreadCount: () => Promise<void>;
   markAsReadLocal: (notificationId: string) => Promise<void>;
   markAllAsReadLocal: () => Promise<void>;
+  deleteNotificationLocal: (notificationId: string) => Promise<void>;
   addNotification: (notification: Notification) => void;
   clearNotifications: () => void;
 }
@@ -36,20 +37,24 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // Fetch notifications from API
   const fetchNotifications = useCallback(async () => {
     try {
+      console.log('[NotificationContext] 🔄 Fetching notifications...');
       const data = await getNotifications();
+      console.log('[NotificationContext] ✅ Notifications fetched:', data);
       setNotifications(data);
     } catch (error) {
-      console.error('Failed to fetch notifications:', error);
+      console.error('[NotificationContext] ❌ Failed to fetch notifications:', error);
     }
   }, []);
 
   // Fetch unread count
   const fetchUnreadCount = useCallback(async () => {
     try {
+      console.log('[NotificationContext] 🔄 Fetching unread count...');
       const data = await getUnreadCount();
+      console.log('[NotificationContext] ✅ Unread count fetched:', data);
       setUnreadCount(data.unreadCount);
     } catch (error) {
-      console.error('Failed to fetch unread count:', error);
+      console.error('[NotificationContext] ❌ Failed to fetch unread count:', error);
     }
   }, []);
 
@@ -92,6 +97,17 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setNotifications([]);
     setUnreadCount(0);
   }, []);
+
+  // Delete a notification
+  const deleteNotificationLocal = useCallback(async (notificationId: string) => {
+    try {
+      await deleteNotification(notificationId);
+      setNotifications(prev => prev.filter(n => n._id !== notificationId));
+      await fetchUnreadCount();
+    } catch (error) {
+      console.error('Failed to delete notification:', error);
+    }
+  }, [fetchUnreadCount]);
 
   // Listen for real-time notifications via Socket.io
   useEffect(() => {
@@ -167,13 +183,19 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   // Fetch initial notifications on mount (only if authenticated)
   useEffect(() => {
-    if (!user) return; // Don't fetch if not authenticated
+    console.log('[NotificationContext] 📋 useEffect triggered. User:', user?.id);
+    if (!user) {
+      console.log('[NotificationContext] ⏸️ No user, skipping notification fetch');
+      return;
+    }
 
+    console.log('[NotificationContext] 👤 User found, fetching notifications...');
     fetchNotifications();
     fetchUnreadCount();
 
     // Refresh every 30 seconds
     const interval = setInterval(() => {
+      console.log('[NotificationContext] 🔄 Periodic unread count refresh');
       fetchUnreadCount();
     }, 30000);
 
@@ -189,6 +211,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         fetchUnreadCount,
         markAsReadLocal,
         markAllAsReadLocal,
+        deleteNotificationLocal,
         addNotification,
         clearNotifications
       }}

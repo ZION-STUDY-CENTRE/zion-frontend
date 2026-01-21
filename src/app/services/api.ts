@@ -411,12 +411,6 @@ export const sendEmail = async (type: 'contact' | 'admission', data: any) => {
         });
 
         if (!response.ok) {
-<<<<<<< HEAD
-            throw new Error('Failed to send email');
-        }
-        return await response.json();
-    } catch (error) {
-=======
             let errorMessage = 'Failed to send email';
             try {
                 const errorData = await response.json();
@@ -431,7 +425,6 @@ export const sendEmail = async (type: 'contact' | 'admission', data: any) => {
         return await response.json();
     } catch (error) {
         console.error("API sendEmail error:", error);
->>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
         throw error;
     }
 };
@@ -743,11 +736,7 @@ export interface Testimonial {
     course: string;
     rating: number;
     text: string;
-<<<<<<< HEAD
-    image?: string;
-=======
     image?: any;
->>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
     approved?: boolean;
     createdAt?: string;
 }
@@ -858,11 +847,20 @@ export const createGroupConversation = async (name: string, participantIds: stri
 };
 
 export const getAllUsersForChat = async () => {
-    const response = await fetchWithCreds(`${API_URL}/chat/users`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch users');
+    try {
+        const response = await fetchWithCreds(`${API_URL}/chat/users`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('[API] Failed to fetch chat users:', response.status, errorData);
+            throw new Error(errorData.error || 'Failed to fetch users');
+        }
+        const data = await response.json();
+        console.log('[API] Chat users fetched:', data.length, 'users');
+        return data;
+    } catch (error) {
+        console.error('[API] Error in getAllUsersForChat:', error);
+        throw error;
     }
-    return response.json();
 };
 
 export const deleteConversation = async (conversationId: string) => {

@@ -223,7 +223,7 @@ export function InstructorDashboard() {
             {showAssignmentForm ? (
               <div>
                 <AssignmentForm
-                  programId={selectedProgram._id}
+                  programId={selectedProgram!._id}
                   onSuccess={() => {
                     setShowAssignmentForm(false);
                     if (selectedProgram) {
@@ -236,7 +236,7 @@ export function InstructorDashboard() {
             ) : showQuizForm ? (
               <div>
                 <QuizForm
-                  programId={selectedProgram._id}
+                  programId={selectedProgram!._id}
                   onSuccess={() => {
                     setShowQuizForm(false);
                     if (selectedProgram) {
@@ -447,7 +447,7 @@ export function InstructorDashboard() {
                 {/* Files Tab */}
                 <TabsContent value="files">
                   <FileUpload
-                    programId={selectedProgram._id}
+                    programId={selectedProgram!._id}
                     files={files}
                     onFileAdded={() => {
                       if (selectedProgram) {

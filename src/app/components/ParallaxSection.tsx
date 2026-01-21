@@ -3,19 +3,6 @@ import logo from "../../assets/logo.png";
 import { Link } from 'react-router-dom';
 
 import image_1 from '../../assets/ict.jpg';
-<<<<<<< HEAD
-import image_2 from '../../assets/new.jpg'; 
-import image_3 from '../../assets/banner/one.jpg';
-import image_4 from '../../assets/building.jpg';
-import image_5 from '../../assets/babat.jpg'; 
-import image_6 from '../../assets/380744119_780266217441396_1983891642942690767_n.jpg';
-import image_7 from  '../../assets/412657755_18238667398219159_7415258944157009743_n.jpg';
-import image_8 from '../../assets/banner/bk.jpg';
-import image_9 from '../../assets/425316029_889881139813236_713455906063210211_n.jpg'; 
-import image_10 from '../../assets/banner/sat.jpg';
-import image_11 from '../../assets/banner/up.jpg'; 
-import image_12 from '../../assets/new1.jpg';
-=======
 import image_2 from '../../assets/img5000.jpg'; 
 import image_3 from '../../assets/img9224.jpeg';
 import image_4 from '../../assets/babs04.jpg';
@@ -27,7 +14,6 @@ import image_9 from '../../assets/img9222.jpeg';
 import image_10 from '../../assets/img4925.jpg';
 import image_11 from '../../assets/img9220.jpeg'; 
 import image_12 from '../../assets/img5012.jpg';
->>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
 
 const ParallaxSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);

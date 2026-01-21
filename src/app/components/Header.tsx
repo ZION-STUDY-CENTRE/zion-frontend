@@ -250,9 +250,6 @@ export function Header() {
       </div>
     </header>
       
-<<<<<<< HEAD
-      {isSearchOpen && <SearchCourse onClose={() => setIsSearchOpen(false)} />}
-=======
       {isSearchOpen && 
         <div 
           className="fixed h-screen w-screen top-0 left-0 z-[100] flex justify-center items-start pt-[10vh]"
@@ -272,7 +269,6 @@ export function Header() {
           </div>
         </div>
       }
->>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
     </>
   )
 }

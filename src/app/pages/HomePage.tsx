@@ -139,11 +139,7 @@ export function HomePage() {
             className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out group-hover:scale-110 ${
               index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
-<<<<<<< HEAD
-            style={{ backgroundImage: `url(${latestPost ? latestPost.image : image})` }}
-=======
             style={{ backgroundImage: `url(${image})` }}
->>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
           />
         ))}
         
@@ -231,10 +227,7 @@ export function HomePage() {
                         <img 
                           src={course.heroImage || course.imageUrl} 
                           alt={course.title}
-<<<<<<< HEAD
-=======
                           loading="lazy"
->>>>>>> 97b6d22c93b8a8b33b0132ef20a875b26d38a70b
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>

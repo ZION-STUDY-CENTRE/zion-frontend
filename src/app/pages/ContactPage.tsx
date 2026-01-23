@@ -86,9 +86,9 @@ export function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Visit Us</h3>
                     <p className="text-gray-600 text-sm">
-                      123 Education Street,<br />
-                      Victoria Island, Lagos,<br />
-                      Nigeria
+                      ZION TOWERS OPPOSITE MTN OFFICE ALONG <br />
+                       GENERAL HOSPITAL,<br />
+                        KUBWA Abuja.
                     </p>
                   </div>
                 </div>
@@ -99,8 +99,8 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
-                    <p className="text-gray-600 text-sm">+234 123 456 7890</p>
-                    <p className="text-gray-600 text-sm">+234 098 765 4321</p>
+                    <p className="text-gray-600 text-sm">+234 803 329 7541</p>
+                    <p className="text-gray-600 text-sm">+234 817 938 3426</p>
                   </div>
                 </div>
 
@@ -111,7 +111,6 @@ export function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Email Us</h3>
                     <p className="text-gray-600 text-sm">zionstudycenter@gmail.com</p>
-                    <p className="text-gray-600 text-sm">admissions@zionstudycentre.com</p>
                   </div>
                 </div>
 

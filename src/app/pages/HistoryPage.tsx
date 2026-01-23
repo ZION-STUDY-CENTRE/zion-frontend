@@ -113,7 +113,7 @@ const HistoryPage = () => {
             {/* The Journey Section */}
             <section className="bg-white py-16 md:py-24">
                 <div className="max-w-4xl mx-auto px-6 md:px-8">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Story</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Story in  Zion</h2>
                     <div className="space-y-6">
                         <p className="text-gray-700 text-lg leading-relaxed">
                             Zion Study Centre was established in the year 2000 and has since evolved into a reputable institution dedicated to academic excellence. Over the past two decades, we have proudly groomed more than 5,000 students, equipping them with the knowledge and skills necessary to succeed in their academic and professional pursuits.

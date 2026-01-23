@@ -65,28 +65,28 @@ export function AboutPage() {
       id:1,
       image: heroImage,
       title: "Who are we",
-      description: "We strive for the highest standards in education and training delivery.",
+      description: "We deliver quality education to thousands of students across West Africa in JAMB preparation, international certifications, and professional development programs. Our commitment to accessibility and excellence drives everything we do.",
       other: 'modal',
     },
     {
       id:2,
       image: classRoom,
       title: "What we do",
-      description: "Honesty and transparency in all our dealings with students and partners.",
+      description: "We provide comprehensive exam preparation, certification training, and professional development programs. From JAMB to international qualifications, our expert-led courses equip students with knowledge and practical skills for success.",
       other: 'modal',
     },
     {
       id:3,
       image: pioneer,
       title: "What makes us unique",
-      description: "Every decision we make is focused on student success and wellbeing.",
+      description: "With 15+ years of excellence, proven 95% success rate, expert instructors, small class sizes, and comprehensive support systems. We prioritize student outcomes and create lasting impact in professional development.",
       other: 'modal',
     },
     {
       id:4,
       image: heroImage,
       title: "Our Mission",
-      description: "o provide world-class education and professional training that equips students with the knowledge, skills, and confidence needed to excel in their academic pursuits and professional careers, while maintaining the highest standards of integrity and excellence.",
+      description: "To provide world-class education and professional training that equips students with the knowledge, skills, and confidence needed to excel in their academic pursuits and professional careers, while maintaining the highest standards of integrity and excellence.",
       other: 'modal',
     },
     {
@@ -111,19 +111,19 @@ export function AboutPage() {
       id:1,
       image: heroImage,
       title: "Best Training Institute Award",
-      description: "Recognized for excellence in professional training, 2022",
+      description: "Recognized for excellence in professional training and student outcomes — January 2026",
     },
     {
       id:2,
-      image: heroImage,
-      title: "5,000+ Graduates",
-      description: "Honesty and transparency in all our dealings with students and partners.",
+      image: classRoom,
+      title: "5,000+ Successful Graduates",
+      description: "Celebrated milestone of 5,000 students trained and certified across all programs since founding — January 2026",
     },
     {
       id:3,
-      image: heroImage,
-      title: "95% Success Rate",
-      description: "Consistent high performance in exam preparation and certification",
+      image: pioneer,
+      title: "95% Success Rate Achievement",
+      description: "Consistent high performance across exam preparation, JAMB, and certification programs — January 2026",
     },
   ];
 
@@ -167,7 +167,7 @@ export function AboutPage() {
         </div>
         <article className="bg-gray-50 relative z-20 flex justify-center py-6 text-center ">
           <div className="w-[90%] lg:w-[80%] py-4 lg:py-8">
-            <p className="text-xl lg:text-4xl leading-9"><span className="font-medium">Zion study Centre and Leadership Academy (Limited) is a leading provider of</span> <i>structrued and sound education</i> in relationship to JAMB, International Certification and Technology. Although proudly rooted in <i>Abuja</i>, our commitment and impact are <i>global.</i></p>
+            <p className="text-xl lg:text-3xl leading-9"><span className="font-medium">Zion Study Centre and Leadership Academy (Limited) is a leading provider of</span> <i>structured and sound education</i> in JAMB preparation, International Certification, and Technology training. <span className="font-medium">Serving 5,000+ graduates across West Africa with a 95% success rate.</span> Although proudly rooted in <i>Abuja</i>, our commitment and impact are <i>global.</i></p>
           </div>
         </article>
       </section>
@@ -301,6 +301,31 @@ export function AboutPage() {
         </div>
       </section>
 
+      {/* Key Stats */}
+      <section className="py-16 md:py-24 bg-blue-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">Our Impact by Numbers</h2>
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">15+</h3>
+              <p className="text-xl text-gray-700">Years of Excellence</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">5,000+</h3>
+              <p className="text-xl text-gray-700">Successful Graduates</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">95%</h3>
+              <p className="text-xl text-gray-700">Success Rate</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">West Africa</h3>
+              <p className="text-xl text-gray-700">Service Coverage</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 md:py-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white">
         <div className="container mx-auto px-4 text-center">
@@ -308,7 +333,7 @@ export function AboutPage() {
             Join Our Community of Successful Students
           </h2>
           <p className="text-xl mb-8 text-blue-100 max-w-2xl mx-auto">
-            Experience the difference that quality education makes.
+            Experience the difference that quality education and expert guidance can make in your career.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-amber-600 hover:bg-amber-700" asChild>

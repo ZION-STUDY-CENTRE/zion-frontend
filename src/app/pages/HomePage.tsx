@@ -261,6 +261,26 @@ export function HomePage() {
       {/* Parallax Section */}
       <ParallaxSection />
 
+      {/* Video Section */}
+      <section className="bg-white py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-6 md:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
+          <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg">
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              title="Zion Study Centre"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+          <p className="text-gray-600 text-center mt-6">
+              Watch our journey and learn more about Zion Study Centre and Leadership Academy
+          </p>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">

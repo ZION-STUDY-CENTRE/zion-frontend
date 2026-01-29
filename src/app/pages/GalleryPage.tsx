@@ -129,7 +129,7 @@ export function GalleryPage() {
                     <img 
                         src={getOptimizedImageUrl(item.img, 'gallery')} 
                         alt={item.title} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-cover object-left transition-transform duration-500 group-hover:scale-110"
                         loading="lazy"
                         decoding="async"
                     />

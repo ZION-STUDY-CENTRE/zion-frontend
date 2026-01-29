@@ -2,9 +2,15 @@ import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Target, Eye, Award, Users, TrendingUp, Heart, Tag } from "lucide-react";
 
-import heroImage from '../../assets/SenateHouse.jpg';
-import anotherHeroImage from '../../assets/bk3.jpg';
-import classRoom from '../../assets/287522350_1387577808421737_4478080586879130110_n.jpg';
+import heroImage from '../../assets/babat.jpg';
+import whoWeAre from '../../assets/refined/zionStaffs.jpeg';
+import whatWeDo from '../../assets/refined/dataAnalysisClass.jpeg';
+import students from '../../assets/refined/codingStudents.jpeg';
+import vision from '../../assets/refined/zionTowersTwo.jpeg';
+import history from '../../assets/new.jpg';
+import unique from '../../assets/refined/students.jpeg';
+import anotherHeroImage from '../../assets/refined/zionTowersThree.jpeg';
+import classRoom from '../../assets/refined/Director.jpeg';
 import pioneer from '../../assets/babat.jpg';
 import { useState, useEffect } from "react";
 
@@ -63,42 +69,42 @@ export function AboutPage() {
   const findOutMore = [
     {
       id:1,
-      image: heroImage,
+      image: whoWeAre,
       title: "Who are we",
       description: "We strive for the highest standards in education and training delivery.",
       other: 'modal',
     },
     {
       id:2,
-      image: classRoom,
+      image: unique,
       title: "What we do",
       description: "Honesty and transparency in all our dealings with students and partners.",
       other: 'modal',
     },
     {
       id:3,
-      image: pioneer,
+      image: whatWeDo,
       title: "What makes us unique",
       description: "Every decision we make is focused on student success and wellbeing.",
       other: 'modal',
     },
     {
       id:4,
-      image: heroImage,
+      image: students,
       title: "Our Mission",
-      description: "o provide world-class education and professional training that equips students with the knowledge, skills, and confidence needed to excel in their academic pursuits and professional careers, while maintaining the highest standards of integrity and excellence.",
+      description: "To provide world-class education and professional training that equips students with the knowledge, skills, and confidence needed to excel in their academic pursuits and professional careers, while maintaining the highest standards of integrity and excellence.",
       other: 'modal',
     },
     {
       id:5,
-      image: heroImage,
+      image: vision,
       title: "Our Vision",
       description: "To be the leading multi-disciplinary educational institution in Nigeria and West Africa, recognized for our exceptional training quality, student success rates, and contribution to developing skilled professionals who drive societal and economic growth.",
       other: 'modal',
     },
     {
       id:6,
-      image: heroImage,
+      image: history,
       title: "Our History",
       description: "Founded in 2009, Zion Study Centre began with a simple mission: to provide accessible, high-quality education and training to students and professionals seeking to advance their careers and academic achievements...",
       other: 'page',
@@ -157,6 +163,7 @@ export function AboutPage() {
           </div>
         </article>
         <div className="relative h-[70vh] overflow-hidden z-0">
+          <div className="absolute bg-black h-full w-full top-0 left-0 opacity-40 z-20"></div>
           <img
             src={anotherHeroImage}
             className={`w-full bg-center bg-cover absolute -top-[250px] md:-top-[400px] left-0 h-[650px] md:h-[900px]`}

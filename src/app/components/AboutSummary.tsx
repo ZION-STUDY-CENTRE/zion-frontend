@@ -2,9 +2,10 @@ import React from 'react';
 import { ArrowRight, Mountain, Eye, GraduationCap } from 'lucide-react';
 
 import studentImage from '../../assets/378194467_780266214108063_4926751009964101269_n.jpg';
-import zionBuildingImage from '../../assets/banner/bk2.jpg'; 
+import zionStaffTwo from '../../assets/refined/zionStaffTwo.jpeg'; 
 import image2 from '../../assets/banner/bk3.jpg';  
-import image3 from '../../assets/301968619_477799417688079_221370051454207794_n.jpg';  
+import diplomaClass from '../../assets/refined/diplomaClass.jpeg';  
+import biologyClass from '../../assets/refined/biologyClass.jpeg';  
  
 
 const AboutSummaryComponent: React.FC = () => {
@@ -35,7 +36,7 @@ const AboutSummaryComponent: React.FC = () => {
           >
             <div className="relative bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center">
               <img 
-                src={zionBuildingImage}
+                src={image2}
                 alt="Students collaborating"
                 className="w-full h-full object-cover"
               />
@@ -67,9 +68,9 @@ const AboutSummaryComponent: React.FC = () => {
               onClick={handleNavigation}
               className=" cursor-pointer  group"
             >
-              <div className="relative h-48 bg-gradient-to-br from-blue-100 to-teal-200">
+              <div className="relative h-70 bg-gradient-to-br from-blue-100 to-teal-200">
                 <img 
-                  src={image2}
+                  src={zionStaffTwo}
                   alt="Computer Science classroom"
                   className="w-full h-full object-cover"
                 />
@@ -93,9 +94,9 @@ const AboutSummaryComponent: React.FC = () => {
               onClick={handleNavigation}
               className=" cursor-pointer  group"
             >
-              <div className="relative h-48 bg-gradient-to-br from-purple-100 to-pink-200">
+              <div className="relative h-70 bg-gradient-to-br from-purple-100 to-pink-200">
                 <img 
-                  src={image3}
+                  src={diplomaClass}
                   alt="Professional accounting"
                   className="w-full h-full object-cover"
                 />
@@ -119,9 +120,9 @@ const AboutSummaryComponent: React.FC = () => {
               onClick={handleNavigation}
               className=" cursor-pointer  group"
             >
-              <div className="relative h-48 bg-gradient-to-br from-green-100 to-emerald-200">
+              <div className="relative h-70 bg-gradient-to-br from-green-100 to-emerald-200">
                 <img 
-                  src={studentImage}
+                  src={biologyClass}
                   alt="Marketing strategy"
                   className="w-full h-full object-cover"
                 />

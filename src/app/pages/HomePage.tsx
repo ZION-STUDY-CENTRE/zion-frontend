@@ -32,11 +32,10 @@ import {
 import AboutSummaryComponent from "../components/AboutSummary";
 import OurPrograms from "../components/OurPrograms";
 import ParallaxSection from "../components/ParallaxSection";
-
 import { getBlogPosts, BlogPost, getPrograms, Program, getTestimonials, Testimonial } from "../services/api";
-
-import facilityImg from "../../assets/287522350_1387577808421737_4478080586879130110_n.jpg";
-import libraryImg from "../../assets/banner/bk.jpg"; 
+import zionStaffsTwo from "../../assets/refined/zionStaffsTwo.jpeg";
+import studentsTwo from "../../assets/refined/studentsTwo.jpeg"; 
+import zionTowersThree from "../../assets/refined/zionTowersThree.jpeg"; 
 
 export function HomePage() {
   const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
@@ -113,9 +112,10 @@ export function HomePage() {
   ];
 
   const heroImages = [
-    facilityImg,
-    libraryImg,
-    "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMHN0dWR5aW5nJTIwY2xhc3Nyb29tfGVufDF8fHx8MTc2NTk1NTM4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+    studentsTwo,
+    zionTowersThree,
+    zionStaffsTwo,
+
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -123,7 +123,7 @@ export function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 15000);
+    }, 7000);
 
     return () => clearInterval(interval);
   }, []);
@@ -167,7 +167,7 @@ export function HomePage() {
            
           </div>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-100 z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.8)] to-[rgba(0,0,0,0.2)]  opacity-100 z-0"></div>
       </section>
       
 
@@ -263,15 +263,16 @@ export function HomePage() {
 
       {/* Video Section */}
       <section className="bg-white py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-6 md:px-8">
+        <div className=" mx-auto px-6 md:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
           <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg">
-            <iframe
-              className="absolute top-0 left-0 w-full h-full"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              title="Zion Study Centre"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            <iframe 
+              className="absolute top-0 left-0 w-full h-full" 
+              src="https://www.youtube.com/embed/x_qxLmke_3E" 
+              title="Zion history documentary video = our story from Genesis" 
+              frameBorder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerPolicy="strict-origin-when-cross-origin" 
               allowFullScreen
             ></iframe>
           </div>

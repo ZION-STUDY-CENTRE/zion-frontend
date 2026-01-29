@@ -198,12 +198,13 @@ const HistoryPage = () => {
                 <div className="max-w-4xl mx-auto px-6 md:px-8">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
                     <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg">
-                        <iframe
-                            className="absolute top-0 left-0 w-full h-full"
-                            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                            title="Zion Study Centre"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        <iframe 
+                            className="absolute top-0 left-0 w-full h-full" 
+                            src="https://www.youtube.com/embed/x_qxLmke_3E" 
+                            title="Zion history documentary video = our story from Genesis" 
+                            frameBorder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            referrerPolicy="strict-origin-when-cross-origin" 
                             allowFullScreen
                         ></iframe>
                     </div>

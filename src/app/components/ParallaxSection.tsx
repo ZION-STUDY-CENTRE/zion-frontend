@@ -2,63 +2,81 @@ import React, { useEffect, useRef } from 'react';
 import logo from "../../assets/logo.png";
 import { Link } from 'react-router-dom';
 
-import image_1 from '../../assets/ict.jpg';
+import image_1 from '../../assets/refined/DirectorTwo.jpeg';
 import image_2 from '../../assets/img5000.jpg'; 
-import image_3 from '../../assets/img9224.jpeg';
+import image_3 from '../../assets/img4954.jpg';
 import image_4 from '../../assets/babs04.jpg';
 import image_5 from '../../assets/img4935.jpg'; 
-import image_6 from '../../assets/img4954.jpg';
-import image_7 from  '../../assets/img5009.jpg';
-import image_8 from '../../assets/ict.jpg';
-import image_9 from '../../assets/img9222.jpeg'; 
-import image_10 from '../../assets/img4925.jpg';
-import image_11 from '../../assets/img9220.jpeg'; 
-import image_12 from '../../assets/img5012.jpg';
+import image_6 from '../../assets/refined/dataAnalysisInstructor.jpeg';
+import image_7 from  '../../assets/refined/zionStaffsTwo.jpeg';
+import image_8 from '../../assets/refined/classroomFour.jpeg';
+import image_9 from '../../assets/refined/classroom.jpeg'; 
+import image_10 from '../../assets/refined/DirectorThree.jpeg';
+import image_11 from '../../assets/refined/onboarding.jpeg'; 
+import image_12 from '../../assets/img4925.jpg';
 
 const ParallaxSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const leftContentRef = useRef<HTMLDivElement>(null);
   const rightContentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current || !leftContentRef.current || !rightContentRef.current) return;
+    // Cache scroll math
+  const leftMaxScroll = useRef(0);
+  const rightMaxScroll = useRef(0);
+  const sectionHeight = useRef(0);
+  const windowHeight = useRef(window.innerHeight);
 
+  // Recalculate on resize
+  useEffect(() => {
+    const recalc = () => {
+      if (!sectionRef.current || !leftContentRef.current || !rightContentRef.current) return;
       const section = sectionRef.current;
       const leftContent = leftContentRef.current;
       const rightContent = rightContentRef.current;
-
-      const sectionRect = section.getBoundingClientRect();
-      const sectionTop = sectionRect.top;
-      const sectionHeight = sectionRect.height;
-      const windowHeight = window.innerHeight;
-
-      // Check if section is in view
-      if (sectionTop > windowHeight || sectionTop + sectionHeight < 0) return;
-
-      // Calculate how much of the section has been scrolled through
-      // 0 = section just entering viewport from bottom
-      // 1 = section has completely passed through viewport
-      const scrollProgress = Math.max(0, Math.min(1, -sectionTop / (sectionHeight - windowHeight)));
-
       const leftContainer = leftContent.parentElement;
       const rightContainer = rightContent.parentElement;
-
       if (!leftContainer || !rightContainer) return;
-
-      // Calculate maximum scroll distances
-      // This ensures both sides reach the bottom of their container at the same time
-      const leftMaxScroll = leftContent.scrollHeight - leftContainer.clientHeight;
-      const rightMaxScroll = rightContent.scrollHeight - rightContainer.clientHeight;
-
-      // Apply transforms - both scroll proportionally to their content
-      leftContent.style.transform = `translateY(-${scrollProgress * leftMaxScroll}px)`;
-      rightContent.style.transform = `translateY(-${scrollProgress * rightMaxScroll}px)`;
+      leftMaxScroll.current = leftContent.scrollHeight - leftContainer.clientHeight;
+      rightMaxScroll.current = rightContent.scrollHeight - rightContainer.clientHeight;
+      sectionHeight.current = section.getBoundingClientRect().height;
+      windowHeight.current = window.innerHeight;
     };
+    recalc();
+    window.addEventListener('resize', recalc);
+    return () => window.removeEventListener('resize', recalc);
+  }, []);
 
-    window.addEventListener('scroll', handleScroll);
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!sectionRef.current || !leftContentRef.current || !rightContentRef.current) {
+            ticking = false;
+            return;
+          }
+          const section = sectionRef.current;
+          const leftContent = leftContentRef.current;
+          const rightContent = rightContentRef.current;
+          const sectionRect = section.getBoundingClientRect();
+          const sectionTop = sectionRect.top;
+          // Use cached values
+          const sHeight = sectionHeight.current;
+          const wHeight = windowHeight.current;
+          if (sectionTop > wHeight || sectionTop + sHeight < 0) {
+            ticking = false;
+            return;
+          }
+          const scrollProgress = Math.max(0, Math.min(1, -sectionTop / (sHeight - wHeight)));
+          leftContent.style.transform = `translateY(-${scrollProgress * leftMaxScroll.current}px)`;
+          rightContent.style.transform = `translateY(-${scrollProgress * rightMaxScroll.current}px)`;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Initial call
-    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Target, Eye, Award, Users, TrendingUp, Heart, Tag } from "lucide-react";
-
-import heroImage from '../../assets/babat.jpg';
 import whoWeAre from '../../assets/refined/zionStaffs.jpeg';
 import whatWeDo from '../../assets/refined/dataAnalysisClass.jpeg';
 import students from '../../assets/refined/codingStudents.jpeg';
@@ -11,7 +9,6 @@ import history from '../../assets/new.jpg';
 import unique from '../../assets/refined/students.jpeg';
 import anotherHeroImage from '../../assets/refined/zionTowersThree.jpeg';
 import classRoom from '../../assets/refined/Director.jpeg';
-import pioneer from '../../assets/babat.jpg';
 import { useState, useEffect } from "react";
 
 export function AboutPage() {
@@ -112,26 +109,6 @@ export function AboutPage() {
     },
   ];
 
-  const news = [
-    {
-      id:1,
-      image: heroImage,
-      title: "Best Training Institute Award",
-      description: "Recognized for excellence in professional training, 2022",
-    },
-    {
-      id:2,
-      image: heroImage,
-      title: "5,000+ Graduates",
-      description: "Honesty and transparency in all our dealings with students and partners.",
-    },
-    {
-      id:3,
-      image: heroImage,
-      title: "95% Success Rate",
-      description: "Consistent high performance in exam preparation and certification",
-    },
-  ];
 
   const openModal = (card: Card) => {
     setSelectedCard(card)

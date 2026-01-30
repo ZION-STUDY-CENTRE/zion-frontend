@@ -4,13 +4,6 @@ import { Menu, X, ChevronDown, Phone, Search } from "lucide-react";
 import { Button } from "./ui/button";
 import logo from "../../assets/logo.png";
 import { SearchCourse } from "./SearchCourse";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "./ui/navigation-menu";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -206,13 +199,13 @@ export function Header() {
                     <div className="absolute top-full left-0 mt-2 w-64 bg-white shadow-lg rounded-lg py-2 transition-all duration-200">
                       <Link
                         to="/about"
-                        className="block px-4 py-2 hover:bg-blue-50 transition-colors"
+                        className="block px-4 py-2 hover:bg-blue-50 transition-colors" onClick={() => setMobileMenuOpen(false)}
                       >
                         About Us
                       </Link>
                       <Link
                         to="/history"
-                        className="block px-4 py-2 hover:bg-blue-50 transition-colors"
+                        className="block px-4 py-2 hover:bg-blue-50 transition-colors" onClick={() => setMobileMenuOpen(false)}
                       >
                         Our History
                       </Link>

@@ -1,7 +1,3 @@
-import { Link } from "react-router-dom";
-import zionBuilding from '../../assets/building.jpg';
-import classRoom from '../../assets/287522350_1387577808421737_4478080586879130110_n.jpg';
-import pioneer from '../../assets/babat.jpg';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
@@ -48,30 +44,6 @@ const HistoryPage = () => {
                 "2025 - Vision for global expansion"
             ]
         }
-    ];
-
-    const historyCards: Card[] = [
-        {
-            id: 1,
-            image: zionBuilding,
-            title: "Our Pioneer Director",
-            description: "Recognized for excellence in professional training, our founding director shaped the vision and mission of Zion Study Centre.",
-            link: "#"
-        },
-        {
-            id: 2,
-            image: classRoom,
-            title: "Pioneer Location",
-            description: "Honesty and transparency in all our dealings with students and partners have been the cornerstone of our growth.",
-            link: "#"
-        },
-        {
-            id: 3,
-            image: pioneer,
-            title: "Our Facilities",
-            description: "Consistent high performance in exam preparation and certification through state-of-the-art learning environments.",
-            link: "#"
-        },
     ];
 
     return(

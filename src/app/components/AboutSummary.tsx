@@ -1,9 +1,7 @@
 import React from 'react';
 import { ArrowRight, Mountain, Eye, GraduationCap } from 'lucide-react';
-
-import studentImage from '../../assets/378194467_780266214108063_4926751009964101269_n.jpg';
 import zionStaffTwo from '../../assets/refined/zionStaffTwo.jpeg'; 
-import image2 from '../../assets/banner/bk3.jpg';  
+import image2 from '../../assets/bk3.jpg';  
 import diplomaClass from '../../assets/refined/diplomaClass.jpeg';  
 import biologyClass from '../../assets/refined/biologyClass.jpeg';  
  

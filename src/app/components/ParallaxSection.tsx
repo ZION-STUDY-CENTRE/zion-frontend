@@ -19,64 +19,45 @@ const ParallaxSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const leftContentRef = useRef<HTMLDivElement>(null);
   const rightContentRef = useRef<HTMLDivElement>(null);
-
-    // Cache scroll math
-  const leftMaxScroll = useRef(0);
-  const rightMaxScroll = useRef(0);
-  const sectionHeight = useRef(0);
-  const windowHeight = useRef(window.innerHeight);
-
-  // Recalculate on resize
   useEffect(() => {
-    const recalc = () => {
+    const handleScroll = () => {
       if (!sectionRef.current || !leftContentRef.current || !rightContentRef.current) return;
+
       const section = sectionRef.current;
       const leftContent = leftContentRef.current;
       const rightContent = rightContentRef.current;
+
+      const sectionRect = section.getBoundingClientRect();
+      const sectionTop = sectionRect.top;
+      const sectionHeight = sectionRect.height;
+      const windowHeight = window.innerHeight;
+
+      // Check if section is in view
+      if (sectionTop > windowHeight || sectionTop + sectionHeight < 0) return;
+
+      // Calculate how much of the section has been scrolled through
+      // 0 = section just entering viewport from bottom
+      // 1 = section has completely passed through viewport
+      const scrollProgress = Math.max(0, Math.min(1, -sectionTop / (sectionHeight - windowHeight)));
+
       const leftContainer = leftContent.parentElement;
       const rightContainer = rightContent.parentElement;
-      if (!leftContainer || !rightContainer) return;
-      leftMaxScroll.current = leftContent.scrollHeight - leftContainer.clientHeight;
-      rightMaxScroll.current = rightContent.scrollHeight - rightContainer.clientHeight;
-      sectionHeight.current = section.getBoundingClientRect().height;
-      windowHeight.current = window.innerHeight;
-    };
-    recalc();
-    window.addEventListener('resize', recalc);
-    return () => window.removeEventListener('resize', recalc);
-  }, []);
 
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          if (!sectionRef.current || !leftContentRef.current || !rightContentRef.current) {
-            ticking = false;
-            return;
-          }
-          const section = sectionRef.current;
-          const leftContent = leftContentRef.current;
-          const rightContent = rightContentRef.current;
-          const sectionRect = section.getBoundingClientRect();
-          const sectionTop = sectionRect.top;
-          // Use cached values
-          const sHeight = sectionHeight.current;
-          const wHeight = windowHeight.current;
-          if (sectionTop > wHeight || sectionTop + sHeight < 0) {
-            ticking = false;
-            return;
-          }
-          const scrollProgress = Math.max(0, Math.min(1, -sectionTop / (sHeight - wHeight)));
-          leftContent.style.transform = `translateY(-${scrollProgress * leftMaxScroll.current}px)`;
-          rightContent.style.transform = `translateY(-${scrollProgress * rightMaxScroll.current}px)`;
-          ticking = false;
-        });
-        ticking = true;
-      }
+      if (!leftContainer || !rightContainer) return;
+
+      // Calculate maximum scroll distances
+      // This ensures both sides reach the bottom of their container at the same time
+      const leftMaxScroll = leftContent.scrollHeight - leftContainer.clientHeight;
+      const rightMaxScroll = rightContent.scrollHeight - rightContainer.clientHeight;
+
+      // Apply transforms - both scroll proportionally to their content
+      leftContent.style.transform = `translateY(-${scrollProgress * leftMaxScroll}px)`;
+      rightContent.style.transform = `translateY(-${scrollProgress * rightMaxScroll}px)`;
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    window.addEventListener('scroll', handleScroll);
     handleScroll(); // Initial call
+    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

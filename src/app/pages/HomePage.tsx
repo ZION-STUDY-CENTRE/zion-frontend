@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link, Links } from "react-router-dom";
-import imageOne from "../../assets/imageOne.png";
 import { Button } from "../components/ui/button";
 import { CourseCard } from "../components/CourseCard";
 import SearchCourse from "../components/SearchCourse";

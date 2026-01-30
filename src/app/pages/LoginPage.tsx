@@ -218,7 +218,7 @@ export function LoginPage() {
           <div className="space-y-8">
             {/* Header - Centered */}
             <div className="text-center space-y-4">
-              <img src="/src/assets/logo.png" alt="Zion Logo" className="h-12 w-12 object-contain mx-auto" />
+              <img src="https://zion-frontend-ashen.vercel.app/logo.png" alt="Zion Logo" className="h-12 w-12 object-contain mx-auto" />
               <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome</h2>
               <p className="text-gray-600 font-light text-base">Kindly log into your account</p>
             </div>

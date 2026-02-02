@@ -57,6 +57,7 @@ export function ChatComponent() {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [groupName, setGroupName] = useState('');
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+  const [usersLoading, setUsersLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Load conversations on mount
@@ -113,11 +114,17 @@ export function ChatComponent() {
   const loadConversations = async () => {
     try {
       setLoading(true);
+      console.log('[ChatComponent] Loading conversations...');
       const data = await getConversations();
+      console.log('[ChatComponent] Conversations loaded:', data.length);
       setConversations(data);
+      
+      console.log('[ChatComponent] Loading users for chat...');
       const usersData = await getAllUsersForChat();
+      console.log('[ChatComponent] Users loaded:', usersData.length);
       setUsers(usersData);
     } catch (error: any) {
+      console.error('[ChatComponent] Error loading data:', error);
       showError('Failed to load', error.message);
     } finally {
       setLoading(false);
@@ -148,13 +155,42 @@ export function ChatComponent() {
 
   const handleStartChat = async (userId: string) => {
     try {
+      console.log('[ChatComponent] Starting chat with user:', userId);
       const conversation = await getOrCreateConversation(userId);
+      console.log('[ChatComponent] Raw conversation from API:', JSON.stringify(conversation, null, 2));
+      
+      // Ensure participants have proper IDs and data
+      const cleanedConversation = {
+        ...conversation,
+        participants: (conversation.participants || []).map((p: any) => {
+          const participantId = p._id || p.id || '';
+          console.log('[ChatComponent] Processing participant:', { id: participantId, name: p.name, email: p.email });
+          return {
+            _id: participantId,
+            name: (p.name || '').trim() || 'Unknown User',
+            email: p.email || '',
+            role: p.role || ''
+          };
+        })
+      };
+
+      console.log('[ChatComponent] Cleaned conversation:', JSON.stringify(cleanedConversation, null, 2));
+
       setConversations(prev => {
-        const exists = prev.some(c => c._id === conversation._id);
-        return exists ? prev : [conversation, ...prev];
+        const exists = prev.some(c => c._id === cleanedConversation._id);
+        if (exists) {
+          // Update existing conversation with fresh data
+          return prev.map(c => c._id === cleanedConversation._id ? cleanedConversation : c);
+        }
+        // Add new conversation at the top
+        return [cleanedConversation, ...prev];
       });
-      setSelectedConversation(conversation);
+      
+      setSelectedConversation(cleanedConversation);
       setShowNewChat(false);
+      
+      const resolvedName = getConversationName(cleanedConversation);
+      console.log('[ChatComponent] Conversation set, resolved name:', resolvedName);
     } catch (error: any) {
       console.error('Error starting chat:', error);
       showError('Failed to start chat', error.message || 'Unknown error');
@@ -199,10 +235,47 @@ export function ChatComponent() {
 
   const getConversationName = (conversation: Conversation) => {
     if (conversation.isGroup) {
-      return conversation.name || 'Group Chat';
+      return (conversation.name || 'Group Chat').trim();
     }
-    const otherParticipant = conversation.participants.find(p => p._id !== user?._id);
-    return otherParticipant?.name || 'Unknown User';
+    
+    // For 1-to-1 chats, find the other participant
+    const currentUserId = user?._id?.toString() || user?._id;
+    
+    if (!conversation.participants || conversation.participants.length === 0) {
+      console.warn('[ChatComponent] No participants in conversation:', conversation);
+      return 'Unknown User';
+    }
+
+    // Find the participant that's not the current user
+    let otherParticipant = null;
+    
+    for (const participant of conversation.participants) {
+      const participantId = participant._id?.toString ? participant._id.toString() : participant._id;
+      const isCurrentUser = participantId === currentUserId || participantId === user?._id;
+      
+      if (!isCurrentUser) {
+        otherParticipant = participant;
+        break;
+      }
+    }
+
+    if (!otherParticipant) {
+      // If we didn't find another participant, just use the first one that's not the current user
+      // Fall back to getting any participant
+      otherParticipant = conversation.participants[0];
+      if (otherParticipant && (otherParticipant._id?.toString() === currentUserId || otherParticipant._id === user?._id)) {
+        otherParticipant = conversation.participants[1];
+      }
+    }
+
+    if (!otherParticipant) {
+      console.warn('[ChatComponent] Could not find other participant. Current user:', currentUserId, 'Participants:', conversation.participants);
+      return 'Unknown User';
+    }
+
+    const name = otherParticipant.name ? otherParticipant.name.trim() : 'Unknown User';
+    console.log('[ChatComponent] Resolved name to:', name, 'Current user ID:', currentUserId, 'Other participant ID:', otherParticipant._id);
+    return name;
   };
 
   if (loading) {
@@ -268,7 +341,7 @@ export function ChatComponent() {
                 }`}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-sm truncate">
+                  <h3 className="font-semibold text-sm truncate" title={getConversationName(conversation)}>
                     {getConversationName(conversation)}
                   </h3>
                   {conversation.isGroup && (
@@ -293,11 +366,14 @@ export function ChatComponent() {
         {selectedConversation ? (
           <>
             {/* Chat Header */}
-            <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-b border-blue-700 p-4 flex justify-between items-center shadow-md">
               <div>
-                <h2 className="text-lg font-bold">{getConversationName(selectedConversation)}</h2>
+                <p className="text-xs font-semibold opacity-90 mb-1">
+                  {selectedConversation.isGroup ? 'GROUP CHAT' : 'CHATTING WITH'}
+                </p>
+                <h2 className="text-xl font-bold">{getConversationName(selectedConversation)}</h2>
                 {selectedConversation.isGroup && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs opacity-90 mt-1">
                     {selectedConversation.participants.length} members
                   </p>
                 )}
@@ -313,31 +389,41 @@ export function ChatComponent() {
 
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map(message => (
-                <div
-                  key={message._id}
-                  className={`flex ${message.sender._id === user?._id ? 'justify-end' : 'justify-start'}`}
-                >
+              {messages.map(message => {
+                const isOwnMessage = message.sender._id === user?._id;
+                const senderName = message.sender?.name ? message.sender.name.trim() : 'Unknown User';
+                
+                return (
                   <div
-                    className={`max-w-xs px-4 py-2 rounded-lg ${
-                      message.sender._id === user?._id
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-200 text-gray-900'
-                    }`}
+                    key={message._id}
+                    className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                   >
-                    {!selectedConversation.isGroup || message.sender._id === user?._id ? null : (
-                      <p className="text-xs font-semibold mb-1">{message.sender.name}</p>
-                    )}
-                    <p className="text-sm">{message.text}</p>
-                    <p className="text-xs opacity-70 mt-1">
-                      {new Date(message.createdAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
+                    <div className={`max-w-xs ${isOwnMessage ? '' : 'w-full'}`}>
+                      {/* Show sender name for group chats (except own messages) */}
+                      {selectedConversation.isGroup && !isOwnMessage && (
+                        <p className="text-xs font-bold text-gray-600 mb-1 px-2">
+                          {senderName}
+                        </p>
+                      )}
+                      <div
+                        className={`px-4 py-2 rounded-lg ${
+                          isOwnMessage
+                            ? 'bg-blue-500 text-white rounded-br-none'
+                            : 'bg-gray-200 text-gray-900 rounded-bl-none'
+                        }`}
+                      >
+                        <p className="text-sm break-words">{message.text}</p>
+                        <p className="text-xs opacity-70 mt-1">
+                          {new Date(message.createdAt).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {/* Typing Indicator */}
               {typingUsers.size > 0 && (
@@ -400,19 +486,26 @@ export function ChatComponent() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {users.map(u => (
-                  <div
-                    key={u._id}
-                    className="p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
-                    onClick={() => handleStartChat(u._id)}
-                  >
-                    <p className="font-semibold text-sm">{u.name}</p>
-                    <p className="text-xs text-gray-500">{u.email}</p>
-                    <Badge variant="outline" className="text-xs mt-1">
-                      {u.role}
-                    </Badge>
+                {users.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">
+                    <MessageCircle size={32} className="mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">No users available for chat</p>
                   </div>
-                ))}
+                ) : (
+                  users.map(u => (
+                    <div
+                      key={u._id}
+                      className="p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleStartChat(u._id)}
+                    >
+                      <p className="font-semibold text-sm">{u.name.trim()}</p>
+                      <p className="text-xs text-gray-500">{u.email}</p>
+                      <Badge variant="outline" className="text-xs mt-1">
+                        {u.role}
+                      </Badge>
+                    </div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
@@ -457,7 +550,7 @@ export function ChatComponent() {
                           );
                         }}
                       />
-                      <span className="text-sm">{u.name}</span>
+                      <span className="text-sm">{u.name.trim()}</span>
                     </label>
                   ))}
                 </div>

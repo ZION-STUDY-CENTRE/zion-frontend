@@ -115,7 +115,7 @@ export function StudentDashboard() {
       const formData = new FormData();
       formData.append('image', file);
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/upload`, {
+      const response = await fetch(`${(import.meta.env as any).VITE_API_URL || 'http://localhost:5000/api'}/upload`, {
         method: 'POST',
         body: formData,
         credentials: 'include'

@@ -426,8 +426,30 @@ export const changeInitialPassword = async (newPassword: string): Promise<any> =
 };
 
 export const logoutUser = async (): Promise<void> => {
-    await fetchWithCreds(`${API_URL}/auth/logout`, { method: 'POST' });
+  try {
+    const response = await fetch(`${API_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    
+    if (!response.ok) {
+      throw new Error('Logout request failed');
+    }
+    
+    // Clear any local state that might interfere with token refresh
+    isRefreshing = false;
+    refreshSubscribers = [];
+    
+    // Allow cookies to be cleared by the response
+    await response.json();
+  } catch (error) {
+    console.error('Logout error:', error);
+    // Even if logout fails, clear local state and redirect
+    isRefreshing = false;
+    refreshSubscribers = [];
+  }
 };
+
 
 export const sendEmail = async (type: 'contact' | 'admission', data: any) => {
     try {
@@ -876,11 +898,20 @@ export const createGroupConversation = async (name: string, participantIds: stri
 };
 
 export const getAllUsersForChat = async () => {
-    const response = await fetchWithCreds(`${API_URL}/chat/users`);
-    if (!response.ok) {
-        throw new Error('Failed to fetch users');
+    try {
+        const response = await fetchWithCreds(`${API_URL}/chat/users`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('[API] Failed to fetch chat users:', response.status, errorData);
+            throw new Error(errorData.error || 'Failed to fetch users');
+        }
+        const data = await response.json();
+        console.log('[API] Chat users fetched:', data.length, 'users');
+        return data;
+    } catch (error) {
+        console.error('[API] Error in getAllUsersForChat:', error);
+        throw error;
     }
-    return response.json();
 };
 
 export const deleteConversation = async (conversationId: string) => {

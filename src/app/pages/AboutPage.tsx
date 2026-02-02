@@ -68,21 +68,21 @@ export function AboutPage() {
       id:1,
       image: whoWeAre,
       title: "Who are we",
-      description: "We strive for the highest standards in education and training delivery.",
+      description: "We deliver quality education to thousands of students across West Africa in JAMB preparation, international certifications, and professional development programs. Our commitment to accessibility and excellence drives everything we do.",
       other: 'modal',
     },
     {
       id:2,
       image: unique,
       title: "What we do",
-      description: "Honesty and transparency in all our dealings with students and partners.",
+      description: "We provide comprehensive exam preparation, certification training, and professional development programs. From JAMB to international qualifications, our expert-led courses equip students with knowledge and practical skills for success.",
       other: 'modal',
     },
     {
       id:3,
       image: whatWeDo,
       title: "What makes us unique",
-      description: "Every decision we make is focused on student success and wellbeing.",
+      description: "With 15+ years of excellence, proven 95% success rate, expert instructors, small class sizes, and comprehensive support systems. We prioritize student outcomes and create lasting impact in professional development.",
       other: 'modal',
     },
     {
@@ -285,6 +285,31 @@ export function AboutPage() {
         </div>
       </section> */}
 
+      {/* Key Stats */}
+      <section className="py-16 md:py-24 bg-blue-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">Our Impact by Numbers</h2>
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">15+</h3>
+              <p className="text-xl text-gray-700">Years of Excellence</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">5,000+</h3>
+              <p className="text-xl text-gray-700">Successful Graduates</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">95%</h3>
+              <p className="text-xl text-gray-700">Success Rate</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">West Africa</h3>
+              <p className="text-xl text-gray-700">Service Coverage</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 md:py-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white">
         <div className="container mx-auto px-4 text-center">
@@ -292,7 +317,7 @@ export function AboutPage() {
             Join Our Community of Successful Students
           </h2>
           <p className="text-xl mb-8 text-blue-100 max-w-2xl mx-auto">
-            Experience the difference that quality education makes.
+            Experience the difference that quality education and expert guidance can make in your career.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-amber-600 hover:bg-amber-700" asChild>

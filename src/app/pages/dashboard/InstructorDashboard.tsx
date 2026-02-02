@@ -221,35 +221,31 @@ export function InstructorDashboard() {
           {/* Main Content for Selected Program */}
           <div className="md:col-span-2 space-y-4">
             {showAssignmentForm ? (
-              selectedProgram && (
-                <div>
-                  <AssignmentForm
-                    programId={selectedProgram._id}
-                    onSuccess={() => {
-                      setShowAssignmentForm(false);
-                      if (selectedProgram) {
-                        fetchAssignments(selectedProgram._id);
-                      }
-                    }}
-                    onCancel={() => setShowAssignmentForm(false)}
-                  />
-                </div>
-              )
+              <div>
+                <AssignmentForm
+                  programId={selectedProgram!._id}
+                  onSuccess={() => {
+                    setShowAssignmentForm(false);
+                    if (selectedProgram) {
+                      fetchAssignments(selectedProgram._id);
+                    }
+                  }}
+                  onCancel={() => setShowAssignmentForm(false)}
+                />
+              </div>
             ) : showQuizForm ? (
-              selectedProgram && (
-                <div>
-                  <QuizForm
-                    programId={selectedProgram._id}
-                    onSuccess={() => {
-                      setShowQuizForm(false);
-                      if (selectedProgram) {
-                        fetchQuizzes(selectedProgram._id);
-                      }
-                    }}
-                    onCancel={() => setShowQuizForm(false)}
-                  />
-                </div>
-              )
+              <div>
+                <QuizForm
+                  programId={selectedProgram!._id}
+                  onSuccess={() => {
+                    setShowQuizForm(false);
+                    if (selectedProgram) {
+                      fetchQuizzes(selectedProgram._id);
+                    }
+                  }}
+                  onCancel={() => setShowQuizForm(false)}
+                />
+              </div>
             ) : (
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-5">
@@ -450,21 +446,16 @@ export function InstructorDashboard() {
 
                 {/* Files Tab */}
                 <TabsContent value="files">
-                  {
-                    selectedProgram && (
-                      <FileUpload
-                        programId={selectedProgram._id}
-                        files={files}
-                        onFileAdded={() => {
-                          if (selectedProgram) {
-                            fetchFiles(selectedProgram._id);
-                          }
-                        }}
-                        isInstructor={true}
-                      />
-                    )
-                  }
-                  
+                  <FileUpload
+                    programId={selectedProgram!._id}
+                    files={files}
+                    onFileAdded={() => {
+                      if (selectedProgram) {
+                        fetchFiles(selectedProgram._id);
+                      }
+                    }}
+                    isInstructor={true}
+                  />
                 </TabsContent>
                 {/* Chat Tab */}
                 <TabsContent value="chat">

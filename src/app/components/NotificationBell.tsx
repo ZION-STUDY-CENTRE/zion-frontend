@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 const NotificationBell: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { notifications, unreadCount, markAsReadLocal, markAllAsReadLocal, deleteNotification, clearNotifications } = useNotifications();
+  const { notifications, unreadCount, markAsReadLocal, markAllAsReadLocal, deleteNotificationLocal, clearNotifications } = useNotifications();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -21,7 +21,7 @@ const NotificationBell: React.FC = () => {
   }, []);
 
   const unreadNotifications = notifications.filter(n => !n.isRead);
-  const recentNotifications = notifications.slice(0, 5);
+  const recentNotifications = notifications.slice(0, 3);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -140,7 +140,7 @@ const NotificationBell: React.FC = () => {
                       </div>
                       <button
                         onClick={async () => {
-                          await deleteNotification(notification._id);
+                          await deleteNotificationLocal(notification._id);
                         }}
                         className="p-1 text-gray-400 hover:text-gray-600 flex-shrink-0"
                         title="Delete"
@@ -165,7 +165,7 @@ const NotificationBell: React.FC = () => {
           </div>
 
           {/* Footer */}
-          {notifications.length > 5 && (
+          {notifications.length > 3 && (
             <div className="p-3 border-t border-gray-200 text-center">
               <a href="#notifications" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                 View all notifications →

@@ -52,16 +52,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(newUser);
   };
 
- const logout = async () => {
-  try {
-    await logoutUser();
-  } catch (e) {
-    console.error("Logout failed", e);
-  } finally {
-    setUser(null);
-    window.location.replace("/login");
-  }
-};
+  const logout = async () => {
+    try {
+      // Clear user state immediately
+      setUser(null);
+      // Call logout endpoint to clear server-side tokens
+      await logoutUser();
+    } catch (e) {
+      console.error("Logout failed", e);
+      // Even if logout fails, clear user state
+      setUser(null);
+    } finally {
+      // Hard redirect to login to clear any cached auth state
+      window.location.href = "/login";
+    }
+  };
 
 
   const updateUser = (updatedUser: User) => {

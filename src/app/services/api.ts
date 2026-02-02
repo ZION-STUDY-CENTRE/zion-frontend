@@ -426,10 +426,28 @@ export const changeInitialPassword = async (newPassword: string): Promise<any> =
 };
 
 export const logoutUser = async (): Promise<void> => {
-  await fetch(`${API_URL}/auth/logout`, {
-    method: "POST",
-    credentials: "include", 
-  });
+  try {
+    const response = await fetch(`${API_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    
+    if (!response.ok) {
+      throw new Error('Logout request failed');
+    }
+    
+    // Clear any local state that might interfere with token refresh
+    isRefreshing = false;
+    refreshSubscribers = [];
+    
+    // Allow cookies to be cleared by the response
+    await response.json();
+  } catch (error) {
+    console.error('Logout error:', error);
+    // Even if logout fails, clear local state and redirect
+    isRefreshing = false;
+    refreshSubscribers = [];
+  }
 };
 
 

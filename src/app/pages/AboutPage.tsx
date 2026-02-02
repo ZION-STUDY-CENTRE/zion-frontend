@@ -28,16 +28,6 @@ export function AboutPage() {
 
   const [isOpenModal, setisOpenModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<Card|null>(null)
-  const [offset, setOffset] = useState(0);
-
-  useEffect(()=>{
-     const onScroll = () => {
-      setOffset(window.scrollY);
-    };
-
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
 
 
   const values = [
@@ -123,37 +113,22 @@ export function AboutPage() {
 
 
   return (
-    <div className="min-h-screen relative">
-      {/* Hero */}
-      <section className="min-h-screen w-full">
-        <article className="relative flex justify-center items-center bg-gradient-to-r from-blue-700 to-blue-900 h-[60vh] lg:h-[70vh] text-white py-16 md:py-20">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">About Us</h1>
-          <div className="absolute bottom-0 w-full bg-blue-900 p-4 text-white">
-            <ul className="flex gap-10">
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-              <li className="hidden md:flex list-disc">
-                <Link to="#">About Us</Link>
-              </li>
-            </ul>
-          </div>
-        </article>
-        <div className="relative h-[70vh] overflow-hidden z-0">
-          <div className="absolute bg-black h-full w-full top-0 left-0 opacity-40 z-20"></div>
-          <img
-            src={anotherHeroImage}
-            className={`w-full bg-center bg-cover absolute -top-[250px] md:-top-[400px] left-0 h-[650px] md:h-[900px]`}
-            style={{
-              transform: `translateY(${offset * 0.5}px)`
-            }}
-          />
+    <div className="min-h-screen">
+      {/* Hero Section - Matching History Page Style */}
+      <section className="relative bg-gradient-to-r from-blue-800 to-blue-950 text-white py-24 md:py-32">
+        <div className="max-w-6xl mx-auto px-6 md:px-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">About Us</h1>
+          <p className="text-lg text-blue-100 mb-8">
+            Learn more about Zion Study Centre and Leadership Academy
+          </p>
         </div>
-        <article className="bg-gray-50 relative z-20 flex justify-center py-6 text-center ">
-          <div className="w-[90%] lg:w-[80%] py-4 lg:py-8">
-            <p className="text-xl lg:text-4xl leading-12"><span className="font-medium">Zion study Centre and Leadership Academy Limited was born in the year 2002 and incorporated after 10 years.</span> It's more than an extra-moral but a study center with a great vision. We are committed to providing quality education and training to individuals seeking to enhance their knowledge and skills in various fields. Our mission is to empower our students to achieve their academic and professional goals through innovative teaching methods, practical learning experiences, and a supportive learning environment.</p>
-          </div>
-        </article>
+      </section>
+
+      {/* Introduction Section */}
+      <section className="bg-gray-50 relative z-20 flex justify-center py-6 text-center">
+        <div className="w-[90%] lg:w-[80%] py-4 lg:py-8">
+          <p className="text-xl lg:text-4xl leading-12"><span className="font-medium">Zion study Centre and Leadership Academy Limited was born in the year 2002 and incorporated after 10 years.</span> It's more than an extra-moral but a study center with a great vision. We are committed to providing quality education and training to individuals seeking to enhance their knowledge and skills in various fields. Our mission is to empower our students to achieve their academic and professional goals through innovative teaching methods, practical learning experiences, and a supportive learning environment.</p>
+        </div>
       </section>
 
       {/* Our Story */}

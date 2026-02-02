@@ -170,12 +170,12 @@ export function HomePage() {
             {stats.map((stat, index) => (
               <div key={index} className="text-center hover:scale-105 hover:shadow-md py-4 px-20 rounded-md w-fit mx-auto">
                 <div className="flex justify-center mb-3 mx-auto">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                    <stat.icon className="text-blue-700" size={32} />
+                  <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                    <stat.icon className="text-blue-700" size={28} />
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
+                <div className="text-gray-600 text-sm">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -196,7 +196,7 @@ export function HomePage() {
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl md:text-5xl text-gray-900">
+            <h2 className="text-2xl md:text-3xl text-gray-900">
               OUR PROGRAMS
             </h2>
           </div>
@@ -257,21 +257,23 @@ export function HomePage() {
 
       {/* Video Section - Lazy Load iframe */}
       <section className="bg-white py-16 md:py-24">
-        <div className="mx-auto px-6 md:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
-          <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg bg-gray-200">
-            <iframe 
-              className="absolute top-0 left-0 w-full h-full" 
-              src="https://www.youtube.com/embed/x_qxLmke_3E?modestbranding=1&rel=0" 
-              title="Zion history documentary video" 
-              frameBorder="0" 
-              loading="lazy"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-              referrerPolicy="strict-origin-when-cross-origin" 
-              allowFullScreen
-            ></iframe>
+        <div className="mx-auto px-6 md:px-8 max-w-4xl">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
+          <div className="flex justify-center">
+            <div className="relative w-full md:w-3/4 pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg bg-gray-200">
+              <iframe 
+                className="absolute top-0 left-0 w-full h-full" 
+                src="https://www.youtube.com/embed/x_qxLmke_3E?modestbranding=1&rel=0" 
+                title="Zion history documentary video" 
+                frameBorder="0" 
+                loading="lazy"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerPolicy="strict-origin-when-cross-origin" 
+                allowFullScreen
+              ></iframe>
+            </div>
           </div>
-          <p className="text-gray-600 text-center mt-6">
+          <p className="text-gray-600 text-center mt-6 text-sm md:text-base">
             Watch our journey and learn more about Zion Study Centre and Leadership Academy
           </p>
         </div>
@@ -281,10 +283,10 @@ export function HomePage() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               Student Success Stories
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
               Hear from our students who have achieved their educational and career goals.
             </p>
           </div>
@@ -352,10 +354,10 @@ export function HomePage() {
       {/* CTA Section */}
       <section className="py-16 md:py-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
             Ready to Start Your Learning Journey?
           </h2>
-          <p className="text-xl mb-8 text-blue-100 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg mb-8 text-blue-100 max-w-2xl mx-auto">
             Join Zion Study Centre today and take the first step towards achieving your academic and professional goals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

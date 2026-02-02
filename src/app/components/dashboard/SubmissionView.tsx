@@ -138,6 +138,7 @@ export function SubmissionView({ assignmentId, onBack }: SubmissionViewProps) {
                     {submission.submissionFile ? (
                       <a
                         href={submission.submissionFile}
+                        download
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline flex items-center gap-1"

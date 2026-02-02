@@ -4,10 +4,11 @@ import { useAuth } from '../context/AuthContext';
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import leftImage from "../../assets/building.jpg";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Lock, Mail, Loader2 } from 'lucide-react';
-import { loginUser, changeInitialPassword } from '../services/api';
+import { loginUser, changeInitialPassword, resendVerificationEmail } from '../services/api';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -15,6 +16,7 @@ export function LoginPage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   
@@ -47,9 +49,29 @@ export function LoginPage() {
         redirectBasedOnRole(userData.role);
       }
     } catch (err: any) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      if (err.code === 'EMAIL_NOT_VERIFIED') {
+        setUnverifiedEmail(err.email || email);
+        setError('Please verify your email address before logging in.');
+      } else {
+        setError(err.message || 'Login failed. Please check your credentials.');
+      }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!unverifiedEmail) return;
+    setIsLoading(true);
+    try {
+        await resendVerificationEmail(unverifiedEmail);
+        alert('Verification email sent! Please check your inbox.');
+        setError(''); 
+        setUnverifiedEmail(null);
+    } catch (err: any) {
+        alert(err.message || 'Failed to send email');
+    } finally {
+        setIsLoading(false);
     }
   };
 
@@ -170,7 +192,7 @@ export function LoginPage() {
       <div 
         className="hidden md:flex md:w-3/5 lg:w-2/3 bg-cover bg-center relative items-center justify-center"
         style={{
-          backgroundImage: 'url(/src/assets/building.jpg)',
+          backgroundImage: `url(${leftImage})`,
           backgroundPosition: 'center',
           backgroundSize: 'cover'
         }}
@@ -178,7 +200,7 @@ export function LoginPage() {
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 text-center text-white space-y-6 px-8">
           <div className="flex items-center justify-center gap-4">
-            <img src="/src/assets/logo.png" alt="Zion Logo" className="h-16 w-16 object-contain" />
+            <img src="https://zion-frontend-ashen.vercel.app/logo.png" alt="Zion Logo" className="h-16 w-16 object-contain" />
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight">
               Zion Study Center
             </h1>
@@ -196,7 +218,7 @@ export function LoginPage() {
           <div className="space-y-8">
             {/* Header - Centered */}
             <div className="text-center space-y-4">
-              <img src="/src/assets/logo.png" alt="Zion Logo" className="h-12 w-12 object-contain mx-auto" />
+              <img src="https://zion-frontend-ashen.vercel.app/logo.png" alt="Zion Logo" className="h-12 w-12 object-contain mx-auto" />
               <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome</h2>
               <p className="text-gray-600 font-light text-base">Kindly log into your account</p>
             </div>
@@ -205,7 +227,20 @@ export function LoginPage() {
             <form onSubmit={handleLogin} className="space-y-5">
               {error && (
                 <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
+                  <AlertDescription className="flex flex-col gap-2">
+                       <span>{error}</span>
+                       {unverifiedEmail && (
+                           <Button 
+                               type="button" 
+                               variant="outline" 
+                               size="sm" 
+                               onClick={handleResendVerification}
+                               className="w-full mt-2 bg-white text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                           >
+                               {isLoading ? 'Sending...' : 'Resend Verification Email'}
+                           </Button>
+                       )}
+                  </AlertDescription>
                 </Alert>
               )}
 

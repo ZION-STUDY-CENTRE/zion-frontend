@@ -119,8 +119,8 @@ export function RegisterPage() {
                   <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                     <p className="text-sm text-gray-700">
                       Need help with registration? Call us at{" "}
-                      <a href="tel:+2341234567890" className="text-blue-700 font-semibold">
-                        +234 123 456 7890
+                      <a href="tel:+2348033297541" className="text-blue-700 font-semibold">
+                        +234 803 329 7541
                       </a>
                     </p>
                   </div>

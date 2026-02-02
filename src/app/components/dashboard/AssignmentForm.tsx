@@ -5,7 +5,7 @@ import { Label } from '../ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Loader2, Upload, X, FileUp } from 'lucide-react';
-import { createAssignment, uploadFile } from '../../services/api';
+import { createAssignment } from '../../services/api';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 

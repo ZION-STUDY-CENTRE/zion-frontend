@@ -38,7 +38,7 @@ export interface BlogPost {
   description: string;
   shortDescription: string;
   timestamp: string | Date; // API returns string usually
-  image: string | null;
+  image: any;
 }
 
 export interface GalleryItem {
@@ -378,7 +378,36 @@ export const loginUser = async (credentials: any): Promise<any> => {
     });
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.msg || 'Login failed');
+        const customError: any = new Error(error.msg || 'Login failed');
+        customError.code = error.code;
+        customError.email = error.email;
+        throw customError;
+    }
+    return await response.json();
+};
+
+export const verifyEmail = async (token: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/auth/verify-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Verification failed');
+    }
+    return await response.json();
+};
+
+export const resendVerificationEmail = async (email: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/auth/resend-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Failed to resend verification');
     }
     return await response.json();
 };

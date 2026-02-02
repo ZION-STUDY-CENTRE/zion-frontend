@@ -2,24 +2,23 @@ import React, { useEffect, useRef } from 'react';
 import logo from "../../assets/logo.png";
 import { Link } from 'react-router-dom';
 
-import image_1 from '../../assets/ict.jpg';
+import image_1 from '../../assets/refined/DirectorTwo.jpeg';
 import image_2 from '../../assets/img5000.jpg'; 
-import image_3 from '../../assets/img9224.jpeg';
+import image_3 from '../../assets/img4954.jpg';
 import image_4 from '../../assets/babs04.jpg';
 import image_5 from '../../assets/img4935.jpg'; 
-import image_6 from '../../assets/img4954.jpg';
-import image_7 from  '../../assets/img5009.jpg';
-import image_8 from '../../assets/ict.jpg';
-import image_9 from '../../assets/img9222.jpeg'; 
-import image_10 from '../../assets/img4925.jpg';
-import image_11 from '../../assets/img9220.jpeg'; 
-import image_12 from '../../assets/img5012.jpg';
+import image_6 from '../../assets/refined/dataAnalysisInstructor.jpeg';
+import image_7 from  '../../assets/refined/zionStaffsTwo.jpeg';
+import image_8 from '../../assets/refined/classroomFour.jpeg';
+import image_9 from '../../assets/refined/classroom.jpeg'; 
+import image_10 from '../../assets/refined/DirectorThree.jpeg';
+import image_11 from '../../assets/refined/onboarding.jpeg'; 
+import image_12 from '../../assets/img4925.jpg';
 
 const ParallaxSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const leftContentRef = useRef<HTMLDivElement>(null);
   const rightContentRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const handleScroll = () => {
       if (!sectionRef.current || !leftContentRef.current || !rightContentRef.current) return;
@@ -103,7 +102,7 @@ const ParallaxSection = () => {
                     <h1 className="text-4xl font-bold mb-6">HISTORY</h1>
 
                     <p className="text-3xl">
-                      <span className="font-serif italic">Zion Study Centre and Leadership Academy (Limited)</span> was born in the year 2002 and incorporated after 10 years. It's more than an extra-moral education center; it's a study center with a great vision.
+                      <span className="font-serif italic">Zion Study Centre and Leadership Academy Limited</span> was born in the year 2002 and incorporated after 10 years. It's more than an extra-moral education center; it's a study center with a great vision.
                     </p>
                     
                     <p className="text-3xl">

@@ -4,13 +4,6 @@ import { Menu, X, ChevronDown, Phone, Search } from "lucide-react";
 import { Button } from "./ui/button";
 import logo from "../../assets/logo.png";
 import { SearchCourse } from "./SearchCourse";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "./ui/navigation-menu";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,7 +26,7 @@ export function Header() {
           <div className="flex items-center gap-4">
             <span className="text-xl font-bold hidden lg:block xl:hidden">Zion Study Center</span>
             <span>📧 zionstudycenter@gmail.com</span>
-            <span className="hidden sm:inline">📞 +234 123 456 7890</span>
+            <span className="hidden sm:inline">📞 +234 803 329 7541</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="hidden md:inline">Mon - Sat: 8:00 AM - 6:00 PM</span>
@@ -206,13 +199,13 @@ export function Header() {
                     <div className="absolute top-full left-0 mt-2 w-64 bg-white shadow-lg rounded-lg py-2 transition-all duration-200">
                       <Link
                         to="/about"
-                        className="block px-4 py-2 hover:bg-blue-50 transition-colors"
+                        className="block px-4 py-2 hover:bg-blue-50 transition-colors" onClick={() => setMobileMenuOpen(false)}
                       >
                         About Us
                       </Link>
                       <Link
                         to="/history"
-                        className="block px-4 py-2 hover:bg-blue-50 transition-colors"
+                        className="block px-4 py-2 hover:bg-blue-50 transition-colors" onClick={() => setMobileMenuOpen(false)}
                       >
                         Our History
                       </Link>

@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Target, Eye, Award, Users, TrendingUp, Heart, Tag } from "lucide-react";
-
-import heroImage from '../../assets/SenateHouse.jpg';
-import anotherHeroImage from '../../assets/bk3.jpg';
-import classRoom from '../../assets/287522350_1387577808421737_4478080586879130110_n.jpg';
-import pioneer from '../../assets/babat.jpg';
+import whoWeAre from '../../assets/refined/zionStaffs.jpeg';
+import whatWeDo from '../../assets/refined/dataAnalysisClass.jpeg';
+import students from '../../assets/refined/codingStudents.jpeg';
+import vision from '../../assets/refined/zionTowersTwo.jpeg';
+import history from '../../assets/new.jpg';
+import unique from '../../assets/refined/students.jpeg';
+import anotherHeroImage from '../../assets/refined/zionTowersThree.jpeg';
+import classRoom from '../../assets/refined/Director.jpeg';
 import { useState, useEffect } from "react";
 
 export function AboutPage() {
@@ -63,42 +66,42 @@ export function AboutPage() {
   const findOutMore = [
     {
       id:1,
-      image: heroImage,
+      image: whoWeAre,
       title: "Who are we",
       description: "We deliver quality education to thousands of students across West Africa in JAMB preparation, international certifications, and professional development programs. Our commitment to accessibility and excellence drives everything we do.",
       other: 'modal',
     },
     {
       id:2,
-      image: classRoom,
+      image: unique,
       title: "What we do",
       description: "We provide comprehensive exam preparation, certification training, and professional development programs. From JAMB to international qualifications, our expert-led courses equip students with knowledge and practical skills for success.",
       other: 'modal',
     },
     {
       id:3,
-      image: pioneer,
+      image: whatWeDo,
       title: "What makes us unique",
       description: "With 15+ years of excellence, proven 95% success rate, expert instructors, small class sizes, and comprehensive support systems. We prioritize student outcomes and create lasting impact in professional development.",
       other: 'modal',
     },
     {
       id:4,
-      image: heroImage,
+      image: students,
       title: "Our Mission",
       description: "To provide world-class education and professional training that equips students with the knowledge, skills, and confidence needed to excel in their academic pursuits and professional careers, while maintaining the highest standards of integrity and excellence.",
       other: 'modal',
     },
     {
       id:5,
-      image: heroImage,
+      image: vision,
       title: "Our Vision",
       description: "To be the leading multi-disciplinary educational institution in Nigeria and West Africa, recognized for our exceptional training quality, student success rates, and contribution to developing skilled professionals who drive societal and economic growth.",
       other: 'modal',
     },
     {
       id:6,
-      image: heroImage,
+      image: history,
       title: "Our History",
       description: "Founded in 2009, Zion Study Centre began with a simple mission: to provide accessible, high-quality education and training to students and professionals seeking to advance their careers and academic achievements...",
       other: 'page',
@@ -106,26 +109,6 @@ export function AboutPage() {
     },
   ];
 
-  const news = [
-    {
-      id:1,
-      image: heroImage,
-      title: "Best Training Institute Award",
-      description: "Recognized for excellence in professional training and student outcomes — January 2026",
-    },
-    {
-      id:2,
-      image: classRoom,
-      title: "5,000+ Successful Graduates",
-      description: "Celebrated milestone of 5,000 students trained and certified across all programs since founding — January 2026",
-    },
-    {
-      id:3,
-      image: pioneer,
-      title: "95% Success Rate Achievement",
-      description: "Consistent high performance across exam preparation, JAMB, and certification programs — January 2026",
-    },
-  ];
 
   const openModal = (card: Card) => {
     setSelectedCard(card)
@@ -157,6 +140,7 @@ export function AboutPage() {
           </div>
         </article>
         <div className="relative h-[70vh] overflow-hidden z-0">
+          <div className="absolute bg-black h-full w-full top-0 left-0 opacity-40 z-20"></div>
           <img
             src={anotherHeroImage}
             className={`w-full bg-center bg-cover absolute -top-[250px] md:-top-[400px] left-0 h-[650px] md:h-[900px]`}
@@ -167,7 +151,7 @@ export function AboutPage() {
         </div>
         <article className="bg-gray-50 relative z-20 flex justify-center py-6 text-center ">
           <div className="w-[90%] lg:w-[80%] py-4 lg:py-8">
-            <p className="text-xl lg:text-3xl leading-9"><span className="font-medium">Zion Study Centre and Leadership Academy (Limited) is a leading provider of</span> <i>structured and sound education</i> in JAMB preparation, International Certification, and Technology training. <span className="font-medium">Serving 5,000+ graduates across West Africa with a 95% success rate.</span> Although proudly rooted in <i>Abuja</i>, our commitment and impact are <i>global.</i></p>
+            <p className="text-xl lg:text-4xl leading-12"><span className="font-medium">Zion study Centre and Leadership Academy Limited was born in the year 2002 and incorporated after 10 years.</span> It's more than an extra-moral but a study center with a great vision. We are committed to providing quality education and training to individuals seeking to enhance their knowledge and skills in various fields. Our mission is to empower our students to achieve their academic and professional goals through innovative teaching methods, practical learning experiences, and a supportive learning environment.</p>
           </div>
         </article>
       </section>
@@ -190,7 +174,7 @@ export function AboutPage() {
                 <p>
                   Founded in 2009, Zion Study Centre began with a simple mission: to provide accessible, high-quality education and training to students and professionals seeking to advance their careers and academic achievements.
                 </p>
-                <button className="bg-transparent text-white py-2 px-8 border-1 border-white">Read More</button>
+                <Link to="/futures" className="inline-block bg-transparent text-white py-2 px-8 border border-white hover:bg-white hover:text-blue-700 transition duration-300">Read More</Link>
               </div>
             </div>
           </div>
@@ -273,7 +257,7 @@ export function AboutPage() {
       </section>
 
       {/* Achievements */}
-      <section className="py-16 md:py-24 bg-blue-50">
+      {/* <section className="py-16 md:py-24 bg-blue-50">
         <div className="container mx-auto px-4 lg:px-16">
            <h1 className="text-2xl md:text-3xl text-gray-900 mb-12 font-extrabold">Our Latest News and Achievement</h1>
 
@@ -299,7 +283,7 @@ export function AboutPage() {
             } 
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Key Stats */}
       <section className="py-16 md:py-24 bg-blue-50">

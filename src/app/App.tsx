@@ -21,10 +21,11 @@ import { MediaManagerDashboard } from "./pages/dashboard/MediaManagerDashboard";
 import { GalleryPage } from "./pages/GalleryPage";
 import BlogPostsComponent from "./pages/Blog";
 import { StudentDashboard } from "./pages/dashboard/StudentDashboard";
+import { FuturesPage } from "./pages/FuturesPage";
+import { VerifyEmailPage } from "./pages/VerifyEmailPage";
 import ScrollToTop from "./components/ScrollToTop";
 import { ScrollToTopButton } from "./components/ScrollToTopButton";
 import { PopUp } from "./components/PopUp";
-import adImage from "../assets/new1.jpg";
 
 // Layout for the public-facing website
 const WebsiteLayout = () => {
@@ -37,12 +38,7 @@ const WebsiteLayout = () => {
       <Footer />
       <WhatsAppFloat />
       <ScrollToTopButton />
-      <PopUp 
-        title="2024/2025 Admission is Now Open!"
-        image={adImage}
-        ctaLink="/register"
-        description="Join Zion Study Centre today for excellence in IJMB, JUPEB and NABTEB."
-      />
+      <PopUp />
     </div>
   );
 };
@@ -59,6 +55,7 @@ export default function App() {
           <Route element={<WebsiteLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/futures" element={<FuturesPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/blog" element={<BlogPostsComponent />} />
             <Route path="/history" element={<HistoryPage />} />
@@ -78,6 +75,7 @@ export default function App() {
 
           {/* System Routes (Standalone) */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
           
           {/* Dashboard Routes (Protected) */}
           <Route 

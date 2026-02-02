@@ -1,7 +1,3 @@
-import { Link } from "react-router-dom";
-import zionBuilding from '../../assets/building.jpg';
-import classRoom from '../../assets/287522350_1387577808421737_4478080586879130110_n.jpg';
-import pioneer from '../../assets/babat.jpg';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
@@ -48,30 +44,6 @@ const HistoryPage = () => {
                 "2025 - Vision for global expansion"
             ]
         }
-    ];
-
-    const historyCards: Card[] = [
-        {
-            id: 1,
-            image: zionBuilding,
-            title: "Our Pioneer Director",
-            description: "Recognized for excellence in professional training, our founding director shaped the vision and mission of Zion Study Centre.",
-            link: "#"
-        },
-        {
-            id: 2,
-            image: classRoom,
-            title: "Pioneer Location",
-            description: "Honesty and transparency in all our dealings with students and partners have been the cornerstone of our growth.",
-            link: "#"
-        },
-        {
-            id: 3,
-            image: pioneer,
-            title: "Our Facilities",
-            description: "Consistent high performance in exam preparation and certification through state-of-the-art learning environments.",
-            link: "#"
-        },
     ];
 
     return(
@@ -198,57 +170,19 @@ const HistoryPage = () => {
                 <div className="max-w-4xl mx-auto px-6 md:px-8">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
                     <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg">
-                        <iframe
-                            className="absolute top-0 left-0 w-full h-full"
-                            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                            title="Zion Study Centre"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        <iframe 
+                            className="absolute top-0 left-0 w-full h-full" 
+                            src="https://www.youtube.com/embed/x_qxLmke_3E" 
+                            title="Zion history documentary video = our story from Genesis" 
+                            frameBorder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            referrerPolicy="strict-origin-when-cross-origin" 
                             allowFullScreen
                         ></iframe>
                     </div>
                     <p className="text-gray-600 text-center mt-6">
                         Watch our journey and learn more about Zion Study Centre and Leadership Academy
                     </p>
-                </div>
-            </section>
-
-            {/* In This Section - Related Links */}
-            <section className="bg-white py-16 md:py-24">
-                <div className="max-w-6xl mx-auto px-6 md:px-8">
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12">In This Section</h2>
-                    
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {historyCards.map((card: Card) => (
-                            <Link to={card.link} key={card.id}>
-                                <div className="group cursor-pointer h-full">
-                                    {/* Image Container */}
-                                    <div className="overflow-hidden rounded-sm mb-4">
-                                        <img
-                                            src={card.image}
-                                            alt={card.title}
-                                            className="w-full h-64 object-cover transform transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                    </div>
-                                    
-                                    {/* Text Container */}
-                                    <div className="space-y-3">
-                                        <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                                            {card.title}
-                                        </h3>
-                                        <p className="text-gray-600 line-clamp-3">
-                                            {card.description}
-                                        </p>
-                                        <div className="pt-2">
-                                            <span className="text-blue-600 font-medium text-sm group-hover:underline">
-                                                Learn more →
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
                 </div>
             </section>
         </div>

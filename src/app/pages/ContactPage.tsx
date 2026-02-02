@@ -50,8 +50,8 @@ export function ContactPage() {
   };
 
   const officeAddress = "Zion Study Centre, ZION TOWERS OPPOSITE MTN OFFICE ALONG GENERAL HOSPITAL KUBWA Abuja, FCT Off nadrem supermarket before UBA, Kubwa";
-  const officeLat = 9.149028;
-  const officeLng = 7.279051;
+  const officeLat = 9.154515855422833;
+  const officeLng = 7.338470986492352;
 
   return (
     <div className="min-h-screen">
@@ -86,9 +86,9 @@ export function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Visit Us</h3>
                     <p className="text-gray-600 text-sm">
-                      123 Education Street,<br />
-                      Victoria Island, Lagos,<br />
-                      Nigeria
+                      ZION TOWERS OPPOSITE MTN OFFICE ALONG <br />
+                       GENERAL HOSPITAL,<br />
+                        KUBWA Abuja.
                     </p>
                   </div>
                 </div>
@@ -99,8 +99,8 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
-                    <p className="text-gray-600 text-sm">+234 123 456 7890</p>
-                    <p className="text-gray-600 text-sm">+234 098 765 4321</p>
+                    <p className="text-gray-600 text-sm">+234 803 329 7541</p>
+                    <p className="text-gray-600 text-sm">+234 817 938 3426</p>
                   </div>
                 </div>
 
@@ -111,7 +111,6 @@ export function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Email Us</h3>
                     <p className="text-gray-600 text-sm">zionstudycenter@gmail.com</p>
-                    <p className="text-gray-600 text-sm">admissions@zionstudycentre.com</p>
                   </div>
                 </div>
 
@@ -243,9 +242,9 @@ export function ContactPage() {
       </section>
 
       {/* Map Section */}
-      <section className="w-full bg-gray-50 py-12 md:py-0 md:h-screen md:max-h-screen md:min-h-screen flex flex-col md:m-0 md:p-0">
+      <section className="w-full bg-gray-50 md:py-0 flex flex-col md:m-0 md:p-0">
         <div className="w-full h-full flex-1 px-0 md:m-0 md:p-0">
-          <div className="w-full h-64 sm:h-80 md:h-full md:max-h-screen overflow-hidden md:m-0 md:p-0">
+          <div className="w-full h-80 md:h-full overflow-hidden md:m-0 md:p-0">
             <MapEmbed lat={officeLat} lng={officeLng} address={officeAddress} width="100%" />
           </div>
         </div>

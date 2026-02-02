@@ -52,14 +52,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(newUser);
   };
 
-  const logout = async () => {
-    try {
-        await logoutUser();
-    } catch (e) {
-        console.error("Logout failed", e);
-    }
+ const logout = async () => {
+  try {
+    await logoutUser();
+  } catch (e) {
+    console.error("Logout failed", e);
+  } finally {
     setUser(null);
-  };
+    window.location.replace("/login");
+  }
+};
+
 
   const updateUser = (updatedUser: User) => {
     setUser(updatedUser);

@@ -257,21 +257,19 @@ export function HomePage() {
 
       {/* Video Section - Lazy Load iframe */}
       <section className="bg-white py-16 md:py-24">
-        <div className="mx-auto px-6 md:px-8 max-w-4xl">
+        <div className="max-w-4xl mx-auto px-6 md:px-8">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
-          <div className="flex justify-center">
-            <div className="relative w-full md:w-3/4 pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg bg-gray-200">
-              <iframe 
-                className="absolute top-0 left-0 w-full h-full" 
-                src="https://www.youtube.com/embed/x_qxLmke_3E?modestbranding=1&rel=0" 
-                title="Zion history documentary video" 
-                frameBorder="0" 
-                loading="lazy"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerPolicy="strict-origin-when-cross-origin" 
-                allowFullScreen
-              ></iframe>
-            </div>
+          <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg">
+            <iframe 
+              className="absolute top-0 left-0 w-full h-full" 
+              src="https://www.youtube.com/embed/x_qxLmke_3E?modestbranding=1&rel=0" 
+              title="Zion history documentary video" 
+              frameBorder="0" 
+              loading="lazy"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerPolicy="strict-origin-when-cross-origin" 
+              allowFullScreen
+            ></iframe>
           </div>
           <p className="text-gray-600 text-center mt-6 text-sm md:text-base">
             Watch our journey and learn more about Zion Study Centre and Leadership Academy

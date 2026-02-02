@@ -426,8 +426,12 @@ export const changeInitialPassword = async (newPassword: string): Promise<any> =
 };
 
 export const logoutUser = async (): Promise<void> => {
-    await fetchWithCreds(`${API_URL}/auth/logout`, { method: 'POST' });
+  await fetch(`${API_URL}/auth/logout`, {
+    method: "POST",
+    credentials: "include", 
+  });
 };
+
 
 export const sendEmail = async (type: 'contact' | 'admission', data: any) => {
     try {

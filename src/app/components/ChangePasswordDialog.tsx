@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { changeOwnPassword } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 interface ChangePasswordDialogProps {
   isOpen: boolean;
@@ -11,11 +12,13 @@ interface ChangePasswordDialogProps {
 }
 
 export function ChangePasswordDialog({ isOpen, onClose }: ChangePasswordDialogProps) {
+  const user = useAuth().user || { isFirstLogin: false };
   const [passwords, setPasswords] = useState({ current: '', new: '', confirm: '' });
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    user.isFirstLogin = false;
     e.preventDefault();
     if (passwords.new !== passwords.confirm) {
       setMsg({ type: 'error', text: 'New passwords do not match' });

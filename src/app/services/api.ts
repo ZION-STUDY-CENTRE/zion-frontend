@@ -49,6 +49,17 @@ export interface GalleryItem {
   category?: string;
 }
 
+// Add this type declaration at the top of your file (or in a global .d.ts file if preferred)
+interface ImportMetaEnv {
+    VITE_API_URL?: string;
+}
+// Augment the ImportMeta interface globally for Vite
+declare global {
+    interface ImportMeta {
+        readonly env: ImportMetaEnv;
+    }
+}
+
 const API_URL = import.meta.env.VITE_API_URL || 'https://zion-backend-og8z.onrender.com/api';
 
 // Concurrency handling for Token Refresh

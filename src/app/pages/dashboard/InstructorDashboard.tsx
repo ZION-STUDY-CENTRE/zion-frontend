@@ -39,7 +39,7 @@ export function InstructorDashboard() {
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [files, setFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(user?.isFirstLogin ? true : false);
   const [activeTab, setActiveTab] = useState('students');
   const [showAssignmentForm, setShowAssignmentForm] = useState(false);
   const [showQuizForm, setShowQuizForm] = useState(false);

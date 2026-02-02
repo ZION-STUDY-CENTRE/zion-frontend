@@ -21,7 +21,7 @@ export const MediaManagerDashboard = () => {
     const { user, logout } = useAuth();
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(user?.isFirstLogin ? true : false);
 
     // Programs State for Department Dropdown
     const [programs, setPrograms] = useState<Program[]>([]);

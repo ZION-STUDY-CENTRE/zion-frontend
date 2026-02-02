@@ -49,7 +49,7 @@ export interface GalleryItem {
   category?: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://zionstudycentrewebsitebackend.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://zion-backend-og8z.onrender.com/api';
 
 // Concurrency handling for Token Refresh
 let isRefreshing = false;

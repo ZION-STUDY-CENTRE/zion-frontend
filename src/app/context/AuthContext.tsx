@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (newUser: User) => {
     setUser(newUser);
+    console.log("User logged in", newUser)
   };
 
   const logout = async () => {

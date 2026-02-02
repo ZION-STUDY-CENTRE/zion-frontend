@@ -14,35 +14,38 @@ const AboutSummaryComponent: React.FC = () => {
   return (
     <div className="bg-gray-50 py-16">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Left Side - Text with matching height */}
-          <div className="flex flex-col justify-center h-full">
-            <div className="space-y-6 text-gray-800 leading-relaxed">
-              <h2 className="text-3xl font-bold mb-6">WELCOME TO ZION STUDY CENTRE</h2>
-
-              <p className="text-base">
-                <span className='font-bold'>Zion Study Centre</span> offers intensive coaching for students preparing for any forms of Examinations both local and international.
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Column - Large Card with Image */}
+          <div 
+            onClick={handleNavigation}
+            className="cursor-pointer group w-full lg:w-[55%]"
+          >
+            <div className="relative bg-gradient-to-br from-amber-100 to-orange-200 rounded-lg overflow-hidden h-80">
+              <img 
+                src={image2}
+                alt="Students collaborating"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="p-8">
+              <p className="text-gray-600 mb-4 leading-relaxed">
+                <span className='font-bold text-lg'>Zion Study Centre</span> offers intensive coaching for students preparing for any forms of Examinations both local and international.
               </p>
-              
-              <p className="text-base">
+              <p className="text-gray-600 mb-4 leading-relaxed">
                 We manage Students, offer career counselling on their academic future and guide them in selection of courses into university, based on their I/Q and E/Q.
               </p>
-              
-              <p className="text-base">
+              <p className="text-gray-600 leading-relaxed">
                 Zion Study Centre is a modern organization set up to bring about the best in Students and ignite the fire of greatness in them. We also provide Scholarship through our foundation to intelligent students from humble homes.
               </p>
-
-              <button 
-                onClick={handleNavigation}
-                className="border-2 border-red-700 text-red-700 px-6 py-3 hover:bg-red-700 hover:text-white transition-colors duration-300 inline-block mt-4"
-              >
-                Learn more about studying with us
-              </button>
+              <div className="mt-6 flex items-center gap-2 text-red-600">
+                <Mountain className="w-5 h-5" />
+                <span className="font-medium">Study</span>
+              </div>
             </div>
           </div>
 
-          {/* Right Side - Three Cards */}
-          <div className="space-y-8">
+          {/* Right Column - Three Cards */}
+          <div className="space-y-8 w-full lg:w-[45%]">
             {/* Mission Card */}
             <div 
               onClick={handleNavigation}

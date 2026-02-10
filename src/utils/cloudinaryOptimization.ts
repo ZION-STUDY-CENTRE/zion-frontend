@@ -57,7 +57,7 @@ export function extractCloudName(url: string): string {
   } catch (e) {
     console.warn('Could not extract cloud name from URL:', url);
   }
-  return import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dovcohv9k';
+  return import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dffwwr8vy';
 }
 
 /**
@@ -106,7 +106,7 @@ export function getOptimizedImageUrl(
   if (!imageUrl) return '';
 
   // Extract cloud name from URL if it's a full URL
-  let cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dovcohv9k';
+  let cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dffwwr8vy';
   if (imageUrl.includes('res.cloudinary.com')) {
     cloudName = extractCloudName(imageUrl);
   }

@@ -1,10 +1,6 @@
-import { useState, useEffect } from "react";
-import { Link, Links } from "react-router-dom";
+import { useState, useEffect, Suspense, lazy } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { CourseCard } from "../components/CourseCard";
-import SearchCourse from "../components/SearchCourse";
-import ChooseZion from "../components/ChooseZion";
-import { LazyImage } from "../components/LazyImage";
 import { getOptimizedImageUrl } from "../../utils/cloudinaryOptimization";
 import {
   Carousel,
@@ -15,32 +11,41 @@ import {
 } from "../components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import {
-  GraduationCap,
   Users,
   Award,
-  Clock,
+  GraduationCap,
   BookOpen,
-  Target,
+  Clock,
   TrendingUp,
-  CircleCheck,
-  ArrowRight,
-  ArrowUp,
+  Target,
   Star,
-  Search,
 } from "lucide-react";
-import AboutSummaryComponent from "../components/AboutSummary";
-import OurPrograms from "../components/OurPrograms";
-import ParallaxSection from "../components/ParallaxSection";
 import { getBlogPosts, BlogPost, getPrograms, Program, getTestimonials, Testimonial } from "../services/api";
+
+// Direct imports for critical images
+import studentsTwo from "../../assets/refined/studentsTwo.jpeg";
+import zionTowersThree from "../../assets/refined/zionTowersThree.jpeg";
 import zionStaffsTwo from "../../assets/refined/zionStaffsTwo.jpeg";
-import studentsTwo from "../../assets/refined/studentsTwo.jpeg"; 
-import zionTowersThree from "../../assets/refined/zionTowersThree.jpeg"; 
+
+// Lazy load components
+const SearchCourse = lazy(() => import("../components/SearchCourse"));
+const ChooseZion = lazy(() => import("../components/ChooseZion"));
+const AboutSummaryComponent = lazy(() => import("../components/AboutSummary"));
+const OurPrograms = lazy(() => import("../components/OurPrograms"));
+const ParallaxSection = lazy(() => import("../components/ParallaxSection"));
+
+// Skeleton loaders
+const ComponentSkeleton = () => (
+  <div className="animate-pulse">
+    <div className="h-96 bg-gray-200 rounded-lg"></div>
+  </div>
+); 
 
 export function HomePage() {
   const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
   const [programs, setPrograms] = useState<Program[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [offset, setOffset] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,14 +76,14 @@ export function HomePage() {
     fetchData();
   }, []);
 
-  useEffect(()=>{
-     const onScroll = () => {
-      setOffset(window.scrollY);
-    };
+  // Handle hero image carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
+    }, 7000);
 
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   const stats = [
     { icon: Users, value: "5,000+", label: "Students Trained" },
@@ -114,24 +119,12 @@ export function HomePage() {
     studentsTwo,
     zionTowersThree,
     zionStaffsTwo,
-
   ];
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 7000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="group relative text-white h-[70vh] flex justify-start items-end overflow-hidden">
-
+      {/* Hero Section - Optimized */}
+      <section className="group relative text-white h-[70vh] flex justify-start items-end overflow-hidden bg-gray-900">
         {heroImages.map((image, index) => (
           <div
             key={index}
@@ -142,35 +135,33 @@ export function HomePage() {
           />
         ))}
         
-        <div className="2xl:container flex relative px-4 z-10 mx-auto mb-10">
-          <div className="grid items-end ">
+        <div className="container mx-auto px-4 relative z-10 w-full mb-10">
+          <div className="grid items-end w-full">
             <div className="">
-              
-               <div className="relative inline-block">
+              <div className="relative inline-block max-w-2xl">
                 <Link to="/blog" className="block group/link">
-                {
-                  latestPost && 
+                  {latestPost && 
                     <span className="inline-block bg-blue-900 text-white text-xs px-2 py-1 mb-2 font-bold uppercase tracking-wider rounded-sm">
                       Latest News
                     </span>
-                }
-                  
-                  <h3 className="text-3xl lg:text-4xl mb-1 font-bold leading-tight ">
+                  }
+                  <h3 className="text-3xl lg:text-4xl mb-1 font-bold leading-tight lg:whitespace-nowrap lg:text-ellipsis ">
                     {latestPost ? latestPost.shortDescription : "Zion Study Center & Leadership Academy"}
                   </h3>
                 </Link>
-                  <span
-                    className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
-                </div>
+                <span
+                  className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+              </div>
             </div>
-           
           </div>
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.8)] to-[rgba(0,0,0,0.2)]  opacity-100 z-0"></div>
       </section>
       
 
-      <SearchCourse />
+      <Suspense fallback={<ComponentSkeleton />}>
+        <SearchCourse />
+      </Suspense>
 
       {/* Stats Section */}
       <section className="py-12 bg-white">
@@ -178,29 +169,34 @@ export function HomePage() {
           <div className="flex flex-wrap gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center hover:scale-105 hover:shadow-md py-4 px-20 rounded-md w-fit mx-auto">
-                <div className="flex justify-center mb-3mx-auto">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                    <stat.icon className="text-blue-700" size={32} />
+                <div className="flex justify-center mb-3 mx-auto">
+                  <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                    <stat.icon className="text-blue-700" size={28} />
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
+                <div className="text-gray-600 text-sm">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <AboutSummaryComponent/>
+      {/* About Summary - Lazy Loaded */}
+      <Suspense fallback={<ComponentSkeleton />}>
+        <AboutSummaryComponent />
+      </Suspense>
 
-      {/* Programs Overview */}
-      <OurPrograms />
+      {/* Programs Overview - Lazy Loaded */}
+      <Suspense fallback={<ComponentSkeleton />}>
+        <OurPrograms />
+      </Suspense>
 
-{/* Featured Courses - News Style */}
+      {/* Featured Programs - Carousel */}
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl md:text-5xl text-gray-900">
+            <h2 className="text-2xl md:text-3xl text-gray-900">
               OUR PROGRAMS
             </h2>
           </div>
@@ -222,9 +218,9 @@ export function HomePage() {
                 {programs.map((course) => (
                   <CarouselItem key={course._id} className="pl-4 md:basis-1/2 lg:basis-1/4">
                     <Link to={`/course/${course.id}`} className="block bg-white group cursor-pointer h-full">
-                      <div className="aspect-[4/3] overflow-hidden">
-                        <img 
-                          src={course.heroImage || course.imageUrl} 
+                      <div className="aspect-[4/3] overflow-hidden bg-gray-100">
+                        <img
+                          src={course.heroImage || course.imageUrl}
                           alt={course.title}
                           loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -237,11 +233,6 @@ export function HomePage() {
                         <p className="text-gray-600 mb-6 flex-grow leading-relaxed hover:underline line-clamp-3">
                           {course.shortDescription || course.description}
                         </p>
-                        <div className="flex items-start gap-2 text-red-600 text-sm">
-                          <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                          </svg>
-                        </div>
                       </div>
                     </Link>
                   </CarouselItem>
@@ -255,40 +246,45 @@ export function HomePage() {
       </section>
 
       {/* Why Choose Us */}
-      <ChooseZion />
+      <Suspense fallback={<ComponentSkeleton />}>
+        <ChooseZion />
+      </Suspense>
 
-      {/* Parallax Section */}
-      <ParallaxSection />
+      {/* Parallax Section - Lazy Loaded */}
+      <Suspense fallback={<ComponentSkeleton />}>
+        <ParallaxSection />
+      </Suspense>
 
-      {/* Video Section */}
+      {/* Video Section - Lazy Load iframe */}
       <section className="bg-white py-16 md:py-24">
-        <div className=" mx-auto px-6 md:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
+        <div className="max-w-4xl mx-auto px-6 md:px-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
           <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg">
             <iframe 
               className="absolute top-0 left-0 w-full h-full" 
-              src="https://www.youtube.com/embed/x_qxLmke_3E" 
-              title="Zion history documentary video = our story from Genesis" 
+              src="https://www.youtube.com/embed/x_qxLmke_3E?modestbranding=1&rel=0" 
+              title="Zion history documentary video" 
               frameBorder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              loading="lazy"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
               referrerPolicy="strict-origin-when-cross-origin" 
               allowFullScreen
             ></iframe>
           </div>
-          <p className="text-gray-600 text-center mt-6">
-              Watch our journey and learn more about Zion Study Centre and Leadership Academy
+          <p className="text-gray-600 text-center mt-6 text-sm md:text-base">
+            Watch our journey and learn more about Zion Study Centre and Leadership Academy
           </p>
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials - Optimized */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               Student Success Stories
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
               Hear from our students who have achieved their educational and career goals.
             </p>
           </div>
@@ -312,14 +308,13 @@ export function HomePage() {
                     <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
                       <div className="bg-white p-6 rounded-lg shadow-md h-full border">
                         <div className="flex items-center mb-4">
-                          <div className="w-12 h-12 rounded-full mr-3 overflow-hidden">
+                          <div className="w-12 h-12 rounded-full mr-3 overflow-hidden bg-gray-100">
                             {testimonial.image ? (
                               <img
                                 src={getOptimizedImageUrl(testimonial.image, 'testimonial')}
                                 alt={testimonial.name}
-                                className="w-12 h-12 rounded-full object-cover"
                                 loading="lazy"
-                                decoding="async"
+                                className="w-12 h-12 rounded-full object-cover"
                               />
                             ) : (
                               <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
@@ -357,10 +352,10 @@ export function HomePage() {
       {/* CTA Section */}
       <section className="py-16 md:py-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
             Ready to Start Your Learning Journey?
           </h2>
-          <p className="text-xl mb-8 text-blue-100 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg mb-8 text-blue-100 max-w-2xl mx-auto">
             Join Zion Study Centre today and take the first step towards achieving your academic and professional goals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

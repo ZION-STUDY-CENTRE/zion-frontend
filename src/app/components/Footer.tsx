@@ -107,7 +107,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={16} className="text-blue-500 flex-shrink-0" />
-                <span className="text-gray-400">zionstudycenter@gmail.com</span>
+                <span className="text-gray-400">info@zionstudycentre.com.ng</span>
               </li>
             </ul>
             <div className="mt-4 p-3 bg-gray-800 rounded-lg">

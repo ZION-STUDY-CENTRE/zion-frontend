@@ -589,6 +589,53 @@ export const deleteAssignment = async (assignmentId: string) => {
     return response.json();
 };
 
+
+// Assignment Submissions
+export const submitAssignment = async (assignmentId: string, data: any) => {
+    const response = await fetchWithCreds(`${API_URL}/assignment-submissions/${assignmentId}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to submit assignment');
+    }
+    return response.json();
+};
+
+export const getMyAssignmentSubmission = async (assignmentId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/assignment-submissions/${assignmentId}/my-submission`);
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to get submission');
+    }
+    return response.json();
+};
+
+export const getAssignmentSubmissions = async (assignmentId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/assignment-submissions/${assignmentId}/submissions`);
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to get submissions');
+    }
+    return response.json();
+};
+
+export const gradeAssignmentSubmission = async (submissionId: string, data: any) => {
+    const response = await fetchWithCreds(`${API_URL}/assignment-submissions/${submissionId}/grade`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to grade submission');
+    }
+    return response.json();
+};
+
+
 // ============ QUIZZES API ============
 
 export const getQuizzes = async (programId: string) => {
@@ -741,51 +788,6 @@ export const deleteFileResource = async (fileId: string) => {
     if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to delete file');
-    }
-    return response.json();
-};
-
-// Assignment Submissions
-export const submitAssignment = async (assignmentId: string, data: any) => {
-    const response = await fetchWithCreds(`${API_URL}/assignment-submissions/${assignmentId}/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to submit assignment');
-    }
-    return response.json();
-};
-
-export const getMyAssignmentSubmission = async (assignmentId: string) => {
-    const response = await fetchWithCreds(`${API_URL}/assignment-submissions/${assignmentId}/my-submission`);
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to get submission');
-    }
-    return response.json();
-};
-
-export const getAssignmentSubmissions = async (assignmentId: string) => {
-    const response = await fetchWithCreds(`${API_URL}/assignment-submissions/${assignmentId}/submissions`);
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to get submissions');
-    }
-    return response.json();
-};
-
-export const gradeAssignmentSubmission = async (submissionId: string, data: any) => {
-    const response = await fetchWithCreds(`${API_URL}/assignment-submissions/${submissionId}/grade`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to grade submission');
     }
     return response.json();
 };

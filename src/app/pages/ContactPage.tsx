@@ -110,7 +110,7 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Email Us</h3>
-                    <p className="text-gray-600 text-sm">zionstudycenter@gmail.com</p>
+                    <p className="text-gray-600 text-sm">info@zionstudycentre.com.ng</p>
                   </div>
                 </div>
 

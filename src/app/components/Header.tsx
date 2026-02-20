@@ -25,7 +25,7 @@ export function Header() {
         <div className="container mx-auto flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
             <span className="text-xl font-bold hidden lg:block xl:hidden">Zion Study Center</span>
-            <span>📧 zionstudycenter@gmail.com</span>
+            <span>📧 info@zionstudycentre.com.ng</span>
             <span className="hidden sm:inline">📞 +234 803 329 7541</span>
           </div>
           <div className="flex items-center gap-2">

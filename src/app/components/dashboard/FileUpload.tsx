@@ -26,79 +26,62 @@ export function FileUpload({ programId, files, onFileAdded, isInstructor }: File
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    fileUrl: '',
-    fileName: '',
     resourceType: 'study-material' as const,
     visibility: 'public' as const
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files?.[0];
     if (!file) return;
-
-    setIsUploadingFile(true);
-    setError('');
-
-    try {
-      // Upload file to Cloudinary via backend
-      const formDataForUpload = new FormData();
-      formDataForUpload.append('image', file);
-      
-      const response = await fetch(`${API_URL}/upload`, {
-        method: 'POST',
-        body: formDataForUpload,
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        throw new Error('File upload failed');
-      }
-
-      const data = await response.json();
-      
-      setFormData(prev => ({
-        ...prev,
-        fileName: file.name,
-        fileUrl: data.imageUrl
-      }));
-      setUploadedFileUrl(data.imageUrl);
-    } catch (err: any) {
-      setError(`Failed to upload file: ${err.message}`);
-    } finally {
-      setIsUploadingFile(false);
-    }
+    setSelectedFile(file);
+    setFormData(prev => ({ ...prev })); // trigger re-render
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!formData.title || !formData.fileUrl) {
-      setError('Please fill in title and upload a file');
+    if (!formData.title || !selectedFile) {
+      setError('Please fill in title and select a file');
       return;
     }
 
     setIsLoading(true);
+    setIsUploadingFile(true);
 
     try {
-      await uploadFileResource({
-        ...formData,
-        program: programId,
-        fileSize: 0
+      const fd = new FormData();
+      fd.append('title', formData.title);
+      fd.append('description', formData.description);
+      fd.append('program', programId);
+      fd.append('resourceType', formData.resourceType);
+      fd.append('visibility', formData.visibility);
+      fd.append('file', selectedFile);
+
+      const response = await fetch(`${API_URL}/files`, {
+        method: 'POST',
+        body: fd,
+        credentials: 'include'
       });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || 'Failed to upload file');
+      }
+
       setFormData({
         title: '',
         description: '',
-        fileUrl: '',
-        fileName: '',
         resourceType: 'study-material',
         visibility: 'public'
       });
+      setSelectedFile(null);
       setUploadedFileUrl('');
       if (filePickerRef.current) {
         filePickerRef.current.value = '';
@@ -108,6 +91,7 @@ export function FileUpload({ programId, files, onFileAdded, isInstructor }: File
       setError(err.message || 'Failed to send material');
     } finally {
       setIsLoading(false);
+      setIsUploadingFile(false);
     }
   };
 
@@ -224,9 +208,9 @@ export function FileUpload({ programId, files, onFileAdded, isInstructor }: File
                       </>
                     )}
                   </Button>
-                  {formData.fileName && (
+                  {selectedFile && (
                     <div className="flex items-center justify-between p-2 bg-green-50 rounded border border-green-200">
-                      <span className="text-sm text-green-700">{formData.fileName}</span>
+                      <span className="text-sm text-green-700">{selectedFile.name}</span>
                       <span className="text-xs text-green-600">✓ Ready</span>
                     </div>
                   )}
@@ -235,7 +219,7 @@ export function FileUpload({ programId, files, onFileAdded, isInstructor }: File
 
               <Button
                 type="submit"
-                disabled={isLoading || isUploadingFile || !formData.fileUrl}
+                disabled={isLoading || isUploadingFile || !selectedFile}
                 className="w-full gap-2 bg-blue-600 hover:bg-blue-700"
               >
                 {isLoading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}

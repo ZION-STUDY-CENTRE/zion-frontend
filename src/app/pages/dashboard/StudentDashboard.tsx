@@ -7,25 +7,32 @@ import { Badge } from "../../components/ui/badge";
 import { CalendarIcon, BookOpenIcon, UserIcon, Lock, Download, Clock, CheckCircle, Send } from "lucide-react";
 import { ChangePasswordDialog } from "../../components/ChangePasswordDialog";
 import { NotificationBell } from "../../components/NotificationBell";
-import { getStudentProgram, getAssignments, getQuizzes, getFileResources, getQuiz, submitAssignment, getMyAssignmentSubmission } from '../../services/api';
+import { getStudentProgram, getAssignments, getQuizzes, getFileResources, getQuiz, submitAssignment, getMyAssignmentSubmission, getPrograms } from '../../services/api';
 import { QuizTake } from '../../components/dashboard/QuizTake';
 import { ChatComponent } from '../../components/ChatComponent';
 import { showSuccess, showError, showConfirm } from '../../../utils/sweetAlert';
 
 interface Program {
-  _id: string;
-  title: string;
-  name: string;
-  description: string;
-  instructors?: {
+    _id: string;
+    title: string;
     name: string;
-    email: string;
-  }[];
+    description: string;
+    instructors?: {
+        name: string;
+        email: string;
+    }[];
+}
+
+interface StudentProgram {
+    program: Program;
+    enrollmentDate?: string;
+    duration?: number;
 }
 
 export function StudentDashboard() {
   const { user, logout } = useAuth();
-  const [program, setProgram] = useState<Program | null>(null);
+    const [studentPrograms, setStudentPrograms] = useState<StudentProgram[]>([]);
+    const [selectedProgram, setSelectedProgram] = useState<StudentProgram | null>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [files, setFiles] = useState<any[]>([]);
@@ -39,34 +46,41 @@ export function StudentDashboard() {
   const [uploadingFile, setUploadingFile] = useState<{[key: string]: boolean}>({});
   const [submissionFiles, setSubmissionFiles] = useState<{[key: string]: {file: File | null, url: string}}>({});
 
-  useEffect(() => {
-    fetchMyProgram();
-  }, []);
+    useEffect(() => {
+        fetchMyPrograms();
+    }, []);
 
-  const fetchMyProgram = async () => {
-    try {
-      // Use centralized API instead of direct fetch + localStorage
-      const data = await getStudentProgram();
-      
-      if (data) {
-        setProgram(data);
-        // Fetch assignments, quizzes, and files for this program
-        await fetchAssignments(data._id);
-        await fetchQuizzes(data._id);
-        await fetchFiles(data._id);
-      } else {
-        // null means 404/not enrolled (handled by getStudentProgram returning null on 404)
-        // If it was another error, getStudentProgram would throw.
-      }
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Server Error');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchMyPrograms = async () => {
+        setLoading(true);
+        try {
+            // getStudentProgram now returns an array of programs for multi-program students
+            const data = await getStudentProgram();
+            if (Array.isArray(data) && data.length > 0) {
+                setStudentPrograms(data);
+                setSelectedProgram(data[0]);
+                await fetchAssignments(data[0].program._id);
+                await fetchQuizzes(data[0].program._id);
+                await fetchFiles(data[0].program._id);
+            } else if (data && data.program) {
+                // fallback for single program object
+                setStudentPrograms([data]);
+                setSelectedProgram(data);
+                await fetchAssignments(data.program._id);
+                await fetchQuizzes(data.program._id);
+                await fetchFiles(data.program._id);
+            } else {
+                setStudentPrograms([]);
+                setSelectedProgram(null);
+            }
+        } catch (err: any) {
+            console.error(err);
+            setError(err.message || 'Server Error');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const fetchAssignments = async (programId: string) => {
+    const fetchAssignments = async (programId: string) => {
     try {
       const data = await getAssignments(programId);
       setAssignments(data);
@@ -75,7 +89,7 @@ export function StudentDashboard() {
     }
   };
 
-  const fetchQuizzes = async (programId: string) => {
+    const fetchQuizzes = async (programId: string) => {
     try {
       const data = await getQuizzes(programId);
       setQuizzes(data);
@@ -84,7 +98,7 @@ export function StudentDashboard() {
     }
   };
 
-  const fetchFiles = async (programId: string) => {
+    const fetchFiles = async (programId: string) => {
     try {
       const data = await getFileResources(programId);
       setFiles(data);
@@ -195,7 +209,7 @@ export function StudentDashboard() {
                 <Card><CardContent className="p-8">Loading your program...</CardContent></Card>
             ) : error ? (
                 <Card className="border-red-200 bg-red-50"><CardContent className="p-8 text-red-600">{error}</CardContent></Card>
-            ) : !program ? (
+            ) : studentPrograms.length === 0 ? (
                 <Card>
                     <CardHeader>
                         <CardTitle>Not Enrolled</CardTitle>
@@ -203,38 +217,61 @@ export function StudentDashboard() {
                     </CardHeader>
                 </Card>
             ) : (
+                <>
+                <div className="flex flex-col md:flex-row md:items-center md:gap-4 mb-4">
+                  <span className="font-semibold">My Programs:</span>
+                  <div className="flex flex-wrap gap-2 mt-2 md:mt-0">
+                    {studentPrograms.map((sp, idx) => (
+                      <Button
+                        key={sp.program._id}
+                        variant={selectedProgram?.program._id === sp.program._id ? 'default' : 'outline'}
+                        onClick={async () => {
+                          setSelectedProgram(sp);
+                          setLoading(true);
+                          await fetchAssignments(sp.program._id);
+                          await fetchQuizzes(sp.program._id);
+                          await fetchFiles(sp.program._id);
+                          setLoading(false);
+                        }}
+                        size="sm"
+                      >
+                        {sp.program.title}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
                 <Card className="border-l-4 border-l-primary shadow-md">
                     <CardHeader>
                         <div className="flex justify-between items-start">
                             <div>
-                                <CardTitle className="text-2xl text-black">{program.title}</CardTitle>
+                                <CardTitle className="text-2xl text-black">{selectedProgram?.program.title}</CardTitle>
                             </div>
                             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">Active</Badge>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-gray-700">{program.description || "No description available."}</p>
-                        
+                        <p className="text-gray-700">{selectedProgram?.program.description || "No description available."}</p>
                         <div className="flex items-center gap-4 text-sm text-gray-500 pt-4 border-t">
                             <div className="flex items-center gap-2">
                                 <UserIcon className="h-4 w-4" />
                                 <span>
-                                    Instructors: {program.instructors && program.instructors.length > 0 
-                                     ? program.instructors.map(i => i.name).join(', ') 
+                                    Instructors: {selectedProgram?.program.instructors && selectedProgram.program.instructors.length > 0 
+                                     ? selectedProgram.program.instructors.map(i => i.name).join(', ') 
                                      : "TBA"}
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <CalendarIcon className="h-4 w-4" />
-                                <span>Enrolled: {user?.role === 'student' ? 'Active' : '-'}</span>
+                                <span>Enrolled: {selectedProgram?.enrollmentDate ? new Date(selectedProgram.enrollmentDate).toLocaleDateString() : '-'}</span>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
+                </>
             )}
 
             {/* Tabs for Materials/Assignments/Quizzes */}
-            {program && (
+            {selectedProgram && (
                 <Tabs defaultValue="materials" className="w-full">
                     <TabsList className="grid w-full grid-cols-5">
                         <TabsTrigger value="materials">Study Materials</TabsTrigger>
@@ -256,28 +293,30 @@ export function StudentDashboard() {
                                     <p className="text-muted-foreground text-sm italic py-8 text-center">No materials uploaded yet.</p>
                                 ) : (
                                     <div className="space-y-2">
-                                        {files.map((file) => (
-                                            <div
-                                                key={file._id}
-                                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors"
-                                            >
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-sm">{file.title}</p>
-                                                    <p className="text-xs text-gray-600 mt-1">
-                                                        {file.description || 'No description'}
-                                                    </p>
-                                                </div>
-                                                <a
-                                                    href={file.fileUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="p-2 hover:bg-gray-200 rounded transition-colors"
-                                                    title="Download"
+                                        {files
+                                            .filter(file => file.program === selectedProgram?.program._id || file.program?._id === selectedProgram?.program._id)
+                                            .map((file) => (
+                                                <div
+                                                    key={file._id}
+                                                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors"
                                                 >
-                                                    <Download size={18} className="text-blue-600" />
-                                                </a>
-                                            </div>
-                                        ))}
+                                                    <div className="flex-1">
+                                                        <p className="font-medium text-sm">{file.title}</p>
+                                                        <p className="text-xs text-gray-600 mt-1">
+                                                            {file.description || 'No description'}
+                                                        </p>
+                                                    </div>
+                                                    <a
+                                                        href={file.fileUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-2 hover:bg-gray-200 rounded transition-colors"
+                                                        title="Download"
+                                                    >
+                                                        <Download size={18} className="text-blue-600" />
+                                                    </a>
+                                                </div>
+                                            ))}
                                     </div>
                                 )}
                             </CardContent>
@@ -420,8 +459,8 @@ export function StudentDashboard() {
                                     onQuizComplete={() => {
                                         setSelectedQuiz(null);
                                         setQuizDetails(null);
-                                        if (program) {
-                                            fetchQuizzes(program._id);
+                                        if (selectedProgram) {
+                                            fetchQuizzes(selectedProgram.program._id);
                                         }
                                     }}
                                 />
@@ -514,7 +553,9 @@ export function StudentDashboard() {
                                     </Card>
                                     <Card>
                                         <CardContent className="p-4 text-center">
-                                            <p className="text-3xl font-bold">{files.length}</p>
+                                            <p className="text-3xl font-bold">{
+                                                files.filter(file => file.program === selectedProgram?.program._id || file.program?._id === selectedProgram?.program._id).length
+                                            }</p>
                                             <p className="text-sm text-gray-600">Resources</p>
                                         </CardContent>
                                     </Card>

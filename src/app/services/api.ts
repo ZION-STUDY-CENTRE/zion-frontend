@@ -352,13 +352,16 @@ export const updateUser = async (userId: string, userData: any, token?: string):
     return data;
 };
 
-export const reactivateUser = async (userId: string, durationMonths: number, token?: string): Promise<any> => {
+export const reactivateUser = async (userId: string, durationMonths?: number, programs?: Array<{ program: string, duration: number }>, token?: string): Promise<any> => {
+    const body: any = {};
+    if (typeof durationMonths !== 'undefined') body.durationMonths = durationMonths;
+    if (Array.isArray(programs)) body.programs = programs;
     const response = await fetchWithCreds(`${API_URL}/users/${userId}/reactivate`, {
         method: 'PUT',
         headers: { 
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ durationMonths })
+        body: JSON.stringify(body)
     });
     if (!response.ok) throw new Error('Failed to reactivate user');
     return await response.json();

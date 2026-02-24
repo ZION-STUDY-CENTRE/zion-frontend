@@ -30,15 +30,17 @@ export interface Program {
 }
 
 export interface BlogPost {
-  _id: string;
-  id?: number | string;
-  type: 'upcoming-event' | 'ongoing-activity';
-  department: string;
-  title: string;
-  description: string;
-  shortDescription: string;
-  timestamp: string | Date; // API returns string usually
-  image: any;
+    _id: string;
+    id?: number | string;
+    type: 'upcoming-event' | 'ongoing-activity' | 'social-media-post';
+    department?: string; // Optional for social-media-post
+    title: string;
+    description?: string;
+    shortDescription?: string;
+    url?: string;
+    platform?: 'twitter' | 'instagram' | 'youtube' | 'tiktok' | string;
+    timestamp?: string | Date; // API returns string usually
+    image?: any;
 }
 
 export interface GalleryItem {

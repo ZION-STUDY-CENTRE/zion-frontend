@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Filter, Loader2 } from 'lucide-react';
+import { Calendar, Clock, Filter, Loader2, Twitter, Instagram, Youtube, Music } from 'lucide-react';
 import { getBlogPosts, BlogPost } from '../services/api';
 import { Pagination } from '../components/Pagination';
 
@@ -40,8 +41,27 @@ const BlogPostsComponent = () => {
     fetchPosts();
   }, []);
 
-  // Get unique departments
-  const departments = ['all', ...new Set(posts.map(post => post.department))];
+  // Get unique departments (filter out undefined/null for social-media-posts)
+  const departments = ['all', ...new Set(posts.map(post => post.department).filter(Boolean))];
+
+  // Social Media Posts
+  const socialMediaPosts = posts.filter(post => post.type === 'social-media-post');
+
+  // Helper to get platform icon
+  const getPlatformIcon = (platform?: string) => {
+    switch (platform) {
+      case 'twitter':
+        return <Twitter className="inline-block text-blue-400 mr-2" size={20} />;
+      case 'instagram':
+        return <Instagram className="inline-block text-pink-500 mr-2" size={20} />;
+      case 'youtube':
+        return <Youtube className="inline-block text-red-500 mr-2" size={20} />;
+      case 'tiktok':
+        return <Music className="inline-block text-black mr-2" size={20} />;
+      default:
+        return null;
+    }
+  };
 
   // Filter posts based on selected tab and department
   const filteredPosts = posts.filter(post => {
@@ -50,9 +70,14 @@ const BlogPostsComponent = () => {
     return matchesTab && matchesDepartment;
   });
 
-  // Get latest 3 posts overall
+  // Get latest 3 posts overall (excluding social-media-posts)
   const latestPosts = [...posts]
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .filter(post => post.type !== 'social-media-post')
+    .sort((a, b) => {
+      const dateA = a.timestamp ? new Date(a.timestamp) : new Date(0);
+      const dateB = b.timestamp ? new Date(b.timestamp) : new Date(0);
+      return dateB.getTime() - dateA.getTime();
+    })
     .slice(0, 3);
 
   const formatDate = (dateInput: string | Date) => {
@@ -88,7 +113,7 @@ const BlogPostsComponent = () => {
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span className="flex items-center gap-1">
               <Clock size={14} />
-              {formatDate(post.timestamp)}
+              {formatDate( post.timestamp ? new Date(post.timestamp) : new Date(0))}
             </span>
           </div>
         </div>
@@ -124,6 +149,24 @@ const BlogPostsComponent = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white">
+      {/* Social Media Posts Section */}
+      {socialMediaPosts.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-blue-900 mb-4">Social Media Posts</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {socialMediaPosts.map(post => (
+              <div key={post.id || post._id} className="border-l-4 border-blue-400 bg-blue-50 rounded p-5 flex flex-col gap-2 shadow-sm">
+                <div className="flex items-center gap-2 mb-1">
+                  {getPlatformIcon(post.platform)}
+                  <h3 className="font-semibold text-blue-900 text-lg">{post.title}</h3>
+                </div>
+                <a href={post.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">{post.url}</a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2">
@@ -142,7 +185,6 @@ const BlogPostsComponent = () => {
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900" />
               )}
             </button>
-            
             <button
               onClick={() => setSelectedTab('ongoing-activity')}
               className={`pb-4 text-sm font-medium transition-colors relative ${
@@ -196,7 +238,7 @@ const BlogPostsComponent = () => {
                       <h4 className="font-semibold text-sm text-gray-900 line-clamp-2 mb-1">
                         {post.title}
                       </h4>
-                      <p className="text-xs text-gray-500">{formatDate(post.timestamp)}</p>
+                      <p className="text-xs text-gray-500">{formatDate( post.timestamp ? new Date(post.timestamp) : new Date(0))}</p>
                     </div>
                   </div>
                 </div>
@@ -211,9 +253,9 @@ const BlogPostsComponent = () => {
               {departments.map(dept => (
                 <button
                   key={dept}
-                  onClick={() => setSelectedDepartment(dept)}
+                  onClick={() => setSelectedDepartment(dept ?? 'all')}
                   className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                    selectedDepartment === dept
+                    selectedDepartment === (dept ?? 'all')
                       ? 'bg-gray-900 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}

@@ -83,6 +83,8 @@ export const MediaManagerDashboard = () => {
     const [blogType, setBlogType] = useState('upcoming-event');
     const [blogImage, setBlogImage] = useState<File | null>(null);
     const [blogDate, setBlogDate] = useState('');
+    const [blogUrl, setBlogUrl] = useState('');
+    const [blogPlatform, setBlogPlatform] = useState('');
 
     // Gallery Form State
     const [galleryTitle, setGalleryTitle] = useState('');
@@ -107,19 +109,28 @@ export const MediaManagerDashboard = () => {
 
         try {
             let imageUrl = null;
-            if (blogImage) {
+            if (blogType !== 'social-media-post' && blogImage) {
                 imageUrl = await handleImageUpload(blogImage, 'blog');
             }
 
-            await createBlogPost({
-                title: blogTitle,
-                description: blogDesc,
-                shortDescription: blogShortDesc,
-                department: blogDept,
-                type: blogType as any,
-                image: imageUrl,
-                timestamp: blogDate ? new Date(blogDate) : new Date()
-            });
+            if (blogType === 'social-media-post') {
+                await createBlogPost({
+                    title: blogTitle,
+                    type: blogType,
+                    url: blogUrl,
+                    platform: blogPlatform,
+                });
+            } else {
+                await createBlogPost({
+                    title: blogTitle,
+                    description: blogDesc,
+                    shortDescription: blogShortDesc,
+                    department: blogDept,
+                    type: blogType as any,
+                    image: imageUrl,
+                    timestamp: blogDate ? new Date(blogDate) : new Date()
+                });
+            }
 
             setMessage({ type: 'success', text: 'Blog post created successfully!' });
             showSuccess('Success!', 'Blog post created successfully!');
@@ -130,6 +141,8 @@ export const MediaManagerDashboard = () => {
             setBlogDept('');
             setBlogImage(null);
             setBlogDate('');
+            setBlogUrl('');
+            setBlogPlatform('');
             refreshData();
         } catch (err: any) {
             showError('Error', err.message || 'Failed to create blog post');
@@ -342,28 +355,56 @@ export const MediaManagerDashboard = () => {
                                             >
                                                 <option value="upcoming-event">Upcoming Event</option>
                                                 <option value="ongoing-activity">Ongoing Activity</option>
+                                                <option value="social-media-post">Social Media Post</option>
                                             </select>
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="date">Date</Label>
-                                            <Input id="date" type="datetime-local" value={blogDate} onChange={e => setBlogDate(e.target.value)} required />
-                                        </div>
+                                        {blogType !== 'social-media-post' && (
+                                            <div className="space-y-2">
+                                                <Label htmlFor="date">Date</Label>
+                                                <Input id="date" type="datetime-local" value={blogDate} onChange={e => setBlogDate(e.target.value)} required />
+                                            </div>
+                                        )}
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="shortDesc">Short Description</Label>
-                                        <Input id="shortDesc" value={blogShortDesc} onChange={e => setBlogShortDesc(e.target.value)} required />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="description">Full Description</Label>
-                                        <Textarea id="description" value={blogDesc} onChange={e => setBlogDesc(e.target.value)} rows={5} required />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="blogImage">Cover Image (Optional)</Label>
-                                        <Input id="blogImage" type="file" accept="image/*" onChange={e => setBlogImage(e.target.files?.[0] || null)} />
-                                    </div>
+                                    {blogType === 'social-media-post' ? (
+                                        <>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="url">Social Media URL</Label>
+                                                <Input id="url" value={blogUrl} onChange={e => setBlogUrl(e.target.value)} required />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="platform">Platform</Label>
+                                                <select
+                                                    id="platform"
+                                                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    value={blogPlatform}
+                                                    onChange={e => setBlogPlatform(e.target.value)}
+                                                    required
+                                                >
+                                                    <option value="" disabled>Select Platform</option>
+                                                    <option value="twitter">Twitter</option>
+                                                    <option value="instagram">Instagram</option>
+                                                    <option value="youtube">YouTube</option>
+                                                    <option value="tiktok">TikTok</option>
+                                                </select>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="shortDesc">Short Description</Label>
+                                                <Input id="shortDesc" value={blogShortDesc} onChange={e => setBlogShortDesc(e.target.value)} required />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="description">Full Description</Label>
+                                                <Textarea id="description" value={blogDesc} onChange={e => setBlogDesc(e.target.value)} rows={5} required />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="blogImage">Cover Image (Optional)</Label>
+                                                <Input id="blogImage" type="file" accept="image/*" onChange={e => setBlogImage(e.target.files?.[0] || null)} />
+                                            </div>
+                                        </>
+                                    )}
 
                                     <Button type="submit" className="w-full" disabled={uploading}>
                                         {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
@@ -387,6 +428,30 @@ export const MediaManagerDashboard = () => {
                                         value={blogSearchQuery} 
                                         onChange={e => setBlogSearchQuery(e.target.value)} 
                                     />
+                                </div>
+                            </div>
+
+                            {/* Social Media Posts Section */}
+                            <div className="mt-8">
+                                <h3 className="text-xl font-bold text-blue-700 mb-2">Social Media Posts</h3>
+                                <div className="grid gap-4">
+                                    {filteredPosts.filter(post => post.type === 'social-media-post').length === 0 ? (
+                                        <div className="text-center py-6 text-gray-400">No social media posts yet.</div>
+                                    ) : (
+                                        paginate(filteredPosts.filter(post => post.type === 'social-media-post'), currentPageBlog).map(post => (
+                                            <Card key={post._id} className="overflow-hidden hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-400 bg-blue-50">
+                                                <div className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                                    <div>
+                                                        <h4 className="font-bold text-lg text-blue-900 mb-1">{post.title}</h4>
+                                                        <a href={post.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">{post.url}</a>
+                                                    </div>
+                                                    <Button variant="destructive" onClick={() => handleDeletePost(post._id)}>
+                                                        <Trash2 className="h-4 w-4 mr-1" /> Delete
+                                                    </Button>
+                                                </div>
+                                            </Card>
+                                        ))
+                                    )}
                                 </div>
                             </div>
 

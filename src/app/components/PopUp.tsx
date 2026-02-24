@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { X, Twitter, Instagram, Youtube, Music } from "lucide-react";
+import { X, Facebook, Instagram, Youtube, Music } from "lucide-react";
 import { BlogPost, getBlogPosts } from '../services/api';
 // Helper to get platform icon
 const getPlatformIcon = (platform?: string) => {
     switch (platform) {
-        case 'twitter':
-            return <Twitter className="inline-block text-blue-400" size={100} />;
+        case 'facebook':
+            return <Facebook className="inline-block text-blue-400" size={48} />;
         case 'instagram':
-            return <Instagram className="inline-block text-pink-500" size={100} />;
+            return <Instagram className="inline-block text-pink-500" size={48} />;
         case 'youtube':
-            return <Youtube className="inline-block text-red-500" size={100} />;
+            return <Youtube className="inline-block text-red-500" size={48} />;
         case 'tiktok':
-            return <Music className="inline-block text-black" size={100} />;
+            return <Music className="inline-block text-black" size={48} />;
         default:
             return null;
     }
@@ -77,7 +77,7 @@ export function PopUp() {
         />
 
         {/* Modal Card */}
-        <div className="relative bg-white rounded-xl shadow-2xl w-3/4 md:w-full max-w-4xl overflow-hidden flex flex-col md:flex-row animate-[slideDown_0.5s_cubic-bezier(0.16,1,0.3,1)_forwards]">
+        <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col md:flex-row animate-[slideDown_0.5s_cubic-bezier(0.16,1,0.3,1)_forwards]">
             
             {/* Close Button */}
             <button 
@@ -89,7 +89,7 @@ export function PopUp() {
             </button>
 
                         {/* Image or Platform Logo Section */}
-                        <div className="md:w-1/2 h-70 md:h-100 relative bg-blue-900 flex items-center justify-center">
+                        <div className="md:w-1/2 h-100 relative bg-blue-900 flex items-center justify-center">
                             {latestPost && latestPost.type === 'social-media-post' ? (
                                 <div className="flex flex-col items-center justify-center w-full h-full">
                                     {getPlatformIcon(latestPost.platform)}

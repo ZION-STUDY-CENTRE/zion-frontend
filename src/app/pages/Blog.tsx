@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Filter, Loader2, Twitter, Instagram, Youtube, Music } from 'lucide-react';
+import { Calendar, Clock, Filter, Loader2, Facebook, Instagram, Youtube, Music } from 'lucide-react';
 import { getBlogPosts, BlogPost } from '../services/api';
 import { Pagination } from '../components/Pagination';
 
@@ -50,8 +50,8 @@ const BlogPostsComponent = () => {
   // Helper to get platform icon
   const getPlatformIcon = (platform?: string) => {
     switch (platform) {
-      case 'twitter':
-        return <Twitter className="inline-block text-blue-400 mr-2" size={20} />;
+      case 'facebook':
+        return <Facebook className="inline-block text-blue-400 mr-2" size={20} />;
       case 'instagram':
         return <Instagram className="inline-block text-pink-500 mr-2" size={20} />;
       case 'youtube':

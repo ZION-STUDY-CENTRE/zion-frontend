@@ -38,7 +38,7 @@ export interface BlogPost {
     description?: string;
     shortDescription?: string;
     url?: string;
-    platform?: 'twitter' | 'instagram' | 'youtube' | 'tiktok' | string;
+    platform?: 'facebook' | 'instagram' | 'youtube' | 'tiktok' | string;
     timestamp?: string | Date; // API returns string usually
     image?: any;
 }

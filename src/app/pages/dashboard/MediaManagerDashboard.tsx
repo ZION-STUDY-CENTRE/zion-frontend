@@ -382,7 +382,7 @@ export const MediaManagerDashboard = () => {
                                                     required
                                                 >
                                                     <option value="" disabled>Select Platform</option>
-                                                    <option value="twitter">Twitter</option>
+                                                    <option value="facebook">Facebook</option>
                                                     <option value="instagram">Instagram</option>
                                                     <option value="youtube">YouTube</option>
                                                     <option value="tiktok">TikTok</option>

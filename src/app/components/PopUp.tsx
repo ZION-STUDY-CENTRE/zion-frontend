@@ -5,13 +5,13 @@ import { BlogPost, getBlogPosts } from '../services/api';
 const getPlatformIcon = (platform?: string) => {
     switch (platform) {
         case 'facebook':
-            return <Facebook className="inline-block text-blue-400" size={48} />;
+            return <Facebook className="inline-block text-blue-400" size={100} />;
         case 'instagram':
-            return <Instagram className="inline-block text-pink-500" size={48} />;
+            return <Instagram className="inline-block text-pink-500" size={100} />;
         case 'youtube':
-            return <Youtube className="inline-block text-red-500" size={48} />;
+            return <Youtube className="inline-block text-red-500" size={100} />;
         case 'tiktok':
-            return <Music className="inline-block text-black" size={48} />;
+            return <Music className="inline-block text-black" size={100} />;
         default:
             return null;
     }
@@ -89,7 +89,7 @@ export function PopUp() {
             </button>
 
                         {/* Image or Platform Logo Section */}
-                        <div className="md:w-1/2 h-100 relative bg-blue-900 flex items-center justify-center">
+                        <div className="md:w-1/2 h-70 md:h-100 relative bg-blue-900 flex items-center justify-center">
                             {latestPost && latestPost.type === 'social-media-post' ? (
                                 <div className="flex flex-col items-center justify-center w-full h-full">
                                     {getPlatformIcon(latestPost.platform)}

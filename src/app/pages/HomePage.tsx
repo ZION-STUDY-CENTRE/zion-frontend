@@ -58,7 +58,7 @@ export function HomePage() {
         
         if (posts.length > 0) {
            // Sort by date descending
-           const sorted = [...posts].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+           const sorted = [...posts].sort((a, b) => new Date( b.timestamp ? new Date(b.timestamp) : new Date(0)).getTime() - new Date(a.timestamp ? new Date(a.timestamp) : new Date(0)).getTime());
            setLatestPost(sorted[0]);
         }
         

@@ -1,7 +1,21 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Twitter, Instagram, Youtube, Music } from "lucide-react";
 import { BlogPost, getBlogPosts } from '../services/api';
-import zion from '../../assets/bk3.jpg';
+// Helper to get platform icon
+const getPlatformIcon = (platform?: string) => {
+    switch (platform) {
+        case 'twitter':
+            return <Twitter className="inline-block text-blue-400" size={100} />;
+        case 'instagram':
+            return <Instagram className="inline-block text-pink-500" size={100} />;
+        case 'youtube':
+            return <Youtube className="inline-block text-red-500" size={100} />;
+        case 'tiktok':
+            return <Music className="inline-block text-black" size={100} />;
+        default:
+            return null;
+    }
+};
 
 export function PopUp() {
 
@@ -45,7 +59,7 @@ export function PopUp() {
         
         if (posts.length > 0) {
            // Sort by date descending
-           const sorted = [...posts].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+           const sorted = [...posts].sort((a, b) => new Date( b.timestamp ? new Date(b.timestamp) : new Date(0)).getTime() - new Date( a.timestamp ? new Date(a.timestamp) : new Date(0)).getTime());
            setLatestPost(sorted[0]);
         }
     }
@@ -63,7 +77,7 @@ export function PopUp() {
         />
 
         {/* Modal Card */}
-        <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col md:flex-row animate-[slideDown_0.5s_cubic-bezier(0.16,1,0.3,1)_forwards]">
+        <div className="relative bg-white rounded-xl shadow-2xl w-3/4 md:w-full max-w-4xl overflow-hidden flex flex-col md:flex-row animate-[slideDown_0.5s_cubic-bezier(0.16,1,0.3,1)_forwards]">
             
             {/* Close Button */}
             <button 
@@ -74,17 +88,23 @@ export function PopUp() {
                 <X size={20} className="text-gray-600" />
             </button>
 
-            {/* Image Section */}
-            <div className="md:w-1/2 h-100 relative bg-blue-900">
-                 
-                 <img 
-                    src={latestPost && latestPost.image} 
-                    alt="Announcement" 
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                 /> 
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/10" />
-            </div>
+                        {/* Image or Platform Logo Section */}
+                        <div className="md:w-1/2 h-70 md:h-100 relative bg-blue-900 flex items-center justify-center">
+                            {latestPost && latestPost.type === 'social-media-post' ? (
+                                <div className="flex flex-col items-center justify-center w-full h-full">
+                                    {getPlatformIcon(latestPost.platform)}
+                                </div>
+                            ) : (
+                                latestPost?.image && (
+                                    <img 
+                                        src={latestPost.image}  
+                                        loading="lazy"
+                                        className="w-full h-full object-cover"
+                                    />
+                                )
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/10" />
+                        </div>
 
             {/* Content Section */}
             <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center text-left bg-white">
@@ -92,9 +112,19 @@ export function PopUp() {
                     Latest
                 </span>
                 
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 font-serif">
-                    {latestPost && latestPost.title }
-                </h2>
+                                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 font-serif">
+                                        {latestPost && latestPost.title }
+                                </h2>
+                                {latestPost && latestPost.type === 'social-media-post' && latestPost.url && (
+                                    <a
+                                        href={latestPost.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 underline break-all mb-4 block"
+                                    >
+                                        {latestPost.url}
+                                    </a>
+                                )}
                 
                 <p className="text-gray-600 mb-8 leading-relaxed text-lg">
                     {latestPost && latestPost.description }

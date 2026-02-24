@@ -70,9 +70,8 @@ const BlogPostsComponent = () => {
     return matchesTab && matchesDepartment;
   });
 
-  // Get latest 3 posts overall (excluding social-media-posts)
+  // Get latest 3 posts overall (including social-media-posts)
   const latestPosts = [...posts]
-    .filter(post => post.type !== 'social-media-post')
     .sort((a, b) => {
       const dateA = a.timestamp ? new Date(a.timestamp) : new Date(0);
       const dateB = b.timestamp ? new Date(b.timestamp) : new Date(0);
@@ -149,23 +148,6 @@ const BlogPostsComponent = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white">
-      {/* Social Media Posts Section */}
-      {socialMediaPosts.length > 0 && (
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-blue-900 mb-4">Social Media Posts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {socialMediaPosts.map(post => (
-              <div key={post.id || post._id} className="border-l-4 border-blue-400 bg-blue-50 rounded p-5 flex flex-col gap-2 shadow-sm">
-                <div className="flex items-center gap-2 mb-1">
-                  {getPlatformIcon(post.platform)}
-                  <h3 className="font-semibold text-blue-900 text-lg">{post.title}</h3>
-                </div>
-                <a href={post.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">{post.url}</a>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
@@ -198,25 +180,66 @@ const BlogPostsComponent = () => {
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900" />
               )}
             </button>
+            <button
+              onClick={() => setSelectedTab('social-media-post')}
+              className={`pb-4 text-sm font-medium transition-colors relative ${
+                selectedTab === 'social-media-post'
+                  ? 'text-gray-900'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Social Media Posts
+              {selectedTab === 'social-media-post' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900" />
+              )}
+            </button>
           </div>
 
           {/* Posts */}
           <div>
-            {filteredPosts.length > 0 ? (
-              paginate(filteredPosts, currentPage).map(post => (
-                <PostCard key={post.id} post={post} />
-              ))
+            {selectedTab === 'social-media-post' ? (
+              <>
+                <h2 className="text-xl font-bold mb-4">Social Media Posts</h2>
+                {socialMediaPosts.length > 0 ? (
+                  paginate(socialMediaPosts, currentPage).map(post => (
+                    <div key={post.id || post._id} className="border-l-4 border-blue-400 bg-blue-50 rounded p-5 flex flex-col gap-2 shadow-sm mb-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        {getPlatformIcon(post.platform)}
+                        <h3 className="font-semibold text-blue-900 text-lg">{post.title}</h3>
+                      </div>
+                      <a href={post.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">{post.url}</a>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12 text-gray-500">No social media posts found.</div>
+                )}
+                {socialMediaPosts.length > 0 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(socialMediaPosts.length / ITEMS_PER_PAGE)}
+                    onPageChange={setCurrentPage}
+                  />
+                )}
+              </>
             ) : (
-              <div className="text-center py-12 text-gray-500">
-                No posts found for this department.
-              </div>
-            )}
-            {filteredPosts.length > 0 && (
-                <Pagination 
+              <>
+                {filteredPosts.length > 0 ? (
+                  paginate(filteredPosts, currentPage).map(post => (
+                    <PostCard key={post.id} post={post} />
+                  ))
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    No posts found for this department.
+                  </div>
+                )}
+                {filteredPosts.length > 0 && (
+                  <Pagination
                     currentPage={currentPage}
                     totalPages={Math.ceil(filteredPosts.length / ITEMS_PER_PAGE)}
                     onPageChange={setCurrentPage}
-                />
+                  />
+                )}
+              </>
             )}
           </div>
         </div>

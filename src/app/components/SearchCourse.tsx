@@ -142,7 +142,7 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
 
       <div className="relative z-10 container mx-auto px-6 h-full flex items-center justify-between">
         {/* Left side - Hero text */}
-        <div className="max-w-xl hidden md:block">
+        <div className="max-w-full hidden md:block">
           <h1 className="text-6xl font-serif text-white mb-4 leading-tight">
             Join the Zion class
           </h1>
@@ -153,17 +153,17 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
 
         {/* Right side - Search box */}
         <div className="w-full max-w-2xl ml-auto relative" ref={wrapperRef}>
-          <form onSubmit={handleSearch} className="flex shadow-lg relative z-20">
+          <form onSubmit={handleSearch} className="flex shadow-lg overflow-hidden relative z-20">
             <input
               type="text"
               placeholder="Search for courses"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-white px-6 py-8 text-gray-800 placeholder-gray-500 focus:outline-none"
+              className="flex-1 bg-white pl-6 py-8 text-gray-800 placeholder-gray-500 focus:outline-none"
             />
             <button
               type="submit"
-              className="bg-red-600 hover:bg-red-700 px-8 py-4 transition-colors"
+              className="bg-red-600 hover:bg-red-700 px-2 md:px-8 py-4 transition-colors"
               aria-label="Search"
             >
               <Search className="w-6 h-6 text-white" />

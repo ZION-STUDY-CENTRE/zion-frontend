@@ -257,7 +257,7 @@ export function FileUpload({ programId, files, onFileAdded, isInstructor }: File
                   </div>
                   <div className="flex gap-2">
                     <a
-                      href={file.fileUrl}
+                      href={`${API_URL}/files/${file._id}/download`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 hover:bg-gray-200 rounded transition-colors"

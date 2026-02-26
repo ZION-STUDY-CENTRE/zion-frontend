@@ -137,8 +137,8 @@ export function SubmissionView({ assignmentId, onBack }: SubmissionViewProps) {
                   <td className="px-4 py-3">
                     {submission.submissionFile ? (
                       <a
-                        href={submission.submissionFile}
-                        download
+                        href={`${import.meta.env.VITE_API_URL || 'https://zion-backend-og8z.onrender.com/api'}/assignment-submissions/${submission._id}/download`}
+                        download={submission.fileName || true}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline flex items-center gap-1"

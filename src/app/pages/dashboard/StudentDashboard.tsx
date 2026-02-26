@@ -307,7 +307,8 @@ export function StudentDashboard() {
                                                         </p>
                                                     </div>
                                                     <a
-                                                        href={file.fileUrl}
+                                                        href={`${(import.meta.env as any).VITE_API_URL || 'https://zion-backend-og8z.onrender.com/api'}/files/${file._id}/download`}
+                                                        download={file.title + (file.extension || '')}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="p-2 hover:bg-gray-200 rounded transition-colors"
@@ -371,7 +372,8 @@ export function StudentDashboard() {
                                                                     {assignment.attachments.map((file: any, idx: number) => (
                                                                         <a
                                                                             key={idx}
-                                                                            href={file.fileUrl}
+                                                                            href={`${(import.meta.env as any).VITE_API_URL || 'https://zion-backend-og8z.onrender.com/api'}/assignments/${assignment._id}/attachments/${idx}/download`}
+                                                                            download={file.fileName || true}
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
                                                                             className="text-blue-600 hover:underline text-sm flex items-center gap-2"

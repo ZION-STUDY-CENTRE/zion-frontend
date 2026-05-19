@@ -39,13 +39,23 @@ const ComponentSkeleton = () => (
   <div className="animate-pulse">
     <div className="h-96 bg-gray-200 rounded-lg"></div>
   </div>
-); 
+);
 
 export function HomePage() {
   const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
   const [programs, setPrograms] = useState<Program[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [blogImages, setBlogImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const staticHeroImages = [
+    studentsTwo,
+    zionTowersThree,
+    zionStaffsTwo,
+  ];
+
+  // Merge static images with blog images
+  const heroImages = [...staticHeroImages, ...blogImages];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,17 +65,21 @@ export function HomePage() {
           getPrograms(),
           getTestimonials()
         ]);
-        
+        // Latest blog post (by date)
         if (posts.length > 0) {
-           // Sort by date descending
-           const sorted = [...posts].sort((a, b) => new Date( b.timestamp ? new Date(b.timestamp) : new Date(0)).getTime() - new Date(a.timestamp ? new Date(a.timestamp) : new Date(0)).getTime());
-           setLatestPost(sorted[0]);
+          const sorted = [...posts].sort(
+            (a, b) => new Date(b.timestamp ? new Date(b.timestamp) : new Date(0)).getTime() - new Date(a.timestamp ? new Date(a.timestamp) : new Date(0)).getTime()
+          );
+          setLatestPost(sorted[0]);
+          // Get all blog images (exclude social-media-posts, require image)
+          const blogPostImages = sorted
+            .filter(post => post.type !== "social-media-post" && post.image)
+            .map(post => getOptimizedImageUrl(post.image, "blog"));
+          setBlogImages(blogPostImages);
         }
-        
         if (programsData) {
           setPrograms(programsData);
         }
-
         if (testimonialsData && testimonialsData.length > 0) {
           setTestimonials(testimonialsData);
         }
@@ -76,14 +90,15 @@ export function HomePage() {
     fetchData();
   }, []);
 
-  // Handle hero image carousel
+  // Update carousel indexes when images array changes
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
     }, 7000);
-
     return () => clearInterval(interval);
-  }, []);
+    // Note: include heroImages.length as a dependency in case blog images are loaded after static
+    // images, so the carousel indexes adjust correctly
+  }, [heroImages.length]);
 
   const stats = [
     { icon: Users, value: "5,000+", label: "Students Trained" },
@@ -115,12 +130,6 @@ export function HomePage() {
     },
   ];
 
-  const heroImages = [
-    studentsTwo,
-    zionTowersThree,
-    zionStaffsTwo,
-  ];
-
   return (
     <div className="min-h-screen">
       {/* Hero Section - Optimized */}
@@ -134,30 +143,27 @@ export function HomePage() {
             style={{ backgroundImage: `url(${image})` }}
           />
         ))}
-        
         <div className="container mx-auto px-4 relative z-10 w-full mb-10">
           <div className="grid items-end w-full">
             <div className="">
               <div className="relative inline-block max-w-2xl">
                 <Link to="/blog" className="block group/link">
-                  {latestPost && 
+                  {latestPost && (
                     <span className="inline-block bg-blue-900 text-white text-xs px-2 py-1 mb-2 font-bold uppercase tracking-wider rounded-sm">
                       Latest News
                     </span>
-                  }
+                  )}
                   <h3 className="text-3xl lg:text-4xl mb-1 font-bold leading-tight lg:whitespace-nowrap lg:text-ellipsis ">
                     {latestPost ? latestPost.shortDescription : "Zion Study Center & Leadership Academy"}
                   </h3>
                 </Link>
-                <span
-                  className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                <span className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
               </div>
             </div>
           </div>
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.8)] to-[rgba(0,0,0,0.2)]  opacity-100 z-0"></div>
       </section>
-      
 
       <Suspense fallback={<ComponentSkeleton />}>
         <SearchCourse />
@@ -200,7 +206,6 @@ export function HomePage() {
               OUR PROGRAMS
             </h2>
           </div>
-
           <div className="mx-auto px-4">
             <Carousel
               opts={{
@@ -288,7 +293,6 @@ export function HomePage() {
               Hear from our students who have achieved their educational and career goals.
             </p>
           </div>
-
           <div className="mx-auto px-4">
             {testimonials.length > 0 ? (
               <Carousel

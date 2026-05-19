@@ -137,7 +137,7 @@ export function HomePage() {
         {heroImages.map((image, index) => (
           <div
             key={index}
-            className={`absolute inset-0 bg-contain bg-center transition-all duration-1000 ease-in-out group-hover:scale-110 ${
+            className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out group-hover:scale-110 ${
               index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
             style={{ backgroundImage: `url(${image})` }}

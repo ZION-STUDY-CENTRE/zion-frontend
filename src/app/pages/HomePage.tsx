@@ -57,6 +57,7 @@ export function HomePage() {
   // Merge static images with blog images
   const heroImages = [...staticHeroImages, ...blogImages];
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -119,7 +120,7 @@ export function HomePage() {
         }
         return prevIndex + 1;
       });
-    }, 1000); // 5000ms is standard for hero images. 1000ms is too fast for transition-all duration-1000.
+    }, 5000); 
 
     return () => clearInterval(interval);
   }, [heroImages.length]);
@@ -191,6 +192,7 @@ export function HomePage() {
                     {latestPost ? latestPost.shortDescription : "Zion Study Center & Leadership Academy"}
                   </p>
                 </Link>
+                <span className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
                 <span className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
               </div>
             </div>

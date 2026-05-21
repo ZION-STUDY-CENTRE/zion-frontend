@@ -1,3 +1,5 @@
+import { Pause, Play, Ban } from "lucide-react";
+import axios from "axios";
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from "../../components/ui/button";
@@ -24,11 +26,15 @@ import {
     registerUser,
     updateUser,
     reactivateUser,
-    deleteUser
+    deleteUser,
+    pauseUser,
+    unpauseUser,
+    deactivateUser
 } from '../../services/api';
 
 import { Pagination } from "../../components/Pagination";
 import { showSuccess, showError, showConfirm } from '../../../utils/sweetAlert';
+import { calculateDaysLeft } from '../../../utils/daysLeft';
 import { ChatComponent } from '../../components/ChatComponent';
 
 interface UserSummary {
@@ -41,6 +47,8 @@ interface UserSummary {
     program: { _id: string; title: string; name?: string };
     enrollmentDate?: string;
     duration?: number;
+    isPaused?: boolean;
+    pausedDaysLeft?: number;
   }>;
   // Legacy fields for backward compatibility
   program?: { _id: string; title: string; name?: string };
@@ -261,6 +269,37 @@ export function AdminDashboard() {
       setIsEditUserDialogOpen(false);
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'Failed to update user' });
+    }
+  };
+
+  const handlePauseStudent = async (userId: string, programId: string) => {
+    try {
+      await pauseUser(userId, programId);
+      setMessage({ type: 'success', text: 'Student paused successfully.' });
+      // Optionally refresh users
+      fetchUsers();
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || 'Failed to pause student.' });
+    }
+  };
+
+  const handleUnpauseStudent = async (userId: string, programId: string) => {
+    try {
+      await unpauseUser(userId, programId);
+      setMessage({ type: 'success', text: 'Student unpaused successfully.' });
+      fetchUsers();
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || 'Failed to unpause student.' });
+    }
+  };
+
+  const handleDeactivateStudent = async (userId: string, programId: string) => {
+    try {
+      await deactivateUser(userId, programId);
+      setMessage({ type: 'success', text: 'Student deactivated successfully.' });
+      fetchUsers();
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || 'Failed to deactivate student.' });
     }
   };
 
@@ -593,7 +632,6 @@ export function AdminDashboard() {
                       <SelectContent>
                         <SelectItem value="student">Student</SelectItem>
                         <SelectItem value="instructor">Instructor</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
                         <SelectItem value="media-manager">Media Manager</SelectItem>
                       </SelectContent>
                     </Select>
@@ -919,13 +957,64 @@ export function AdminDashboard() {
                               <TableCell>
                                 {u.programs && u.programs.length > 0 ? (
                                   <ul className="ml-2">
-                                    {(u.programs as Array<{ program: { _id: string; title: string; name?: string }; duration?: number; enrollmentDate?: string }> ).map((p, i) => {
+                                    {(u.programs as Array<{ program: { _id: string; title: string; name?: string }; duration?: number; enrollmentDate?: string; isPaused?: boolean; pausedDaysLeft?: number }> ).map((p, i) => {
                                       const status = getStudentProgramStatus(u)[p.program?._id];
+                                      const daysLeft = p.enrollmentDate && p.duration ? calculateDaysLeft(p.enrollmentDate, p.duration) : null;
+                                      // Add isPaused and pausedDaysLeft to type
+                                      const isPaused = (typeof p.isPaused === 'boolean') ? p.isPaused : false;
+                                      
+                                      // Determine badge logic
+                                      let badgeVariant: "default" | "destructive" | "secondary" | "outline" = status?.active ? 'default' : 'destructive';
+                                      let badgeLabel = status?.active ? 'Active' : 'Inactive';
+                                      let badgeClass = "";
+
+                                      if (isPaused) {
+                                        badgeVariant = "secondary";
+                                        badgeLabel = "Paused";
+                                        badgeClass = "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-yellow-200";
+                                      } else if (status?.active) {
+                                        badgeClass = "bg-green-100 text-green-800 hover:bg-green-200 border-green-200";
+                                      }
+
                                       return (
-                                        <li className='my-3' key={p.program?._id || i}>
-                                          <Badge variant={status?.active ? 'default' : 'destructive'}>
-                                            {status?.active ? 'Active' : 'Inactive'}
+                                        <li className='my-3 flex items-center' key={p.program?._id || i}>
+                                          <Badge variant={badgeVariant} className={badgeClass}>
+                                            {badgeLabel}
                                           </Badge>
+                                          {daysLeft !== null && (
+                                            <Badge variant="outline" className="ml-2">
+                                              {daysLeft} days left
+                                            </Badge>
+                                          )}
+                                          {/* Pause/Unpause/Deactivate buttons */}
+                                          <div className="ml-2 flex gap-1">
+                                            {isPaused ? (
+                                              <Button variant="ghost" size="sm" title="Unpause" onClick={() => handleUnpauseStudent(u._id, p.program?._id)}>
+                                                <Play className="h-4 w-4" />
+                                              </Button>
+                                            ) : (
+                                              <Button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                title="Pause" 
+                                                disabled={!status?.active}
+                                                className={!status?.active ? "opacity-50 cursor-not-allowed" : ""}
+                                                onClick={() => status?.active && handlePauseStudent(u._id, p.program?._id)}
+                                              >
+                                                <Pause className="h-4 w-4" />
+                                              </Button>
+                                            )}
+                                            <Button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                title="Deactivate" 
+                                                disabled={!status?.active && !isPaused}
+                                                className={(!status?.active && !isPaused) ? "opacity-50 cursor-not-allowed" : ""}
+                                                onClick={() => (status?.active || isPaused) && handleDeactivateStudent(u._id, p.program?._id)}
+                                            >
+                                              <Ban className="h-4 w-4 text-red-500" />
+                                            </Button>
+                                          </div>
                                         </li>
                                       );
                                     })}
@@ -993,8 +1082,7 @@ export function AdminDashboard() {
                 onChange={(e) => setEditUserForm({ ...editUserForm, name: e.target.value })}
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-user-email">Email Address</Label>
+            <div className="gap-2 hidden">
               <Input
                 id="edit-user-email"
                 value={editUserForm.email}

@@ -62,7 +62,7 @@ declare global {
     }
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://zion-backend-og8z.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Concurrency handling for Token Refresh
 let isRefreshing = false;
@@ -378,6 +378,51 @@ export const deleteUser = async (userId: string, token?: string): Promise<any> =
         throw new Error(data.msg || 'Failed to delete user');
     }
     return true;
+};
+
+export const pauseUser = async (userId: string, programId: string): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/users/${userId}/pause`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ programId })
+    });
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.msg || 'Failed to pause user');
+    }
+    return response.json();
+};
+
+export const unpauseUser = async (userId: string, programId: string): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/users/${userId}/unpause`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ programId })
+    });
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.msg || 'Failed to unpause user');
+    }
+    return response.json();
+};
+
+export const deactivateUser = async (userId: string, programId: string): Promise<any> => {
+    const response = await fetchWithCreds(`${API_URL}/users/${userId}/deactivate`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ programId })
+    });
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.msg || 'Failed to deactivate user');
+    }
+    return response.json();
 };
 
 export const getMe = async (): Promise<any> => {
@@ -941,6 +986,47 @@ export const deleteConversation = async (conversationId: string) => {
     }
     return response.json();
 };
+
+export const addMembersToGroup = async (conversationId: string, userIds: string[]) => {
+    const response = await fetchWithCreds(`${API_URL}/chat/group-conversation/add-members`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId, userIds })
+    });
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || error.message || 'Failed to add members');
+    }
+    return response.json();
+};
+
+export const removeMemberFromGroup = async (conversationId: string, targetUserId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/chat/group-conversation/remove-member`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId, targetUserId })
+    });
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || error.message || 'Failed to remove member');
+    }
+    return response.json();
+};
+
+export const leaveGroup = async (conversationId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/chat/group-conversation/leave`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId })
+    });
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || error.message || 'Failed to leave group');
+    }
+    return response.json();
+};
+
+// ================== OTHER APIs ==================
 
 // Notification APIs
 export const getNotifications = async () => {

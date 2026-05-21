@@ -8,6 +8,7 @@ import { CalendarIcon, BookOpenIcon, UserIcon, Lock, Download, Clock, CheckCircl
 import { ChangePasswordDialog } from "../../components/ChangePasswordDialog";
 import { NotificationBell } from "../../components/NotificationBell";
 import { getStudentProgram, getAssignments, getQuizzes, getFileResources, getQuiz, submitAssignment, getMyAssignmentSubmission, getPrograms } from '../../services/api';
+import { calculateDaysLeft } from '../../../utils/daysLeft';
 import { QuizTake } from '../../components/dashboard/QuizTake';
 import { ChatComponent } from '../../components/ChatComponent';
 import { showSuccess, showError, showConfirm } from '../../../utils/sweetAlert';
@@ -129,7 +130,7 @@ export function StudentDashboard() {
       const formData = new FormData();
       formData.append('image', file);
       
-      const response = await fetch(`${(import.meta.env as any).VITE_API_URL || 'http://localhost:5000/api'}/upload`, {
+      const response = await fetch(`${(import.meta.env as any).VITE_API_URL || 'https://zion-backend-og8z.onrender.com/api'}/upload`, {
         method: 'POST',
         body: formData,
         credentials: 'include'
@@ -246,7 +247,14 @@ export function StudentDashboard() {
                             <div>
                                 <CardTitle className="text-2xl text-black">{selectedProgram?.program.title}</CardTitle>
                             </div>
-                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">Active</Badge>
+                            <div className="flex flex-col items-end gap-2">
+                                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">Active</Badge>
+                                {selectedProgram?.enrollmentDate && selectedProgram?.duration && (
+                                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
+                                    {calculateDaysLeft(selectedProgram.enrollmentDate, selectedProgram.duration)} days left
+                                  </Badge>
+                                )}
+                            </div>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">

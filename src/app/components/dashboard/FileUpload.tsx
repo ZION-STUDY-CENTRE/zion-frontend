@@ -8,7 +8,7 @@ import { Loader2, Upload, Download, Trash2, FileUp } from 'lucide-react';
 import { uploadFileResource, deleteFileResource } from '../../services/api';
 import { showConfirm, showSuccess, showError } from '../../../utils/sweetAlert';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://zion-backend-og8z.onrender.com/api';
 
 interface FileUploadProps {
   programId: string;

@@ -27,7 +27,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     
     if (!token) return;
 
-    const socketURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const socketURL = import.meta.env.VITE_API_URL || 'https://zion-backend-og8z.onrender.com';
     
     const newSocket = io(socketURL, {
       auth: {

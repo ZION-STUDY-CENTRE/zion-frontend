@@ -39,13 +39,23 @@ const ComponentSkeleton = () => (
   <div className="animate-pulse">
     <div className="h-96 bg-gray-200 rounded-lg"></div>
   </div>
-); 
+);
 
 export function HomePage() {
   const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
   const [programs, setPrograms] = useState<Program[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [blogImages, setBlogImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const staticHeroImages = [
+    studentsTwo,
+    zionTowersThree,
+    zionStaffsTwo,
+  ];
+
+  // Merge static images with blog images
+  const heroImages = [...staticHeroImages, ...blogImages];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,17 +65,34 @@ export function HomePage() {
           getPrograms(),
           getTestimonials()
         ]);
-        
+                // Latest blog post (by date)
         if (posts.length > 0) {
-           // Sort by date descending
-           const sorted = [...posts].sort((a, b) => new Date( b.timestamp ? new Date(b.timestamp) : new Date(0)).getTime() - new Date(a.timestamp ? new Date(a.timestamp) : new Date(0)).getTime());
-           setLatestPost(sorted[0]);
+          const sorted = [...posts].sort(
+            (a, b) => new Date(b.timestamp ? new Date(b.timestamp) : new Date(0)).getTime() - new Date(a.timestamp ? new Date(a.timestamp) : new Date(0)).getTime()
+          );
+          setLatestPost(sorted[0]);
+          
+          // Calculate the date 1 week ago from today
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+          // Get blog images (exclude social-media-posts, require image, and must be newer than 1 week)
+          const blogPostImages = sorted
+            .filter(post => {
+              const postDate = new Date(post.timestamp ? new Date(post.timestamp) : new Date(0));
+              return (
+                post.type !== "social-media-post" &&
+                post.image &&
+                postDate.getTime() >= oneWeekAgo.getTime() // Filter out older than 1 week
+              );
+            })
+            .map(post => getOptimizedImageUrl(post.image, "hero"));
+            
+          setBlogImages(blogPostImages);
         }
-        
         if (programsData) {
           setPrograms(programsData);
         }
-
         if (testimonialsData && testimonialsData.length > 0) {
           setTestimonials(testimonialsData);
         }
@@ -76,14 +103,26 @@ export function HomePage() {
     fetchData();
   }, []);
 
-  // Handle hero image carousel
-  useEffect(() => {
+  // Update carousel indexes when images array changes
+    useEffect(() => {
+    // Prevent interval if no images exist yet
+    if (heroImages.length === 0) return;
+
+    // Safety check: ensure current index is always valid for the new array length
+    setCurrentImageIndex((prev) => (prev >= heroImages.length ? 0 : prev));
+
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 7000);
+      setCurrentImageIndex((prevIndex) => {
+        // Explicitly calculate safely and return 0 when hitting the max length
+        if (prevIndex + 1 >= heroImages.length) {
+          return 0;
+        }
+        return prevIndex + 1;
+      });
+    }, 1000); // 5000ms is standard for hero images. 1000ms is too fast for transition-all duration-1000.
 
     return () => clearInterval(interval);
-  }, []);
+  }, [heroImages.length]);
 
   const stats = [
     { icon: Users, value: "5,000+", label: "Students Trained" },
@@ -115,49 +154,50 @@ export function HomePage() {
     },
   ];
 
-  const heroImages = [
-    studentsTwo,
-    zionTowersThree,
-    zionStaffsTwo,
-  ];
-
   return (
     <div className="min-h-screen">
       {/* Hero Section - Optimized */}
-      <section className="group relative text-white h-[70vh] flex justify-start items-end overflow-hidden bg-gray-900">
-        {heroImages.map((image, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out group-hover:scale-110 ${
-              index === currentImageIndex ? "opacity-100" : "opacity-0"
-            }`}
-            style={{ backgroundImage: `url(${image})` }}
-          />
-        ))}
+     <section className="group relative text-white h-[80vh] flex justify-start items-end overflow-hidden bg-gray-900">
+        {heroImages.map((image, index) => {
+          // You requested this log:
+          console.log(`Hero Carousel [${index}/${heroImages.length - 1}]:`, {
+            isActive: index === currentImageIndex,
+            imageUrl: image,
+          });
+
+          return (
+            <div
+              key={`${image}-${index}`} // Use a more concrete key
+              className={`absolute inset-0 bg-cover bg-no-repeat bg-center transition-opacity duration-1000 ease-in-out ${
+                index === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+              style={{ backgroundImage: `url(${image})` }}
+            />
+          );
+        })}
         
-        <div className="container mx-auto px-4 relative z-10 w-full mb-10">
-          <div className="grid items-end w-full">
+        <div className="w-full h-full bg-black absolute z-10 opacity-70"></div>
+        <div className="container px-4 relative z-10 w-full mb-10">
+          <div className="grid w-full">
             <div className="">
-              <div className="relative inline-block max-w-2xl">
+              <div className="relative inline-block ">
                 <Link to="/blog" className="block group/link">
-                  {latestPost && 
-                    <span className="inline-block bg-blue-900 text-white text-xs px-2 py-1 mb-2 font-bold uppercase tracking-wider rounded-sm">
+                  {latestPost && (
+                    <span className="inline-block bg-blue-900 text-[#E2DFD2] text-lg px-2 py-1 mb-2 font-bold uppercase tracking-wider rounded-sm">
                       Latest News
                     </span>
-                  }
-                  <h3 className="text-3xl lg:text-4xl mb-1 font-bold leading-tight lg:whitespace-nowrap lg:text-ellipsis ">
+                  )}
+                  <p className="text-[40px] lg:text-[55px] mb-1 font-bold leading-tight lg:whitespace-nowrap lg:text-ellipsis text-[#FAF9F6]">
                     {latestPost ? latestPost.shortDescription : "Zion Study Center & Leadership Academy"}
-                  </h3>
+                  </p>
                 </Link>
-                <span
-                  className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                <span className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
               </div>
             </div>
           </div>
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.8)] to-[rgba(0,0,0,0.2)]  opacity-100 z-0"></div>
       </section>
-      
 
       <Suspense fallback={<ComponentSkeleton />}>
         <SearchCourse />
@@ -200,7 +240,6 @@ export function HomePage() {
               OUR PROGRAMS
             </h2>
           </div>
-
           <div className="mx-auto px-4">
             <Carousel
               opts={{
@@ -288,7 +327,6 @@ export function HomePage() {
               Hear from our students who have achieved their educational and career goals.
             </p>
           </div>
-
           <div className="mx-auto px-4">
             {testimonials.length > 0 ? (
               <Carousel

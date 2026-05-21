@@ -14,6 +14,7 @@ import { Pagination } from '../../components/Pagination';
 import { getOptimizedImageUrl } from '../../../utils/cloudinaryOptimization';
 import { showSuccess, showError, showConfirm, showWarning } from '../../../utils/sweetAlert';
 import { ChatComponent } from '../../components/ChatComponent';
+import { ImageCropper } from '../../components/ImageCropper';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -85,6 +86,9 @@ export const MediaManagerDashboard = () => {
     const [blogDate, setBlogDate] = useState('');
     const [blogUrl, setBlogUrl] = useState('');
     const [blogPlatform, setBlogPlatform] = useState('');
+
+    // Cropping State
+    const [fileToCrop, setFileToCrop] = useState<{file: File, aspect: number, onComplete: (f: File) => void} | null>(null);
 
     // Gallery Form State
     const [galleryTitle, setGalleryTitle] = useState('');
@@ -401,7 +405,26 @@ export const MediaManagerDashboard = () => {
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="blogImage">Cover Image (Optional)</Label>
-                                                <Input id="blogImage" type="file" accept="image/*" onChange={e => setBlogImage(e.target.files?.[0] || null)} />
+                                                <Input 
+                                                    id="blogImage" 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    onChange={e => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            setFileToCrop({
+                                                                file,
+                                                                aspect: 16 / 9,
+                                                                onComplete: (cropped) => setBlogImage(cropped)
+                                                            });
+                                                        }
+                                                    }} 
+                                                />
+                                                {blogImage && (
+                                                    <div className="mt-2 text-sm text-green-600">
+                                                        Cropped image ready: {blogImage.name}
+                                                    </div>
+                                                )}
                                             </div>
                                         </>
                                     )}
@@ -733,6 +756,18 @@ export const MediaManagerDashboard = () => {
                     </TabsContent>
                 </Tabs>
             </div>
+            
+            {fileToCrop && (
+                <ImageCropper
+                    imageFile={fileToCrop.file}
+                    aspectRatio={fileToCrop.aspect}
+                    onCropComplete={(croppedFile) => {
+                        fileToCrop.onComplete(croppedFile);
+                        setFileToCrop(null);
+                    }}
+                    onCancel={() => setFileToCrop(null)}
+                />
+            )}
         </div>
     );
 };

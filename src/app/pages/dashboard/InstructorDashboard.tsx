@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Badge } from "../../components/ui/badge";
 import { Lock, Plus, BookOpen, FileText, Trash2, ArrowLeft } from "lucide-react";
 import { ChangePasswordDialog } from "../../components/ChangePasswordDialog";
+
 import { NotificationBell } from "../../components/NotificationBell";
 import { showConfirm, showSuccess, showError } from '../../../utils/sweetAlert';
 import { getInstructorPrograms, getProgramStudents, getAssignments, getQuizzes, getFileResources, deleteAssignment, deleteQuiz, getAssignmentSubmissions } from '../../services/api';
@@ -15,6 +16,7 @@ import { QuizForm } from '../../components/dashboard/QuizForm';
 import { FileUpload } from '../../components/dashboard/FileUpload';
 import { SubmissionView } from '../../components/dashboard/SubmissionView';
 import { ChatComponent } from '../../components/ChatComponent';
+import { calculateDaysLeft } from '../../../utils/daysLeft';
 
 interface Program {
   _id: string;
@@ -28,6 +30,12 @@ interface Student {
   email: string;
   enrollmentDate: string;
   programDuration?: number;
+  duration?: number;
+  programs?: Array<{
+    program: string | { _id: string };
+    enrollmentDate?: string;
+    duration?: number;
+  }>;
 }
 
 export function InstructorDashboard() {
@@ -280,16 +288,68 @@ export function InstructorDashboard() {
                           </TableHeader>
                           <TableBody>
                             {students.map((student) => {
-                              const active = isUserActive(student);
+                              // Find the student's program entry for the selected program FIRST
+                              let enrollmentDate = student.enrollmentDate;
+                              let duration = student.duration ?? student.programDuration;
+                              let isPaused = false;
+                              
+                              if (Array.isArray(student.programs) && selectedProgram) {
+                                const progEntry = student.programs.find((p: any) => {
+                                  if (!p.program) return false;
+                                  if (typeof p.program === 'object' && p.program._id) {
+                                    return p.program._id === selectedProgram._id;
+                                  }
+                                  return p.program === selectedProgram._id;
+                                });
+                                if (progEntry) {
+                                  enrollmentDate = progEntry.enrollmentDate || enrollmentDate;
+                                  duration = progEntry.duration ?? duration;
+                                  // Access isPaused safely
+                                  isPaused = (progEntry as any).isPaused === true;
+                                }
+                              }
+
+                              // Calculate active status locally based on resolved dates
+                              let isActive = false;
+                              if (enrollmentDate) {
+                                 const dur = duration || 3;
+                                 const enrollment = new Date(enrollmentDate);
+                                 const expiryDate = new Date(enrollment);
+                                 const wholeMonths = Math.floor(dur);
+                                 expiryDate.setMonth(expiryDate.getMonth() + wholeMonths);
+                                 const fractionalMonths = dur - wholeMonths;
+                                 if (fractionalMonths > 0) {
+                                     const fractionalMs = fractionalMonths * 2592000000;
+                                     expiryDate.setTime(expiryDate.getTime() + fractionalMs);
+                                 }
+                                 isActive = new Date() < expiryDate;
+                              }
+                              
+                              // Determine badge style
+                              let badgeVariant: "default" | "destructive" | "secondary" | "outline" = isActive ? 'default' : 'destructive';
+                              let badgeLabel = isActive ? 'Active' : 'Inactive';
+                              let badgeClass = isActive ? "bg-green-100 hover:bg-green-700 text-green-800" : ""; // Default destructive is red enough
+
+                              if (isPaused) {
+                                badgeVariant = "secondary";
+                                badgeLabel = "Paused";
+                                badgeClass = "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-yellow-200";
+                              }
+
                               return (
                                 <TableRow key={student._id}>
                                   <TableCell className="font-medium">{student.name}</TableCell>
                                   <TableCell>{student.email}</TableCell>
-                                  <TableCell>{new Date(student.enrollmentDate).toLocaleDateString()}</TableCell>
+                                  <TableCell>{enrollmentDate ? new Date(enrollmentDate).toLocaleDateString() : '-'}</TableCell>
                                   <TableCell>
-                                    <Badge variant={active ? "default" : "destructive"} className={active ? "bg-green-100 hover:bg-green-700" : ""}>
-                                      {active ? "Active" : "Inactive"}
+                                    <Badge variant={badgeVariant as any} className={badgeClass}>
+                                      {badgeLabel}
                                     </Badge>
+                                    {enrollmentDate && duration != null && (
+                                      <span className="ml-2 px-2 py-1 rounded bg-blue-100 text-blue-800 border border-blue-200 text-xs font-semibold">
+                                        {calculateDaysLeft(enrollmentDate, duration)} days left
+                                      </span>
+                                    )}
                                   </TableCell>
                                 </TableRow>
                               );

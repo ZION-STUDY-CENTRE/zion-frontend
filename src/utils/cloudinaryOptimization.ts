@@ -3,7 +3,7 @@
  * Converts standard Cloudinary URLs to optimized versions with automatic transformations
  */
 
-type ImageCategory = 'blog' | 'gallery' | 'testimonial' | 'default';
+type ImageCategory = 'blog' | 'gallery' | 'testimonial' | 'default' | 'hero';
 
 interface TransformationConfig {
   width: number;
@@ -11,9 +11,18 @@ interface TransformationConfig {
   quality: number;
   format: string;
   fit: string;
+  gravity?: string; // <--- Add this
 }
 
 const CLOUDINARY_TRANSFORMATIONS: Record<ImageCategory, TransformationConfig> = {
+  hero: {
+    width: 1280,
+    height: 1080,
+    quality: 92,
+    format: 'auto',
+    fit: 'fit',
+    // gravity: 'auto' // <--- This tells Cloudinary to automatically crop around faces/subjects
+  },
   blog: {
     width: 1200,
     height: 600,
@@ -120,8 +129,12 @@ export function getOptimizedImageUrl(
   const config = CLOUDINARY_TRANSFORMATIONS[category];
 
   // Build transformation string
-  // Format: w_{width},h_{height},c_{fit},q_{quality},f_{format}
-  const transformation = `w_${config.width},h_${config.height},c_${config.fit},q_${config.quality},f_${config.format}`;
+  // Format: w_{width},h_{height},c_{fit},q_{quality},f_{format},g_{gravity}
+  let transformation = `w_${config.width},h_${config.height},c_${config.fit},q_${config.quality},f_${config.format}`;
+  
+  if (config.gravity) {
+    transformation += `,g_${config.gravity}`;
+  }
 
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transformation}/${publicId}`;
 }

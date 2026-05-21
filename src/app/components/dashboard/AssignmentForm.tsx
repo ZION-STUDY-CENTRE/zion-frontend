@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '../ui/alert';
 import { Loader2, Upload, X, FileUp } from 'lucide-react';
 import { createAssignment } from '../../services/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://zion-backend-og8z.onrender.com/api';
 
 interface AssignmentFormProps {
   programId: string;

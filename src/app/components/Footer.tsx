@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
+import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
 import logo from "../../assets/logo.png";
+import { getWhatsAppLink } from "../../utils/whatsapp";
+
+const TikTokIcon = ({ size = 16 }: { size?: number }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+    <path d="M192 64a64 64 0 0 1-64-64v96a32 32 0 1 0 32 32h32V64zM88 152a40 40 0 1 0 40 40 40 40 0 0 0-40-40z" />
+  </svg>
+);
 
 export function Footer() {
   return (
@@ -20,18 +27,48 @@ export function Footer() {
             <p className="text-gray-400 text-sm mb-4">
               A leading multi-disciplinary educational and training institution committed to academic excellence and professional development.
             </p>
-            <div className="flex gap-3">
-              <a href="#" className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
-                <Facebook size={16} />
-              </a>
-              <a href="#" className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
-                <Twitter size={16} />
-              </a>
-              <a href="#" className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
-                <Instagram size={16} />
-              </a>
-              <a href="#" className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
-                <Linkedin size={16} />
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-3">
+                <a
+                  href="https://www.facebook.com/share/1F6xj2FNDL/?mibextid=wwXIfr"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
+                >
+                  <Facebook size={16} />
+                </a>
+                <a
+                  href="https://www.tiktok.com/@zionstudy1?_r=1&_t=ZN-981wClAfoO7"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
+                >
+                  <TikTokIcon size={16} />
+                </a>
+                <a
+                  href="https://www.instagram.com/zionstudycentre1?igsh=OHF1c3Vnb2UwMTNq&utm_source=qr"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
+                >
+                  <Instagram size={16} />
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/zion-study-centre/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
+                >
+                  <Linkedin size={16} />
+                </a>
+              </div>
+              <a
+                href={getWhatsAppLink()}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors"
+              >
+                Need Help Choosing a Programme? Chat with Us on WhatsApp
               </a>
             </div>
           </div>
@@ -119,7 +156,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-          <p>All Rights Reserved. © 2024 Zion Study Center & Leadership Academy</p>
+          <p>All Rights Reserved. © 2024 Zion Study Centre & Leadership Academy</p>
           <div className="flex gap-4">
             <Link to="/privacy-policy" className="hover:text-white transition-colors">
               Privacy Policy

@@ -202,7 +202,7 @@ export function LoginPage() {
           <div className="flex items-center justify-center gap-4">
             <img src="https://zion-frontend-ashen.vercel.app/logo.png" alt="Zion Logo" className="h-16 w-16 object-contain" />
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight">
-              Zion Study Center
+              Zion Study Centre
             </h1>
           </div>
           <div className="h-1 w-20 bg-white mx-auto"></div>
@@ -292,7 +292,7 @@ export function LoginPage() {
 
             {/* Footer */}
             <div className="text-center text-xs text-gray-500 pt-4 border-t border-gray-200">
-              <p className="font-light">© 2026 All rights reserved: Zion Study Center</p>
+              <p className="font-light">© 2026 All rights reserved: Zion Study Centre</p>
             </div>
           </div>
         </div>

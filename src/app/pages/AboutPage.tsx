@@ -127,7 +127,7 @@ export function AboutPage() {
       {/* Introduction Section */}
       <section className="bg-gray-50 relative z-20 flex justify-center py-6 text-center">
         <div className="w-[90%] lg:w-[80%] py-4 lg:py-8">
-          <p className="text-xl lg:text-4xl leading-12"><span className="font-medium">Zion study Centre and Leadership Academy Limited was born in the year 2002 and incorporated after 10 years.</span> It's more than an extra-moral but a study center with a great vision. We are committed to providing quality education and training to individuals seeking to enhance their knowledge and skills in various fields. Our mission is to empower our students to achieve their academic and professional goals through innovative teaching methods, practical learning experiences, and a supportive learning environment.</p>
+          <p className="text-xl lg:text-4xl leading-12"><span className="font-medium">Zion study Centre and Leadership Academy Limited was born in the year 2002 and incorporated after 10 years.</span> It's more than an extra-moral but a study centre with a great vision. We are committed to providing quality education and training to individuals seeking to enhance their knowledge and skills in various fields. Our mission is to empower our students to achieve their academic and professional goals through innovative teaching methods, practical learning experiences, and a supportive learning environment.</p>
         </div>
       </section>
 

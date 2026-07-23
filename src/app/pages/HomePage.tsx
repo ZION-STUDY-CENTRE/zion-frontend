@@ -2,6 +2,7 @@ import { useState, useEffect, Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { getOptimizedImageUrl } from "../../utils/cloudinaryOptimization";
+import { getWhatsAppLink } from "../../utils/whatsapp";
 import {
   Carousel,
   CarouselContent,
@@ -126,8 +127,8 @@ export function HomePage() {
   }, [heroImages.length]);
 
   const stats = [
-    { icon: Users, value: "5,000+", label: "Students Trained" },
-    { icon: Award, value: "15+", label: "Years Experience" },
+    { icon: Users, value: "35,000+", label: "Students Trained" },
+    { icon: Award, value: "25+", label: "Years Experience" },
     { icon: GraduationCap, value: "95%", label: "Success Rate" },
     { icon: BookOpen, value: "50+", label: "Courses Offered" },
   ];
@@ -159,42 +160,42 @@ export function HomePage() {
     <div className="min-h-screen">
       {/* Hero Section - Optimized */}
      <section className="group relative text-white h-[80vh] flex justify-start items-end overflow-hidden bg-gray-900">
-        {heroImages.map((image, index) => {
-          // You requested this log:
-          console.log(`Hero Carousel [${index}/${heroImages.length - 1}]:`, {
-            isActive: index === currentImageIndex,
-            imageUrl: image,
-          });
-
-          return (
-            <div
-              key={`${image}-${index}`} // Use a more concrete key
-              className={`absolute inset-0 bg-cover bg-no-repeat bg-center transition-opacity duration-1000 ease-in-out ${
-                index === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0"
-              }`}
-              style={{ backgroundImage: `url(${image})` }}
-            />
-          );
-        })}
+        {heroImages.map((image, index) => (
+          <div
+            key={`${image}-${index}`} 
+            className={`absolute inset-0 bg-cover bg-no-repeat bg-center transition-opacity duration-1000 ease-in-out ${
+              index === currentImageIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+            style={{ backgroundImage: `url(${image})` }}
+          />
+        ))}
         
         <div className="w-full h-full bg-black absolute z-10 opacity-70"></div>
         <div className="container px-4 relative z-10 w-full mb-10">
-          <div className="grid w-full">
-            <div className="">
-              <div className="relative inline-block ">
-                <Link to="/blog" className="block group/link">
-                  {latestPost && (
-                    <span className="inline-block bg-blue-900 text-[#E2DFD2] text-lg px-2 py-1 mb-2 font-bold uppercase tracking-wider rounded-sm">
-                      Latest News
-                    </span>
-                  )}
-                  <p className="text-[40px] lg:text-[55px] mb-1 font-bold leading-tight lg:whitespace-nowrap lg:text-ellipsis text-[#FAF9F6]">
-                    {latestPost ? latestPost.shortDescription : "Zion Study Center & Leadership Academy"}
-                  </p>
-                </Link>
-                <span className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
-                <span className="absolute left-0 bottom-1 h-[2px] w-full bg-blue-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
-              </div>
+          <div className="max-w-3xl rounded-[24px] border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-md transition-all duration-700 hover:-translate-y-1 sm:p-8">
+            <div className="inline-flex items-center rounded-full border border-amber-300/40 bg-amber-400/15 px-3 py-1 text-sm font-semibold uppercase tracking-[0.3em] text-amber-100">
+              Trusted Learning Partner
+            </div>
+            <h1 className="mt-5 text-3xl font-bold leading-tight text-[#FAF9F6] sm:text-4xl lg:text-5xl">
+              Welcome to Zion Study Centre
+            </h1>
+            <div className="mt-4 h-1.5 w-24 rounded-full bg-amber-400"></div>
+            <p className="mt-5 text-lg font-medium leading-relaxed text-[#E2DFD2] sm:text-xl">
+              Preparing students and professionals for academic excellence, global opportunities, and future-ready success.
+            </p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F5F3EA] sm:text-base">
+              With 25+ years of experience, we guide learners through university admissions, international exams, and practical digital skills that open doors worldwide.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <Button size="lg" asChild className="bg-amber-500 border-amber-500 text-white hover:bg-amber-600 transition-all duration-300 hover:scale-[1.02]">
+                <Link to="/register">Start Your Journey</Link>
+              </Button>
+              <Button size="lg" asChild className="bg-white/90 text-blue-900 border-white/90 hover:bg-white transition-all duration-300 hover:scale-[1.02]">
+                <a href={getWhatsAppLink()} target="_blank" rel="noreferrer">
+                  Book Counselling Session
+                </a>
+              </Button>
             </div>
           </div>
         </div>
@@ -204,6 +205,33 @@ export function HomePage() {
       <Suspense fallback={<ComponentSkeleton />}>
         <SearchCourse />
       </Suspense>
+
+      {/* Award Highlight Section */}
+      <section className="py-10 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="overflow-hidden rounded-[28px] border border-blue-200 bg-blue-900 shadow-[0_20px_60px_-20px_rgba(15,23,42,0.35)]">
+            <div className="grid gap-8 px-8 py-10 md:grid-cols-[1.2fr_0.8fr] md:px-12 md:py-12">
+              <div className="text-white">
+                <div className="mb-4 inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-medium text-blue-100">
+                  <Award size={16} className="mr-2" />
+                  Profile Awards Nigeria 2023
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold leading-tight">
+                  Zion Study Centre & Leadership Academy — recipient of the Profile Awards Nigeria award as the Most Outstanding Study Centre of the Year 2023
+                </h2>
+              </div>
+              <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/10 p-6 text-center text-blue-50">
+                <div>
+                  <p className="text-5xl font-bold text-white">2023</p>
+                  <p className="mt-2 text-sm uppercase tracking-[0.3em] text-blue-100">
+                    Most Outstanding Study Centre of the Year
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Stats Section */}
       <section className="py-12 bg-white">
@@ -220,6 +248,99 @@ export function HomePage() {
                 <div className="text-gray-600 text-sm">{stat.label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Video Section - moved after stats */}
+      <section className="bg-white py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-6 md:px-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
+          <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg">
+            <iframe 
+              className="absolute top-0 left-0 w-full h-full" 
+              src="https://www.youtube.com/embed/x_qxLmke_3E?modestbranding=1&rel=0" 
+              title="Zion history documentary video" 
+              frameBorder="0" 
+              loading="lazy"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerPolicy="strict-origin-when-cross-origin" 
+              allowFullScreen
+            ></iframe>
+          </div>
+          <p className="text-gray-600 text-center mt-6 text-sm md:text-base">
+            Watch our journey and learn more about Zion Study Centre and Leadership Academy
+          </p>
+        </div>
+      </section>
+
+      {/* Testimonials - moved after stats */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Student Success Stories
+            </h2>
+            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+              Hear from our students who have achieved their educational and career goals.
+            </p>
+          </div>
+          <div className="mx-auto px-4">
+            {testimonials.length > 0 ? (
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                plugins={[
+                  Autoplay({
+                    delay: 4000,
+                  }),
+                ]}
+                className="w-full relative"
+              >
+                <CarouselContent className="">
+                  {testimonials.map((testimonial, index) => (
+                    <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                      <div className="bg-white p-6 rounded-lg shadow-md h-full border">
+                        <div className="flex items-center mb-4">
+                          <div className="w-12 h-12 rounded-full mr-3 overflow-hidden bg-gray-100">
+                            {testimonial.image ? (
+                              <img
+                                src={getOptimizedImageUrl(testimonial.image, 'testimonial')}
+                                alt={testimonial.name}
+                                loading="lazy"
+                                className="w-12 h-12 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                {testimonial.name.charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
+                            <p className="text-sm text-gray-600">{testimonial.course}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-1 mb-3">
+                          {[...Array(testimonial.rating)].map((_, i) => (
+                            <Star key={i} size={16} className="fill-amber-500 text-amber-500" />
+                          ))}
+                        </div>
+                        <p className="text-gray-700 italic">"{testimonial.text}"</p>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2" />
+                <CarouselNext className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2" />
+              </Carousel>
+            ) : (
+              <div className="text-center py-12 bg-gray-100 rounded-lg">
+                <p className="text-gray-600 text-lg">No testimonials available yet.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -295,99 +416,6 @@ export function HomePage() {
       <Suspense fallback={<ComponentSkeleton />}>
         <ParallaxSection />
       </Suspense>
-
-      {/* Video Section - Lazy Load iframe */}
-      <section className="bg-white py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-6 md:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Our Story in Video</h2>
-          <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg shadow-lg">
-            <iframe 
-              className="absolute top-0 left-0 w-full h-full" 
-              src="https://www.youtube.com/embed/x_qxLmke_3E?modestbranding=1&rel=0" 
-              title="Zion history documentary video" 
-              frameBorder="0" 
-              loading="lazy"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-              referrerPolicy="strict-origin-when-cross-origin" 
-              allowFullScreen
-            ></iframe>
-          </div>
-          <p className="text-gray-600 text-center mt-6 text-sm md:text-base">
-            Watch our journey and learn more about Zion Study Centre and Leadership Academy
-          </p>
-        </div>
-      </section>
-
-      {/* Testimonials - Optimized */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-              Student Success Stories
-            </h2>
-            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-              Hear from our students who have achieved their educational and career goals.
-            </p>
-          </div>
-          <div className="mx-auto px-4">
-            {testimonials.length > 0 ? (
-              <Carousel
-                opts={{
-                  align: "start",
-                  loop: true,
-                }}
-                plugins={[
-                  Autoplay({
-                    delay: 4000,
-                  }),
-                ]}
-                className="w-full relative"
-              >
-                <CarouselContent className="">
-                  {testimonials.map((testimonial, index) => (
-                    <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                      <div className="bg-white p-6 rounded-lg shadow-md h-full border">
-                        <div className="flex items-center mb-4">
-                          <div className="w-12 h-12 rounded-full mr-3 overflow-hidden bg-gray-100">
-                            {testimonial.image ? (
-                              <img
-                                src={getOptimizedImageUrl(testimonial.image, 'testimonial')}
-                                alt={testimonial.name}
-                                loading="lazy"
-                                className="w-12 h-12 rounded-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                {testimonial.name.charAt(0).toUpperCase()}
-                              </div>
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
-                            <p className="text-sm text-gray-600">{testimonial.course}</p>
-                          </div>
-                        </div>
-                        <div className="flex gap-1 mb-3">
-                          {[...Array(testimonial.rating)].map((_, i) => (
-                            <Star key={i} size={16} className="fill-amber-500 text-amber-500" />
-                          ))}
-                        </div>
-                        <p className="text-gray-700 italic">"{testimonial.text}"</p>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2" />
-                <CarouselNext className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2" />
-              </Carousel>
-            ) : (
-              <div className="text-center py-12 bg-gray-100 rounded-lg">
-                <p className="text-gray-600 text-lg">No testimonials available yet.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-16 md:py-20 bg-gradient-to-r from-blue-700 to-blue-900 text-white">

@@ -4,6 +4,7 @@ import { CourseCard } from "../components/CourseCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Button } from "../components/ui/button";
 import { getPrograms, Program } from "../services/api";
+import { getWhatsAppLink } from "../../utils/whatsapp";
 import { Pagination } from "../components/Pagination";
 
 const ITEMS_PER_PAGE = 10;
@@ -48,6 +49,19 @@ export function ProgramsPage() {
 
   const activeTab = getActiveTab();
 
+  const getProgramPageButtonLabel = () => {
+    switch (activeTab) {
+      case "technology":
+        return "Speak with a Learning Advisor";
+      case "international":
+        return "Start Your International Exam Journey";
+      case "secondary":
+        return "Talk to an Academic Advisor";
+      default:
+        return "Book a Counselling Session";
+    }
+  };
+
   const handleTabChange = (value: string) => {
     switch (value) {
       case "technology":
@@ -90,6 +104,13 @@ export function ProgramsPage() {
           <p className="text-xl text-blue-100 max-w-3xl">
             Explore our comprehensive range of programs designed to help you achieve your academic and professional goals.
           </p>
+          <div className="mt-8">
+            <Button size="lg" asChild className="bg-green-600 border-green-600 hover:bg-green-700">
+              <a href={getWhatsAppLink()} target="_blank" rel="noreferrer">
+                {getProgramPageButtonLabel()}
+              </a>
+            </Button>
+          </div>
         </div>
       </section>
 

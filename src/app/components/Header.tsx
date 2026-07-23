@@ -4,6 +4,7 @@ import { Menu, X, ChevronDown, Phone, Search } from "lucide-react";
 import { Button } from "./ui/button";
 import logo from "../../assets/logo.png";
 import { SearchCourse } from "./SearchCourse";
+import { getWhatsAppLink } from "../../utils/whatsapp";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -24,7 +25,7 @@ export function Header() {
       <div className="bg-blue-900 text-white py-2 px-4">
         <div className="container mx-auto flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
-            <span className="text-xl font-bold hidden lg:block xl:hidden">Zion Study Center</span>
+            <span className="text-xl font-bold hidden lg:block xl:hidden">Zion Study Centre</span>
             <span>📧 info@zionstudycentre.com.ng</span>
             <span className="hidden sm:inline">📞 +234 803 329 7541</span>
           </div>
@@ -156,6 +157,15 @@ export function Header() {
             >
               <Search size={20} />
             </button>
+            <Button asChild className="bg-green-600 border-green-600 border-1 hover:bg-green-700 hover:border-green-700">
+              <a
+                href={getWhatsAppLink()}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Book counselling session
+              </a>
+            </Button>
             <Button variant="outline" asChild>
               <Link to="/contact">Enquire Now</Link>
             </Button>
@@ -230,6 +240,15 @@ export function Header() {
                 Contact
               </Link>
               <div className="flex flex-col gap-2 mt-4">
+                <Button asChild className="bg-green-600 border-green-600 border-1 hover:bg-green-700 hover:border-green-700">
+                  <a
+                    href="https://wa.me/+2348033297541"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Book Counseling
+                  </a>
+                </Button>
                 <Button variant="outline" asChild>
                   <Link to="/contact">Enquire Now</Link>
                 </Button>

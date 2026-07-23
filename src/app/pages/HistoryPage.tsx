@@ -53,7 +53,7 @@ const HistoryPage = () => {
                 <div className="max-w-6xl mx-auto px-6 md:px-8">
                     <h1 className="text-5xl md:text-6xl font-bold mb-6">Our History</h1>
                     <p className="text-lg text-blue-100 mb-8">
-                        The Zion Study Center and Leadership Academy
+                        The Zion Study Centre and Leadership Academy
                     </p>
                 </div>
             </section>
@@ -62,7 +62,7 @@ const HistoryPage = () => {
             <section className="bg-white py-16 md:py-24">
                 <div className="max-w-4xl mx-auto px-6 md:px-8">
                     <p className="text-xl md:text-2xl text-gray-800 leading-relaxed font-light">
-                        The Zion Study Center and Leadership Academy is unlike many other institutions. Our commitment to widening access has shaped our history, from our foundation in 2002 to the present day.
+                        The Zion Study Centre and Leadership Academy is unlike many other institutions. Our commitment to widening access has shaped our history, from our foundation in 2002 to the present day.
                     </p>
                 </div>
             </section>

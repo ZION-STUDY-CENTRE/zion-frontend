@@ -97,7 +97,7 @@ const ParallaxSection = () => {
               <h1 className="text-4xl font-bold mb-6">HISTORY</h1>
 
               <p className="text-lg">
-                <span className="font-serif italic">Zion Study Centre and Leadership Academy Limited</span> was born in the year 2002 and incorporated after 10 years. It's more than an extra-moral education center; it's a study center with a great vision.
+                <span className="font-serif italic">Zion Study Centre and Leadership Academy Limited</span> was born in the year 2002 and incorporated after 10 years. It's more than an extra-moral education centre; it's a study centre with a great vision.
               </p>
               
               <p className="text-lg">

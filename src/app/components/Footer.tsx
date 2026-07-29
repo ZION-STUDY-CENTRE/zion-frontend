@@ -4,12 +4,14 @@ import logo from "../../assets/logo.png";
 import { getWhatsAppLink } from "../../utils/whatsapp";
 
 const TikTokIcon = ({ size = 16 }: { size?: number }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
-    <path d="M192 64a64 64 0 0 1-64-64v96a32 32 0 1 0 32 32h32V64zM88 152a40 40 0 1 0 40 40 40 40 0 0 0-40-40z" />
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 448 512" fill="currentColor" aria-hidden="true">
+    <path d="M448 209.9a210.1 210.1 0 0 1-122.8-39.3V349.4A162.5 162.5 0 1 1 185 188.3v154.4A54.5 54.5 0 1 0 226 368V0h69.2A162.5 162.5 0 0 0 448 209.9Z" />
   </svg>
 );
 
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -156,7 +158,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-          <p>All Rights Reserved. © 2024 Zion Study Centre & Leadership Academy</p>
+          <p>All Rights Reserved. © {currentYear} Zion Study Centre & Leadership Academy</p>
           <div className="flex gap-4">
             <Link to="/privacy-policy" className="hover:text-white transition-colors">
               Privacy Policy

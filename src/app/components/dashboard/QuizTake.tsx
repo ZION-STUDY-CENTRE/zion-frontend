@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Alert, AlertDescription } from '../ui/alert';
@@ -32,6 +32,40 @@ export function QuizTake({ quiz, onQuizComplete }: QuizTakeProps) {
   const [error, setError] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(quiz.duration * 60);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [warningCount, setWarningCount] = useState(0);
+  const [escapeNotice, setEscapeNotice] = useState('');
+
+  const requestFullscreen = useCallback(async () => {
+    try {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        await elem.requestFullscreen();
+      }
+    } catch (error) {
+      console.error('Fullscreen request failed', error);
+    }
+  }, []);
+
+  const exitFullscreen = useCallback(() => {
+    if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen().catch(() => undefined);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    requestFullscreen();
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      exitFullscreen();
+    };
+  }, [exitFullscreen, requestFullscreen]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -45,6 +79,45 @@ export function QuizTake({ quiz, onQuizComplete }: QuizTakeProps) {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setWarningCount(prev => prev + 1);
+        setEscapeNotice('You left the quiz window. Returning to the quiz is required.');
+      }
+    };
+
+    const handleBlur = () => {
+      setWarningCount(prev => prev + 1);
+      setEscapeNotice('Focus was lost. Please stay on this quiz page.');
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const blockedKeys = ['F12', 'Escape', 'Tab'];
+      if (blockedKeys.includes(event.key) || (event.ctrlKey && ['c', 'v', 'p', 'u', 's'].includes(event.key.toLowerCase()))) {
+        event.preventDefault();
+        setWarningCount(prev => prev + 1);
+        setEscapeNotice('This quiz is locked to the current tab. Please continue the assessment without switching away.');
+      }
+    };
+
+    const handleContextMenu = (event: MouseEvent) => {
+      event.preventDefault();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('contextmenu', handleContextMenu);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('contextmenu', handleContextMenu);
+    };
   }, []);
 
   const currentQuestion = quiz.questions[currentQuestionIndex];
@@ -117,6 +190,20 @@ export function QuizTake({ quiz, onQuizComplete }: QuizTakeProps) {
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {!isFullscreen && (
+        <Alert className="border-amber-300 bg-amber-50">
+          <AlertDescription>
+            Please stay in full-screen mode to continue this quiz.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {escapeNotice && (
+        <Alert className="border-red-300 bg-red-50">
+          <AlertDescription>{escapeNotice}</AlertDescription>
         </Alert>
       )}
 

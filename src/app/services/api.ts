@@ -62,7 +62,38 @@ declare global {
     }
 }
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const getApiBaseUrl = () => {
+    if (import.meta.env.VITE_API_URL) {
+        return import.meta.env.VITE_API_URL.replace(/\/$/, '');
+    }
+
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        return '/api';
+    }
+
+    return 'https://zion-backend-og8z.onrender.com/api';
+};
+
+const API_URL = getApiBaseUrl();
+
+const parseApiResponse = async (response: Response) => {
+    const contentType = response.headers.get('content-type') || '';
+
+    if (contentType.includes('application/json')) {
+        try {
+            return await response.json();
+        } catch {
+            return null;
+        }
+    }
+
+    const text = await response.text();
+    try {
+        return JSON.parse(text);
+    } catch {
+        return { message: text || 'Request failed' };
+    }
+};
 
 // Concurrency handling for Token Refresh
 let isRefreshing = false;
@@ -336,8 +367,18 @@ export const registerUser = async (userData: any, token?: string): Promise<any> 
         },
         body: JSON.stringify(userData)
     });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || 'Failed to register user');
+
+    let data: any = {};
+    try {
+        data = await response.json();
+    } catch {
+        data = {};
+    }
+
+    if (!response.ok) {
+        throw new Error(data.message || data.msg || 'Failed to register user');
+    }
+
     return data;
 };
 
@@ -669,7 +710,8 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
         const error = await response.json();
         throw new Error(error.message || 'Failed to get submissions');
     }
-    return response.json();
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
 };
 
 export const gradeAssignmentSubmission = async (submissionId: string, data: any) => {
@@ -772,6 +814,67 @@ export const deleteQuiz = async (quizId: string) => {
         throw new Error(error.message || 'Failed to delete quiz');
     }
     return response.json();
+};
+
+export const createStudentResult = async (resultData: any) => {
+    const response = await fetchWithCreds(`${API_URL}/student-results`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(resultData)
+    });
+    if (!response.ok) {
+        const error = await parseApiResponse(response);
+        throw new Error(error?.message || error?.msg || `Failed to create result (${response.status})`);
+    }
+    return parseApiResponse(response);
+};
+
+export const getStudentResults = async (studentId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/student-results/student/${studentId}`);
+    if (response.status === 404) {
+        return [];
+    }
+    if (!response.ok) {
+        const error = await parseApiResponse(response);
+        throw new Error(error?.message || error?.msg || 'Failed to fetch results');
+    }
+    return parseApiResponse(response);
+};
+
+export const getProgramResults = async (programId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/student-results/program/${programId}`);
+    if (response.status === 404) {
+        return [];
+    }
+    if (!response.ok) {
+        const error = await parseApiResponse(response);
+        throw new Error(error?.message || error?.msg || 'Failed to fetch results');
+    }
+    return parseApiResponse(response);
+};
+
+export const updateStudentResult = async (resultId: string, updates: any) => {
+    const response = await fetchWithCreds(`${API_URL}/student-results/${resultId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+    });
+    if (!response.ok) {
+        const error = await parseApiResponse(response);
+        throw new Error(error?.message || error?.msg || 'Failed to update result');
+    }
+    return parseApiResponse(response);
+};
+
+export const deleteStudentResult = async (resultId: string) => {
+    const response = await fetchWithCreds(`${API_URL}/student-results/${resultId}`, {
+        method: 'DELETE'
+    });
+    if (!response.ok) {
+        const error = await parseApiResponse(response);
+        throw new Error(error?.message || error?.msg || 'Failed to delete result');
+    }
+    return parseApiResponse(response);
 };
 
 // ============ FILE RESOURCES API ============

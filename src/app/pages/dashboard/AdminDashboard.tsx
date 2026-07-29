@@ -185,7 +185,9 @@ export function AdminDashboard() {
       } else {
         delete payload.programs;
       }
+      console.log('Admin register payload:', payload);
       const data = await registerUser(payload);
+      console.log('Register response:', data);
       setMessage({ type: 'success', text: `User ${data.user.name} registered successfully with default password!` });
       setNewUser({ name: '', email: '', password: '', role: 'student', programs: [{ program: '', duration: 3 }] });
       fetchUsers(); // Refresh user list
@@ -339,26 +341,24 @@ export function AdminDashboard() {
     }
   };
 
+  const getStudentProgramEntries = (user: UserSummary) => {
+    if (user.programs && user.programs.length > 0) {
+      return user.programs;
+    }
+    if (user.program) {
+      return [{
+        program: user.program,
+        duration: user.programDuration,
+        enrollmentDate: user.enrollmentDate
+      }];
+    }
+    return [];
+  };
+
   const isUserActive = (user: UserSummary) => {
     if (user.role !== 'student') return true;
-    // Multi-program logic: active if any program is active
-    if (user.programs && user.programs.length > 0) {
-      const status = getStudentProgramStatus(user);
-      return Object.values(status).some(s => s.active);
-    }
-    // Fallback for legacy single-program students
-    if (!user.enrollmentDate) return false;
-    const duration = user.programDuration || 3;
-    const enrollment = new Date(user.enrollmentDate);
-    const expiryDate = new Date(enrollment);
-    const wholeMonths = Math.floor(duration);
-    expiryDate.setMonth(expiryDate.getMonth() + wholeMonths);
-    const fractionalMonths = duration - wholeMonths;
-    if (fractionalMonths > 0) {
-      const fractionalMs = fractionalMonths * 2592000000;
-      expiryDate.setTime(expiryDate.getTime() + fractionalMs);
-    }
-    return new Date() < expiryDate;
+    const status = getStudentProgramStatus(user);
+    return Object.values(status).some(s => s.active);
   };
 
   // Filter Functions
@@ -390,11 +390,14 @@ export function AdminDashboard() {
 
   // Returns a map of programId -> { active, enrollmentDate, duration }
   const getStudentProgramStatus = (user: UserSummary) => {
-    if (user.role !== 'student' || !user.programs) return {};
+    if (user.role !== 'student') return {};
     const now = new Date();
     const status: Record<string, { active: boolean; enrollmentDate?: string; duration?: number }> = {};
-    user.programs.forEach(entry => {
-      if (!entry.program?._id || !entry.enrollmentDate || !entry.duration) return;
+    const entries = getStudentProgramEntries(user);
+
+    entries.forEach(entry => {
+      const programId = typeof entry.program === 'string' ? entry.program : entry.program?._id;
+      if (!programId || !entry.enrollmentDate || !entry.duration) return;
       const enrollment = new Date(entry.enrollmentDate);
       const expiryDate = new Date(enrollment);
       const duration = entry.duration;
@@ -405,7 +408,7 @@ export function AdminDashboard() {
         const fractionalMs = fractionalMonths * 2592000000;
         expiryDate.setTime(expiryDate.getTime() + fractionalMs);
       }
-      status[entry.program._id] = {
+      status[programId] = {
         active: now < expiryDate,
         enrollmentDate: entry.enrollmentDate,
         duration: entry.duration
@@ -940,86 +943,96 @@ export function AdminDashboard() {
                               <TableCell className="font-medium">{u.name}</TableCell>
                               <TableCell>{u.email}</TableCell>
                               <TableCell>
-                                {u.programs && u.programs.length > 0 ? (
-                                  <ul className="list-disc ml-4">
-                                    {u.programs.map((p: { program: string | { _id: string; title: string }; duration?: number }, i: number) => {
-                                      // Find the full program object from the loaded programs list
-                                      const progObj = programs.find(prog => prog._id === (typeof p.program === 'string' ? p.program : p.program?._id));
-                                      return (
-                                        <li className='my-3' key={progObj?._id || (typeof p.program === 'string' ? p.program : p.program?._id) || i}>
-                                          {progObj?.title || (typeof p.program !== 'string' && p.program?.title) || 'Unknown'}
-                                        </li>
-                                      );
-                                    })}
-                                  </ul>
-                                ) : <span className="text-muted-foreground italic">Not Enrolled</span>}
+                                {(() => {
+                                  const entries = getStudentProgramEntries(u);
+                                  if (entries.length > 0) {
+                                    return (
+                                      <ul className="list-disc ml-4">
+                                        {entries.map((p: any, i: number) => {
+                                          const programId = typeof p.program === 'string' ? p.program : p.program?._id;
+                                          const progObj = programs.find(prog => prog._id === programId);
+                                          return (
+                                            <li className='my-3' key={programId || i}>
+                                              {progObj?.title || (typeof p.program !== 'string' && p.program?.title) || 'Unknown'}
+                                            </li>
+                                          );
+                                        })}
+                                      </ul>
+                                    );
+                                  }
+                                  return <span className="text-muted-foreground italic">Not Enrolled</span>;
+                                })()}
                               </TableCell>
                               <TableCell>
-                                {u.programs && u.programs.length > 0 ? (
-                                  <ul className="ml-2">
-                                    {(u.programs as Array<{ program: { _id: string; title: string; name?: string }; duration?: number; enrollmentDate?: string; isPaused?: boolean; pausedDaysLeft?: number }> ).map((p, i) => {
-                                      const status = getStudentProgramStatus(u)[p.program?._id];
-                                      const daysLeft = p.enrollmentDate && p.duration ? calculateDaysLeft(p.enrollmentDate, p.duration) : null;
-                                      // Add isPaused and pausedDaysLeft to type
-                                      const isPaused = (typeof p.isPaused === 'boolean') ? p.isPaused : false;
-                                      
-                                      // Determine badge logic
-                                      let badgeVariant: "default" | "destructive" | "secondary" | "outline" = status?.active ? 'default' : 'destructive';
-                                      let badgeLabel = status?.active ? 'Active' : 'Inactive';
-                                      let badgeClass = "";
+                                {(() => {
+                                  const entries = getStudentProgramEntries(u);
+                                  if (entries.length > 0) {
+                                    return (
+                                      <ul className="ml-2">
+                                        {entries.map((p: any, i: number) => {
+                                          const programId = typeof p.program === 'string' ? p.program : p.program?._id;
+                                          const status = getStudentProgramStatus(u)[programId];
+                                          const daysLeft = p.enrollmentDate && p.duration ? calculateDaysLeft(p.enrollmentDate, p.duration) : null;
+                                          const isPaused = (typeof p.isPaused === 'boolean') ? p.isPaused : false;
 
-                                      if (isPaused) {
-                                        badgeVariant = "secondary";
-                                        badgeLabel = "Paused";
-                                        badgeClass = "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-yellow-200";
-                                      } else if (status?.active) {
-                                        badgeClass = "bg-green-100 text-green-800 hover:bg-green-200 border-green-200";
-                                      }
+                                          let badgeVariant: "default" | "destructive" | "secondary" | "outline" = status?.active ? 'default' : 'destructive';
+                                          let badgeLabel = status?.active ? 'Active' : 'Inactive';
+                                          let badgeClass = "";
 
-                                      return (
-                                        <li className='my-3 flex items-center' key={p.program?._id || i}>
-                                          <Badge variant={badgeVariant} className={badgeClass}>
-                                            {badgeLabel}
-                                          </Badge>
-                                          {daysLeft !== null && (
-                                            <Badge variant="outline" className="ml-2">
-                                              {daysLeft} days left
-                                            </Badge>
-                                          )}
-                                          {/* Pause/Unpause/Deactivate buttons */}
-                                          <div className="ml-2 flex gap-1">
-                                            {isPaused ? (
-                                              <Button variant="ghost" size="sm" title="Unpause" onClick={() => handleUnpauseStudent(u._id, p.program?._id)}>
-                                                <Play className="h-4 w-4" />
-                                              </Button>
-                                            ) : (
-                                              <Button 
-                                                variant="ghost" 
-                                                size="sm" 
-                                                title="Pause" 
-                                                disabled={!status?.active}
-                                                className={!status?.active ? "opacity-50 cursor-not-allowed" : ""}
-                                                onClick={() => status?.active && handlePauseStudent(u._id, p.program?._id)}
-                                              >
-                                                <Pause className="h-4 w-4" />
-                                              </Button>
-                                            )}
-                                            <Button 
-                                                variant="ghost" 
-                                                size="sm" 
-                                                title="Deactivate" 
-                                                disabled={!status?.active && !isPaused}
-                                                className={(!status?.active && !isPaused) ? "opacity-50 cursor-not-allowed" : ""}
-                                                onClick={() => (status?.active || isPaused) && handleDeactivateStudent(u._id, p.program?._id)}
-                                            >
-                                              <Ban className="h-4 w-4 text-red-500" />
-                                            </Button>
-                                          </div>
-                                        </li>
-                                      );
-                                    })}
-                                  </ul>
-                                ) : <Badge variant="destructive">Inactive</Badge>}
+                                          if (isPaused) {
+                                            badgeVariant = "secondary";
+                                            badgeLabel = "Paused";
+                                            badgeClass = "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-yellow-200";
+                                          } else if (status?.active) {
+                                            badgeClass = "bg-green-100 text-green-800 hover:bg-green-200 border-green-200";
+                                          }
+
+                                          return (
+                                            <li className='my-3 flex items-center' key={programId || i}>
+                                              <Badge variant={badgeVariant} className={badgeClass}>
+                                                {badgeLabel}
+                                              </Badge>
+                                              {daysLeft !== null && (
+                                                <Badge variant="outline" className="ml-2">
+                                                  {daysLeft} days left
+                                                </Badge>
+                                              )}
+                                              <div className="ml-2 flex gap-1">
+                                                {isPaused ? (
+                                                  <Button variant="ghost" size="sm" title="Unpause" onClick={() => handleUnpauseStudent(u._id, programId)}>
+                                                    <Play className="h-4 w-4" />
+                                                  </Button>
+                                                ) : (
+                                                  <Button 
+                                                    variant="ghost" 
+                                                    size="sm" 
+                                                    title="Pause" 
+                                                    disabled={!status?.active}
+                                                    className={!status?.active ? "opacity-50 cursor-not-allowed" : ""}
+                                                    onClick={() => status?.active && handlePauseStudent(u._id, programId)}
+                                                  >
+                                                    <Pause className="h-4 w-4" />
+                                                  </Button>
+                                                )}
+                                                <Button 
+                                                  variant="ghost" 
+                                                  size="sm" 
+                                                  title="Deactivate" 
+                                                  disabled={!status?.active && !isPaused}
+                                                  className={(!status?.active && !isPaused) ? "opacity-50 cursor-not-allowed" : ""}
+                                                  onClick={() => (status?.active || isPaused) && handleDeactivateStudent(u._id, programId)}
+                                                >
+                                                  <Ban className="h-4 w-4 text-red-500" />
+                                                </Button>
+                                              </div>
+                                            </li>
+                                          );
+                                        })}
+                                      </ul>
+                                    );
+                                  }
+                                  return <Badge variant="destructive">Inactive</Badge>;
+                                })()}
                               </TableCell>
                               <TableCell><Badge variant="secondary">Student</Badge></TableCell>
                               <TableCell className=" gap-2">

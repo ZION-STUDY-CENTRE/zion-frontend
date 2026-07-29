@@ -7,8 +7,9 @@ import { Badge } from "../../components/ui/badge";
 import { CalendarIcon, BookOpenIcon, UserIcon, Lock, Download, Clock, CheckCircle, Send } from "lucide-react";
 import { ChangePasswordDialog } from "../../components/ChangePasswordDialog";
 import { NotificationBell } from "../../components/NotificationBell";
-import { getStudentProgram, getAssignments, getQuizzes, getFileResources, getQuiz, submitAssignment, getMyAssignmentSubmission, getPrograms } from '../../services/api';
+import { getStudentProgram, getAssignments, getQuizzes, getFileResources, getQuiz, submitAssignment, getMyAssignmentSubmission, getQuizSubmission, getPrograms, getStudentResults } from '../../services/api';
 import { calculateDaysLeft } from '../../../utils/daysLeft';
+import { downloadProfessionalReportCard } from '../../utils/reportCard';
 import { QuizTake } from '../../components/dashboard/QuizTake';
 import { ChatComponent } from '../../components/ChatComponent';
 import { showSuccess, showError, showConfirm } from '../../../utils/sweetAlert';
@@ -43,6 +44,8 @@ export function StudentDashboard() {
   const [selectedQuiz, setSelectedQuiz] = useState<any | null>(null);
   const [quizDetails, setQuizDetails] = useState<any | null>(null);
   const [submissions, setSubmissions] = useState<{[key: string]: any}>({});
+  const [quizSubmissions, setQuizSubmissions] = useState<{[key: string]: any}>({});
+  const [studentResults, setStudentResults] = useState<any[]>([]);
   const [submittingId, setSubmittingId] = useState<string | null>(null);
   const [uploadingFile, setUploadingFile] = useState<{[key: string]: boolean}>({});
   const [submissionFiles, setSubmissionFiles] = useState<{[key: string]: {file: File | null, url: string}}>({});
@@ -54,21 +57,24 @@ export function StudentDashboard() {
     const fetchMyPrograms = async () => {
         setLoading(true);
         try {
-            // getStudentProgram now returns an array of programs for multi-program students
             const data = await getStudentProgram();
             if (Array.isArray(data) && data.length > 0) {
+                const firstProgram = data[0];
                 setStudentPrograms(data);
-                setSelectedProgram(data[0]);
-                await fetchAssignments(data[0].program._id);
-                await fetchQuizzes(data[0].program._id);
-                await fetchFiles(data[0].program._id);
+                setSelectedProgram(firstProgram);
+                const assignmentData = await fetchAssignments(firstProgram.program._id);
+                const quizData = await fetchQuizzes(firstProgram.program._id);
+                await fetchFiles(firstProgram.program._id);
+                await fetchStudentProgress(assignmentData, quizData);
+                await fetchResults();
             } else if (data && data.program) {
-                // fallback for single program object
                 setStudentPrograms([data]);
                 setSelectedProgram(data);
-                await fetchAssignments(data.program._id);
-                await fetchQuizzes(data.program._id);
+                const assignmentData = await fetchAssignments(data.program._id);
+                const quizData = await fetchQuizzes(data.program._id);
                 await fetchFiles(data.program._id);
+                await fetchStudentProgress(assignmentData, quizData);
+                await fetchResults();
             } else {
                 setStudentPrograms([]);
                 setSelectedProgram(null);
@@ -85,8 +91,10 @@ export function StudentDashboard() {
     try {
       const data = await getAssignments(programId);
       setAssignments(data);
+      return data;
     } catch (error) {
       console.error('Error fetching assignments:', error);
+      return [];
     }
   };
 
@@ -94,8 +102,10 @@ export function StudentDashboard() {
     try {
       const data = await getQuizzes(programId);
       setQuizzes(data);
+      return data;
     } catch (error) {
       console.error('Error fetching quizzes:', error);
+      return [];
     }
   };
 
@@ -106,6 +116,46 @@ export function StudentDashboard() {
     } catch (error) {
       console.error('Error fetching files:', error);
     }
+  };
+
+  const fetchResults = async () => {
+    try {
+      if (!user?._id) return;
+      const results = await getStudentResults(user._id);
+      setStudentResults(Array.isArray(results) ? results : []);
+    } catch (error) {
+      console.error('Error fetching student results', error);
+    }
+  };
+
+  const fetchStudentProgress = async (assignmentData: any[] = [], quizData: any[] = []) => {
+    const nextSubmissionMap: {[key: string]: any} = {};
+    const nextQuizSubmissionMap: {[key: string]: any} = {};
+
+    for (const assignment of assignmentData) {
+      try {
+        const submission = await getMyAssignmentSubmission(assignment._id);
+        nextSubmissionMap[assignment._id] = submission;
+      } catch (err: any) {
+        if (!String(err?.message || '').includes('No submission found')) {
+          console.error('Error fetching assignment progress:', err);
+        }
+      }
+    }
+
+    for (const quiz of quizData) {
+      try {
+        const submission = await getQuizSubmission(quiz._id);
+        nextQuizSubmissionMap[quiz._id] = submission;
+      } catch (err: any) {
+        if (!String(err?.message || '').includes('No submission found')) {
+          console.error('Error fetching quiz progress:', err);
+        }
+      }
+    }
+
+    setSubmissions(nextSubmissionMap);
+    setQuizSubmissions(nextQuizSubmissionMap);
   };
 
   const handleTakeQuiz = async (quiz: any) => {
@@ -185,6 +235,44 @@ export function StudentDashboard() {
     }
   };
 
+  const performanceSummary = (() => {
+    const assignmentScores = assignments.map((assignment) => {
+      const submission = submissions[assignment._id];
+      return typeof submission?.grade === 'number' ? submission.grade : 0;
+    });
+
+    const quizScores = quizzes.map((quiz) => {
+      const submission = quizSubmissions[quiz._id];
+      return typeof submission?.percentageScore === 'number' ? submission.percentageScore : 0;
+    });
+
+    const assignmentAverage = assignmentScores.length > 0
+      ? assignmentScores.reduce((sum, score) => sum + score, 0) / assignmentScores.length
+      : 0;
+
+    const quizAverage = quizScores.length > 0
+      ? quizScores.reduce((sum, score) => sum + score, 0) / quizScores.length
+      : 0;
+
+    const projectAverage = 0;
+    const components = [] as number[];
+    if (assignments.length > 0) components.push(assignmentAverage);
+    if (quizzes.length > 0) components.push(quizAverage);
+    if (assignments.length > 0 || quizzes.length > 0) components.push(projectAverage);
+
+    const overallScore = components.length > 0
+      ? components.reduce((sum, score) => sum + score, 0) / components.length
+      : 0;
+
+    return {
+      assignmentAverage,
+      quizAverage,
+      projectAverage,
+      overallScore,
+      status: overallScore >= 50 ? 'Passed' : 'Failed'
+    };
+  })();
+
   return (
     <div className="container mx-auto p-6 space-y-8">
       <div className="flex justify-between items-center">
@@ -229,9 +317,10 @@ export function StudentDashboard() {
                         onClick={async () => {
                           setSelectedProgram(sp);
                           setLoading(true);
-                          await fetchAssignments(sp.program._id);
-                          await fetchQuizzes(sp.program._id);
+                          const assignmentData = await fetchAssignments(sp.program._id);
+                          const quizData = await fetchQuizzes(sp.program._id);
                           await fetchFiles(sp.program._id);
+                          await fetchStudentProgress(assignmentData, quizData);
                           setLoading(false);
                         }}
                         size="sm"
@@ -541,6 +630,34 @@ export function StudentDashboard() {
                                 <CardDescription>Overview of your assignments and quiz submissions with grades.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
+                                <Card className="border-blue-200 bg-blue-50">
+                                    <CardContent className="p-4">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-sm text-gray-600">Overall Result</p>
+                                                <p className="text-3xl font-bold">{performanceSummary.overallScore.toFixed(0)}%</p>
+                                            </div>
+                                            <Badge variant={performanceSummary.status === 'Passed' ? 'default' : 'destructive'}>
+                                                {performanceSummary.status}
+                                            </Badge>
+                                        </div>
+                                        <div className="mt-3 grid grid-cols-3 gap-3 text-sm text-gray-600">
+                                            <div>
+                                                <p className="font-semibold">Assignments</p>
+                                                <p>{performanceSummary.assignmentAverage.toFixed(0)}%</p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">Quizzes</p>
+                                                <p>{performanceSummary.quizAverage.toFixed(0)}%</p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">Projects</p>
+                                                <p>{performanceSummary.projectAverage.toFixed(0)}%</p>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
                                 {/* Summary Stats */}
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     <Card>
@@ -614,19 +731,68 @@ export function StudentDashboard() {
                                         {quizzes.length === 0 ? (
                                             <p className="text-sm text-gray-600 italic">No quizzes yet.</p>
                                         ) : (
-                                            quizzes.map((quiz) => (
-                                                <div key={quiz._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                                    <div>
-                                                        <p className="font-medium">{quiz.title}</p>
-                                                        <p className="text-sm text-gray-600">Total Questions: {quiz.questions?.length || 0}</p>
+                                            quizzes.map((quiz) => {
+                                                const submission = quizSubmissions[quiz._id];
+                                                const percentage = typeof submission?.percentageScore === 'number' ? submission.percentageScore : 0;
+                                                const status = percentage >= 50 ? 'Passed' : 'Failed';
+
+                                                return (
+                                                    <div key={quiz._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                                        <div>
+                                                            <p className="font-medium">{quiz.title}</p>
+                                                            <p className="text-sm text-gray-600">Total Questions: {quiz.questions?.length || 0}</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-lg font-semibold">{percentage.toFixed(0)}%</p>
+                                                            <Badge variant={status === 'Passed' ? 'default' : 'destructive'}>{status}</Badge>
+                                                        </div>
                                                     </div>
-                                                    <div className="text-right">
-                                                        <p className="text-sm text-gray-600">Total Marks: {quiz.totalMarks}</p>
-                                                    </div>
-                                                </div>
-                                            ))
+                                                );
+                                            })
                                         )}
                                     </div>
+                                </div>
+
+                                <div className="border rounded-lg p-4 bg-gray-50">
+                                    <h4 className="font-semibold mb-2">Projects</h4>
+                                    <p className="text-sm text-gray-600">Project scores will appear here once uploaded or graded by your instructor.</p>
+                                    <div className="mt-3 text-2xl font-bold">0%</div>
+                                </div>
+
+                                <div className="border rounded-lg p-4 bg-gray-50">
+                                    <h4 className="font-semibold mb-2">Official Results</h4>
+                                    <p className="text-sm text-gray-600">Download your generated academic result sheet from your instructor.</p>
+                                    {studentResults.length === 0 ? (
+                                        <p className="text-sm text-gray-500 mt-3">No results generated yet.</p>
+                                    ) : (
+                                        <div className="space-y-2 mt-3">
+                                            {studentResults.map((result) => {
+                                                const handleDownload = () => {
+                                                    downloadProfessionalReportCard({
+                                                        result,
+                                                        studentName: user?.name || 'Student',
+                                                        programTitle: result.program?.title || 'Program'
+                                                    });
+                                                };
+
+                                                return (
+                                                    <div key={result._id} className="flex items-center justify-between rounded border bg-white p-3">
+                                                        <div>
+                                                            <p className="font-medium">{result.program?.title || 'Program'}</p>
+                                                            <p className="text-xs text-gray-500">{result.academicYear} • {result.term}</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="font-semibold">{result.overallScore}%</p>
+                                                            <p className="text-xs text-gray-500">CGPA {result.cgpa}</p>
+                                                            <Button size="sm" variant="outline" className="mt-2" onClick={handleDownload}>
+                                                                <Download className="mr-1 h-4 w-4" /> Download
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <p className="text-sm text-gray-600 italic pt-4 border-t">Keep working on your assignments and quizzes to improve your progress! Check your feedback in the Assignments and Quizzes tabs.</p>

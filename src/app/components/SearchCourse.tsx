@@ -119,27 +119,7 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
       )}
 
       {/* Decorative curved lines */}
-      <div className="absolute top-0 right-0 w-96 h-96">
-        <svg className="w-full h-full" viewBox="0 0 400 400">
-          <path
-            d="M 400 0 Q 300 100 400 200"
-            stroke="#ef4444"
-            strokeWidth="3"
-            fill="none"
-          />
-        </svg>
-      </div>
-      <div className="absolute bottom-0 right-0 w-full h-64">
-        <svg className="w-full h-full" viewBox="0 0 1600 300">
-          <path
-            d="M 1600 150 Q 1400 50 1200 150 T 800 150"
-            stroke="#ef4444"
-            strokeWidth="3"
-            fill="none"
-          />
-        </svg>
-      </div>
-
+     
       <div className="relative z-10 container mx-auto px-6 h-full flex items-center justify-between">
         {/* Left side - Hero text */}
         <div className="max-w-full hidden md:block">

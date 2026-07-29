@@ -15,7 +15,7 @@ interface SubmissionViewProps {
 
 interface Submission {
   _id: string;
-  student: { _id: string; name: string; email: string };
+  student?: { _id?: string; name?: string; email?: string } | null;
   submittedAt: string;
   isLate: boolean;
   submissionFile?: string;
@@ -122,10 +122,13 @@ export function SubmissionView({ assignmentId, onBack }: SubmissionViewProps) {
               </tr>
             </thead>
             <tbody>
-              {submissions.map((submission) => (
+              {submissions.map((submission) => {
+                const studentName = submission.student?.name || 'Unknown student';
+                const studentEmail = submission.student?.email || 'No email';
+                return (
                 <tr key={submission._id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-3">{submission.student.name}</td>
-                  <td className="px-4 py-3">{submission.student.email}</td>
+                  <td className="px-4 py-3">{studentName}</td>
+                  <td className="px-4 py-3">{studentEmail}</td>
                   <td className="px-4 py-3 text-sm">
                     {new Date(submission.submittedAt).toLocaleDateString()}
                   </td>
@@ -214,7 +217,8 @@ export function SubmissionView({ assignmentId, onBack }: SubmissionViewProps) {
                     )}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -240,7 +244,12 @@ export function SubmissionView({ assignmentId, onBack }: SubmissionViewProps) {
                 <p className="text-sm text-gray-600">Average Grade</p>
                 <p className="text-2xl font-bold">
                   {submissions.length > 0
-                    ? (submissions.reduce((sum, s) => sum + (s.grade || 0), 0) / submissions.filter(s => s.grade !== null).length).toFixed(1)
+                    ? (() => {
+                        const graded = submissions.filter(s => s.grade !== null && typeof s.grade === 'number');
+                        if (graded.length === 0) return '-';
+                        const average = graded.reduce((sum, s) => sum + (s.grade || 0), 0) / graded.length;
+                        return average.toFixed(1);
+                      })()
                     : '-'}
                 </p>
               </div>

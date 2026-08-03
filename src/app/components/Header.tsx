@@ -4,7 +4,7 @@ import { Menu, X, ChevronDown, Phone, Search } from "lucide-react";
 import { Button } from "./ui/button";
 import logo from "../../assets/logo.png";
 import { SearchCourse } from "./SearchCourse";
-import { getWhatsAppLink } from "../../utils/whatsapp";
+import { getWhatsAppLink, PHONE_NUMBER } from "../../utils/whatsapp";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -27,7 +27,7 @@ export function Header() {
           <div className="flex items-center gap-4">
             <span className="text-xl font-bold hidden lg:block xl:hidden">Zion Study Centre</span>
             <span>📧 info@zionstudycentre.com.ng</span>
-            <span className="hidden sm:inline">📞 +234 803 329 7541</span>
+            <span className="hidden sm:inline">📞 {PHONE_NUMBER}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="hidden md:inline">Mon - Sat: 8:00 AM - 6:00 PM</span>
@@ -242,7 +242,7 @@ export function Header() {
               <div className="flex flex-col gap-2 mt-4">
                 <Button asChild className="bg-green-600 border-green-600 border-1 hover:bg-green-700 hover:border-green-700">
                   <a
-                    href="https://wa.me/+2348033297541"
+                    href={getWhatsAppLink()}
                     target="_blank"
                     rel="noreferrer"
                   >

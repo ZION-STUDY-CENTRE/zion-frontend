@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
 import logo from "../../assets/logo.png";
-import { getWhatsAppLink } from "../../utils/whatsapp";
+import { getWhatsAppLink, PHONE_NUMBER } from "../../utils/whatsapp";
 
 const TikTokIcon = ({ size = 16 }: { size?: number }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 448 512" fill="currentColor" aria-hidden="true">
@@ -10,7 +10,7 @@ const TikTokIcon = ({ size = 16 }: { size?: number }) => (
 );
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
+  const currentYear = Math.max(new Date().getFullYear(), 2026);
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -142,7 +142,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} className="text-blue-500 flex-shrink-0" />
-                <span className="text-gray-400">+234 803 329 7541 OR +234 817 938 3426</span>
+                <span className="text-gray-400">{PHONE_NUMBER}</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={16} className="text-blue-500 flex-shrink-0" />

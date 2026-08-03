@@ -7,6 +7,7 @@ import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Label } from "../components/ui/label";
 import MapEmbed from "../components/MapEmbed";
+import { PHONE_NUMBER } from "../../utils/whatsapp";
 
 export function ContactPage() {
   const [formData, setFormData] = useState({
@@ -99,8 +100,7 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
-                    <p className="text-gray-600 text-sm">+234 803 329 7541</p>
-                    <p className="text-gray-600 text-sm">+234 817 938 3426</p>
+                    <p className="text-gray-600 text-sm">{PHONE_NUMBER}</p>
                   </div>
                 </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { createBlogPost, createGalleryItem, uploadImage, getPrograms, Program, getBlogPosts, getGalleryItems, deleteBlogPost, deleteGalleryItem, BlogPost, GalleryItem, getTestimonials, createTestimonial, deleteTestimonial, Testimonial } from '../../services/api';
+import { createBlogPost, createGalleryItem, uploadImage, getPrograms, Program, getBlogPosts, getGalleryItems, deleteBlogPost, deleteGalleryItem, updateBlogPost, updateGalleryItem, BlogPost, GalleryItem, getTestimonials, createTestimonial, deleteTestimonial, Testimonial } from '../../services/api';
 import { Loader2, Upload, Plus, Image as ImageIcon, FileText, Trash2, Search, LogOut, Star, Clock } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -86,6 +86,8 @@ export const MediaManagerDashboard = () => {
     const [blogDate, setBlogDate] = useState('');
     const [blogUrl, setBlogUrl] = useState('');
     const [blogPlatform, setBlogPlatform] = useState('');
+    const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
+    const [editingGalleryItem, setEditingGalleryItem] = useState<GalleryItem | null>(null);
 
     // Cropping State
     const [fileToCrop, setFileToCrop] = useState<{file: File, aspect: number, onComplete: (f: File) => void} | null>(null);
@@ -106,50 +108,83 @@ export const MediaManagerDashboard = () => {
         return await uploadImage(file, category);
     };
 
+    const resetBlogForm = () => {
+        setBlogTitle('');
+        setBlogDesc('');
+        setBlogShortDesc('');
+        setBlogDept('');
+        setBlogType('upcoming-event');
+        setBlogImage(null);
+        setBlogDate('');
+        setBlogUrl('');
+        setBlogPlatform('');
+        setEditingBlogPost(null);
+    };
+
+    const resetGalleryForm = () => {
+        setGalleryTitle('');
+        setGalleryImage(null);
+        setEditingGalleryItem(null);
+    };
+
     const handleBlogSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setUploading(true);
         setMessage(null);
 
         try {
-            let imageUrl = null;
+            let imageUrl = editingBlogPost?.image || null;
             if (blogType !== 'social-media-post' && blogImage) {
                 imageUrl = await handleImageUpload(blogImage, 'blog');
             }
 
-            if (blogType === 'social-media-post') {
-                await createBlogPost({
+            if (editingBlogPost) {
+                const updateData: Partial<BlogPost> = {
                     title: blogTitle,
-                    type: blogType,
-                    url: blogUrl,
-                    platform: blogPlatform,
-                });
-            } else {
-                await createBlogPost({
-                    title: blogTitle,
-                    description: blogDesc,
-                    shortDescription: blogShortDesc,
-                    department: blogDept,
                     type: blogType as any,
-                    image: imageUrl,
-                    timestamp: blogDate ? new Date(blogDate) : new Date()
-                });
+                };
+
+                if (blogType === 'social-media-post') {
+                    updateData.url = blogUrl;
+                    updateData.platform = blogPlatform;
+                } else {
+                    updateData.description = blogDesc;
+                    updateData.shortDescription = blogShortDesc;
+                    updateData.department = blogDept;
+                    updateData.image = imageUrl || undefined;
+                }
+
+                await updateBlogPost(editingBlogPost._id, updateData);
+                setMessage({ type: 'success', text: 'Blog post updated successfully!' });
+                showSuccess('Success!', 'Blog post updated successfully!');
+            } else {
+                if (blogType === 'social-media-post') {
+                    await createBlogPost({
+                        title: blogTitle,
+                        type: blogType,
+                        url: blogUrl,
+                        platform: blogPlatform,
+                    });
+                } else {
+                    await createBlogPost({
+                        title: blogTitle,
+                        description: blogDesc,
+                        shortDescription: blogShortDesc,
+                        department: blogDept,
+                        type: blogType as any,
+                        image: imageUrl,
+                        timestamp: blogDate ? new Date(blogDate) : new Date()
+                    });
+                }
+
+                setMessage({ type: 'success', text: 'Blog post created successfully!' });
+                showSuccess('Success!', 'Blog post created successfully!');
             }
 
-            setMessage({ type: 'success', text: 'Blog post created successfully!' });
-            showSuccess('Success!', 'Blog post created successfully!');
-            // Reset form
-            setBlogTitle('');
-            setBlogDesc('');
-            setBlogShortDesc('');
-            setBlogDept('');
-            setBlogImage(null);
-            setBlogDate('');
-            setBlogUrl('');
-            setBlogPlatform('');
+            resetBlogForm();
             refreshData();
         } catch (err: any) {
-            showError('Error', err.message || 'Failed to create blog post');
+            showError('Error', err.message || (editingBlogPost ? 'Failed to update blog post' : 'Failed to create blog post'));
         } finally {
             setUploading(false);
         }
@@ -169,7 +204,12 @@ export const MediaManagerDashboard = () => {
 
     const handleGallerySubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!galleryImage) {
+        if (!galleryTitle.trim()) {
+            showError('Please add a title', 'A gallery title is required.');
+            return;
+        }
+
+        if (!editingGalleryItem && !galleryImage) {
             showError('Please select an image', 'An image is required to add to the gallery');
             return;
         }
@@ -177,19 +217,31 @@ export const MediaManagerDashboard = () => {
         setUploading(true);
 
         try {
-            const imageUrl = await handleImageUpload(galleryImage, 'gallery');
-            
-            await createGalleryItem({
-                title: galleryTitle,
-                img: imageUrl
-            });
+            let imageUrl = editingGalleryItem?.img || null;
+            if (galleryImage) {
+                imageUrl = await handleImageUpload(galleryImage, 'gallery');
+            }
 
-            showSuccess('Success!', 'Gallery item uploaded successfully!');
-            setGalleryTitle('');
-            setGalleryImage(null);
+            if (editingGalleryItem) {
+                await updateGalleryItem(editingGalleryItem._id, {
+                    title: galleryTitle,
+                    img: imageUrl || editingGalleryItem.img
+                });
+
+                showSuccess('Success!', 'Gallery item updated successfully!');
+            } else {
+                await createGalleryItem({
+                    title: galleryTitle,
+                    img: imageUrl
+                });
+
+                showSuccess('Success!', 'Gallery item uploaded successfully!');
+            }
+
+            resetGalleryForm();
             refreshData();
         } catch (err: any) {
-            showError('Error', err.message || 'Failed to upload gallery item');
+            showError('Error', err.message || (editingGalleryItem ? 'Failed to update gallery item' : 'Failed to upload gallery item'));
         } finally {
             setUploading(false);
         }
@@ -319,8 +371,8 @@ export const MediaManagerDashboard = () => {
                     <TabsContent value="blog">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Create New Blog Post</CardTitle>
-                                <CardDescription>Add a new event or activity to the blog page.</CardDescription>
+                                <CardTitle>{editingBlogPost ? 'Edit Blog Post' : 'Create New Blog Post'}</CardTitle>
+                                <CardDescription>{editingBlogPost ? 'Update the selected blog post or social media post.' : 'Add a new event or activity to the blog page.'}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleBlogSubmit} className="space-y-4">
@@ -336,9 +388,10 @@ export const MediaManagerDashboard = () => {
                                                 className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                                 value={blogDept}
                                                 onChange={e => setBlogDept(e.target.value)}
-                                                required
+                                                required={blogType !== 'social-media-post'}
                                             >
                                                 <option value="" disabled>Select a Department</option>
+                                                <option value="Zion Updates">Zion Updates</option>
                                                 {programs.map((program) => (
                                                     <option key={program._id} value={program.title}>
                                                         {program.title}
@@ -386,8 +439,9 @@ export const MediaManagerDashboard = () => {
                                                     required
                                                 >
                                                     <option value="" disabled>Select Platform</option>
-                                                    <option value="facebook">Facebook</option>
+                                                        <option value="facebook">Facebook</option>
                                                     <option value="instagram">Instagram</option>
+                                                    <option value="linkedin">LinkedIn</option>
                                                     <option value="youtube">YouTube</option>
                                                     <option value="tiktok">TikTok</option>
                                                 </select>
@@ -431,7 +485,7 @@ export const MediaManagerDashboard = () => {
 
                                     <Button type="submit" className="w-full" disabled={uploading}>
                                         {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                                        {uploading ? 'Creating...' : 'Create Post'}
+                                        {uploading ? (editingBlogPost ? 'Updating...' : 'Creating...') : (editingBlogPost ? 'Update Post' : 'Create Post')}
                                     </Button>
                                 </form>
                             </CardContent>
@@ -523,16 +577,36 @@ export const MediaManagerDashboard = () => {
                                                                     </div>
                                                                 </div>
                                                                 
-                                                                {/* Delete Button */}
-                                                                <Button 
-                                                                    variant="destructive" 
-                                                                    size="sm"
-                                                                    onClick={() => handleDeletePost(post._id)}
-                                                                    className="flex-shrink-0"
-                                                                >
-                                                                    <Trash2 className="h-4 w-4 mr-1" />
-                                                                    Delete
-                                                                </Button>
+                                                                <div className="flex gap-2 mt-4">
+                                                                    <Button 
+                                                                        variant="secondary" 
+                                                                        size="sm"
+                                                                        onClick={() => {
+                                                                            setEditingBlogPost(post);
+                                                                            setBlogTitle(post.title);
+                                                                            setBlogDesc(post.description || '');
+                                                                            setBlogShortDesc(post.shortDescription || '');
+                                                                            setBlogDept(post.department || '');
+                                                                            setBlogType(post.type);
+                                                                            setBlogDate(post.timestamp ? new Date(post.timestamp).toISOString().slice(0, 16) : '');
+                                                                            setBlogUrl(post.url || '');
+                                                                            setBlogPlatform(post.platform || '');
+                                                                            setBlogImage(null);
+                                                                        }}
+                                                                        className="flex-shrink-0"
+                                                                    >
+                                                                        Edit
+                                                                    </Button>
+                                                                    <Button 
+                                                                        variant="destructive" 
+                                                                        size="sm"
+                                                                        onClick={() => handleDeletePost(post._id)}
+                                                                        className="flex-shrink-0"
+                                                                    >
+                                                                        <Trash2 className="h-4 w-4 mr-1" />
+                                                                        Delete
+                                                                    </Button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -569,15 +643,19 @@ export const MediaManagerDashboard = () => {
                                     <div className="space-y-2">
                                         <Label htmlFor="galleryImage">Image File</Label>
                                         <div className="flex items-center gap-4">
-                                            <Input id="galleryImage" type="file" accept="image/*" onChange={e => setGalleryImage(e.target.files?.[0] || null)} required />
+                                            <Input id="galleryImage" type="file" accept="image/*" onChange={e => setGalleryImage(e.target.files?.[0] || null)} required={!editingGalleryItem} />
                                         </div>
                                     </div>
 
-                                    {galleryImage && (
+                                    {galleryImage ? (
                                         <div className="mt-4 p-4 border rounded bg-gray-50 flex justify-center">
                                             <img src={URL.createObjectURL(galleryImage)} alt="Preview" className="max-h-64 rounded shadow-sm" />
                                         </div>
-                                    )}
+                                    ) : editingGalleryItem ? (
+                                        <div className="mt-4 p-4 border rounded bg-gray-50 flex justify-center">
+                                            <img src={editingGalleryItem.img} alt={editingGalleryItem.title} className="max-h-64 rounded shadow-sm" />
+                                        </div>
+                                    ) : null}
 
                                     <Button type="submit" className="w-full" disabled={uploading}>
                                         {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
@@ -605,7 +683,14 @@ export const MediaManagerDashboard = () => {
                                     <Card key={item._id} className="overflow-hidden">
                                         <div className="aspect-[4/3] relative group">
                                             <img src={getOptimizedImageUrl(item.img, 'gallery')} alt={item.title} className="w-full h-full object-cover" />
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                                                <Button variant="secondary" size="sm" onClick={() => {
+                                                    setEditingGalleryItem(item);
+                                                    setGalleryTitle(item.title);
+                                                    setGalleryImage(null);
+                                                }}>
+                                                    Edit
+                                                </Button>
                                                 <Button variant="destructive" size="sm" onClick={() => handleDeleteGalleryItem(item._id)}>
                                                     <Trash2 className="h-4 w-4 mr-2" /> Delete
                                                 </Button>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { sendEmail, getPrograms, Program } from "../services/api";
+import { getPhoneLink, PHONE_NUMBER } from "../../utils/whatsapp";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -119,8 +120,8 @@ export function RegisterPage() {
                   <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                     <p className="text-sm text-gray-700">
                       Need help with registration? Call us at{" "}
-                      <a href="tel:+2348033297541" className="text-blue-700 font-semibold">
-                        +234 803 329 7541
+                      <a href={getPhoneLink()} className="text-blue-700 font-semibold">
+                        {PHONE_NUMBER}
                       </a>
                     </p>
                   </div>

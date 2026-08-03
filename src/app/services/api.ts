@@ -38,7 +38,7 @@ export interface BlogPost {
     description?: string;
     shortDescription?: string;
     url?: string;
-    platform?: 'facebook' | 'instagram' | 'youtube' | 'tiktok' | string;
+    platform?: 'facebook' | 'instagram' | 'linkedin' | 'youtube' | 'tiktok' | string;
     timestamp?: string | Date; // API returns string usually
     image?: any;
 }
@@ -334,6 +334,22 @@ export const deleteBlogPost = async (id: string, token?: string): Promise<void> 
     }
 };
 
+export const updateBlogPost = async (id: string, postData: Partial<BlogPost>, token?: string): Promise<BlogPost> => {
+    const response = await fetchWithCreds(`${API_URL}/content/blog/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Failed to update blog post');
+    }
+    return response.json();
+};
+
 export const deleteGalleryItem = async (id: string, token?: string): Promise<void> => {
     const response = await fetchWithCreds(`${API_URL}/content/gallery/${id}`, {
         method: 'DELETE'
@@ -343,6 +359,22 @@ export const deleteGalleryItem = async (id: string, token?: string): Promise<voi
         const error = await response.json();
         throw new Error(error.msg || 'Failed to delete gallery item');
     }
+};
+
+export const updateGalleryItem = async (id: string, itemData: Partial<GalleryItem>, token?: string): Promise<GalleryItem> => {
+    const response = await fetchWithCreds(`${API_URL}/content/gallery/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(itemData)
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.msg || 'Failed to update gallery item');
+    }
+    return response.json();
 };
 
 // --- User Management API ---

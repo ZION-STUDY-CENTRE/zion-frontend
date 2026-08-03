@@ -59,11 +59,11 @@ const AboutSummaryComponent: React.FC = () => {
                 />
               </div>
               <div className="p-6">
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-3'>
                     <Mountain className="w-5 h-5 text-yellow-600" />
                     <h3 className="text-lg font-bold text-gray-900">Mission</h3>
                 </div>
-                <p className="text-gray-600 leading-relaxed text-sm mt-2">
+                <p className="text-gray-600 leading-relaxed text-sm mt-3">
                   Our mission at Zion Study Centre and Leadership Academy is to provide an exceptional and transformative learning experience that nurtures the academic, personal, and professional growth of each student.
                 </p>
               </div>
@@ -82,11 +82,11 @@ const AboutSummaryComponent: React.FC = () => {
                 />
               </div>
               <div className="p-6">
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-3'>
                     <Eye className="w-5 h-5 text-yellow-600" />
                     <h3 className="text-lg font-bold text-gray-900">Vision</h3>
                 </div>
-                <p className="text-gray-600 leading-relaxed text-sm mt-2">
+                <p className="text-gray-600 leading-relaxed text-sm mt-3">
                   Our vision is to become a premier institution known for excellence in education, where students not only excel academically but also develop the leadership qualities necessary to thrive in an ever-changing world.
                 </p>
               </div>

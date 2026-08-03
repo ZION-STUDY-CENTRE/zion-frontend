@@ -14,37 +14,63 @@ const AboutSummaryComponent: React.FC = () => {
   return (
     <div className="bg-gray-50 py-16">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Column - Large Card with Image */}
-          <div 
-            onClick={handleNavigation}
-            className="cursor-pointer group w-full lg:w-[55%]"
-          >
-            <div className="relative bg-gradient-to-br from-amber-100 to-orange-200 rounded-lg overflow-hidden h-80">
-              <img 
-                src={image2}
-                alt="Students collaborating"
-                className="w-full h-full object-cover"
-              />
+        <div className="flex flex-col lg:flex-row gap-8 items-stretch">
+          {/* Left Column - Large Card with Image and Philosophy */}
+          <div className="w-full lg:w-[55%] flex flex-col gap-4 h-full">
+            <div 
+              onClick={handleNavigation}
+              className="cursor-pointer group flex-1 flex flex-col"
+            >
+              <div className="relative bg-gradient-to-br from-amber-100 to-orange-200 rounded-lg overflow-hidden h-80">
+                <img 
+                  src={image2}
+                  alt="Students collaborating"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-8 flex-1 flex flex-col justify-between">
+                <div>
+                  <p className="text-gray-600 mb-4 leading-relaxed">
+                    <span className='font-bold text-lg'>Zion Study Centre</span> offers intensive coaching for students preparing for any forms of Examinations both local and international.
+                  </p>
+                  <p className="text-gray-600 mb-4 leading-relaxed">
+                    We manage Students, offer career counselling on their academic future and guide them in selection of courses into university, based on their I/Q and E/Q.
+                  </p>
+                  <p className="text-gray-600 leading-relaxed">
+                    Zion Study Centre is a modern organization set up to bring about the best in Students and ignite the fire of greatness in them. We also provide Scholarship through our foundation to intelligent students from humble homes.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 text-red-600">
+                  <Mountain className="w-5 h-5" />
+                  <span className="font-medium">Study</span>
+                </div>
+              </div>
             </div>
-            <div className="p-8">
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                <span className='font-bold text-lg'>Zion Study Centre</span> offers intensive coaching for students preparing for any forms of Examinations both local and international.
-              </p>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                We manage Students, offer career counselling on their academic future and guide them in selection of courses into university, based on their I/Q and E/Q.
-              </p>
-              <p className="text-gray-600 leading-relaxed">
-                Zion Study Centre is a modern organization set up to bring about the best in Students and ignite the fire of greatness in them. We also provide Scholarship through our foundation to intelligent students from humble homes.
-              </p>
-              <div className="mt-6 flex items-center gap-2 text-red-600">
-                <Mountain className="w-5 h-5" />
-                <span className="font-medium">Study</span>
+
+            <div 
+              onClick={handleNavigation}
+              className="cursor-pointer group rounded-lg overflow-hidden bg-white shadow-sm"
+            >
+              <div className="relative h-60 bg-gradient-to-br from-green-100 to-emerald-200 rounded-t-lg overflow-hidden">
+                <img 
+                  src={biologyClass}
+                  alt="Marketing strategy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-6">
+                <div className='flex items-center gap-2'>
+                    <GraduationCap className="w-5 h-5 text-yellow-600" />
+                    <h3 className="text-lg font-bold text-gray-900">Educational Philosophy</h3>
+                </div>
+                <p className="text-gray-600 leading-relaxed text-sm mt-2">
+                  At Zion Study Centre and Leadership Academy, our educational philosophy is rooted in the belief that learning should be a dynamic, engaging, and personalized experience. We view education as more than just the acquisition of knowledge.
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Right Column - Three Cards */}
+          {/* Right Column - Mission and Vision Cards */}
           <div className="space-y-8 w-full lg:w-[45%]">
             {/* Mission Card */}
             <div 
@@ -92,28 +118,6 @@ const AboutSummaryComponent: React.FC = () => {
               </div>
             </div>
 
-            {/* Educational Philosophy Card */}
-            <div 
-              onClick={handleNavigation}
-              className="cursor-pointer group"
-            >
-              <div className="relative h-60 bg-gradient-to-br from-green-100 to-emerald-200 rounded-lg overflow-hidden">
-                <img 
-                  src={biologyClass}
-                  alt="Marketing strategy"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <div className='flex items-center gap-2'>
-                    <GraduationCap className="w-5 h-5 text-yellow-600" />
-                    <h3 className="text-lg font-bold text-gray-900">Educational Philosophy</h3>
-                </div>
-                <p className="text-gray-600 leading-relaxed text-sm mt-2">
-                  At Zion Study Centre and Leadership Academy, our educational philosophy is rooted in the belief that learning should be a dynamic, engaging, and personalized experience. We view education as more than just the acquisition of knowledge.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

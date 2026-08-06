@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
+import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail, YoutubeIcon } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { getWhatsAppLink, PHONE_NUMBER } from "../../utils/whatsapp";
 
@@ -39,6 +39,10 @@ export function Footer() {
                 >
                   <Facebook size={16} />
                 </a>
+                <a href="https://youtube.com/@zionstudy?si=OulMnnCDNrSD5h7Y" target="_blank" rel="noreferrer" className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                 
+                  <YoutubeIcon size={16} />
+                </a>
                 <a
                   href="https://www.tiktok.com/@zionstudy1?_r=1&_t=ZN-981wClAfoO7"
                   target="_blank"
@@ -65,7 +69,7 @@ export function Footer() {
                 </a>
               </div>
               <a
-                href={getWhatsAppLink()}
+                
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center justify-center rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors"

@@ -266,11 +266,11 @@ export function AboutPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">Our Impact by Numbers</h2>
           <div className="grid md:grid-cols-4 gap-8">
             <div className="text-center">
-              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">15+</h3>
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">25+</h3>
               <p className="text-xl text-gray-700">Years of Excellence</p>
             </div>
             <div className="text-center">
-              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">5,000+</h3>
+              <h3 className="text-4xl md:text-5xl font-bold text-blue-700 mb-2">35,000+</h3>
               <p className="text-xl text-gray-700">Successful Graduates</p>
             </div>
             <div className="text-center">

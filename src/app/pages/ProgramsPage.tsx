@@ -165,7 +165,7 @@ export function ProgramsPage() {
                     </Button>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {internationalExams.slice(0, 6).map((course) => (
+                    {internationalExams.slice(0, 6).map((course) => (  
                       <CourseCard key={course._id} {...mapToCard(course)} />
                     ))}
                   </div>

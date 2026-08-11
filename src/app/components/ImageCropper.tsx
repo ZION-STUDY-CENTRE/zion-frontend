@@ -74,16 +74,18 @@ function centerAspectCrop(
 
 interface ImageCropperProps {
   imageFile: File;
-  aspectRatio: number; // e.g. 16 / 9
+  aspectRatio?: number; // e.g. 16 / 9 or undefined for freeform
   onCropComplete: (croppedFile: File) => void;
   onCancel: () => void;
 }
 
-export const ImageCropper: React.FC<ImageCropperProps> = ({ imageFile, aspectRatio, onCropComplete, onCancel }) => {
+export const ImageCropper: React.FC<ImageCropperProps> = ({ imageFile, aspectRatio = 16 / 9, onCropComplete, onCancel }) => {
   const [imgSrc, setImgSrc] = useState<string>('');
   const imgRef = useRef<HTMLImageElement>(null);
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState<number | null>(aspectRatio ?? 16 / 9);
+  const [imgDimensions, setImgDimensions] = useState<{ width: number; height: number } | null>(null);
 
   React.useEffect(() => {
     const reader = new FileReader();
@@ -91,9 +93,38 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({ imageFile, aspectRat
     reader.readAsDataURL(imageFile);
   }, [imageFile]);
 
+  React.useEffect(() => {
+    if (!imgDimensions) return;
+    const { width, height } = imgDimensions;
+
+    if (selectedAspectRatio) {
+      setCrop(centerAspectCrop(width, height, selectedAspectRatio));
+    } else {
+      setCrop({
+        unit: '%',
+        x: 5,
+        y: 5,
+        width: 90,
+        height: 70,
+      });
+    }
+  }, [selectedAspectRatio, imgDimensions]);
+
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { width, height } = e.currentTarget;
-    setCrop(centerAspectCrop(width, height, aspectRatio));
+    setImgDimensions({ width, height });
+
+    if (selectedAspectRatio) {
+      setCrop(centerAspectCrop(width, height, selectedAspectRatio));
+    } else {
+      setCrop({
+        unit: '%',
+        x: 5,
+        y: 5,
+        width: 90,
+        height: 70,
+      });
+    }
   }
 
   const handleGenerateCrop = async () => {
@@ -107,6 +138,10 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({ imageFile, aspectRat
     }
   };
 
+  const handleUseWholeImage = () => {
+    onCropComplete(imageFile);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <Card className="w-full max-w-3xl bg-white shadow-xl">
@@ -118,7 +153,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({ imageFile, aspectRat
                 crop={crop}
                 onChange={(_, percentCrop) => setCrop(percentCrop)}
                 onComplete={(c) => setCompletedCrop(c)}
-                aspect={aspectRatio}
+                aspect={selectedAspectRatio ?? undefined}
               >
                 <img
                   ref={imgRef}
@@ -130,6 +165,40 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({ imageFile, aspectRat
               </ReactCrop>
             )}
           </div>
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant={selectedAspectRatio === 16 / 9 ? 'secondary' : 'outline'}
+              onClick={() => setSelectedAspectRatio(16 / 9)}
+            >
+              16:9
+            </Button>
+            <Button
+              type="button"
+              variant={selectedAspectRatio === 4 / 3 ? 'secondary' : 'outline'}
+              onClick={() => setSelectedAspectRatio(4 / 3)}
+            >
+              4:3
+            </Button>
+            <Button
+              type="button"
+              variant={selectedAspectRatio === 1 ? 'secondary' : 'outline'}
+              onClick={() => setSelectedAspectRatio(1)}
+            >
+              1:1
+            </Button>
+            <Button
+              type="button"
+              variant={selectedAspectRatio === null ? 'secondary' : 'outline'}
+              onClick={() => setSelectedAspectRatio(null)}
+            >
+              Freeform
+            </Button>
+            <Button type="button" variant="outline" onClick={handleUseWholeImage}>
+              Use full image
+            </Button>
+          </div>
+
           <div className="flex justify-end gap-2 mt-6">
             <Button variant="outline" type="button" onClick={onCancel}>Cancel</Button>
             <Button type="button" onClick={handleGenerateCrop}>Save Crop</Button>

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { createBlogPost, createGalleryItem, uploadImage, getPrograms, Program, getBlogPosts, getGalleryItems, deleteBlogPost, deleteGalleryItem, updateBlogPost, updateGalleryItem, BlogPost, GalleryItem, getTestimonials, createTestimonial, updateTestimonial, deleteTestimonial, Testimonial } from '../../services/api';
-import { Loader2, Upload, Plus, Image as ImageIcon, FileText, Trash2, Search, LogOut, Star, Clock } from 'lucide-react';
+import { Loader2, Upload, Plus, Image as ImageIcon, FileText, Trash2, Search, LogOut, Star, Clock, Bold, Italic, Link, List } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
@@ -76,6 +76,8 @@ export const MediaManagerDashboard = () => {
         refreshData();
     }, []);
 
+    type CropPreference = '16:9' | '4:3' | '1:1' | 'free' | 'full';
+
     // Blog Form State
     const [blogTitle, setBlogTitle] = useState('');
     const [blogDesc, setBlogDesc] = useState('');
@@ -88,9 +90,11 @@ export const MediaManagerDashboard = () => {
     const [blogPlatform, setBlogPlatform] = useState('');
     const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
     const [editingGalleryItem, setEditingGalleryItem] = useState<GalleryItem | null>(null);
+    const [blogCropPreference, setBlogCropPreference] = useState<CropPreference>('16:9');
+    const blogDescriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
     // Cropping State
-    const [fileToCrop, setFileToCrop] = useState<{file: File, aspect: number, onComplete: (f: File) => void} | null>(null);
+    const [fileToCrop, setFileToCrop] = useState<{file: File, aspect?: number, onComplete: (f: File) => void} | null>(null);
 
     // Gallery Form State
     const [galleryTitle, setGalleryTitle] = useState('');
@@ -105,8 +109,61 @@ export const MediaManagerDashboard = () => {
     const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
 
     const handleImageUpload = async (file: File, category: 'blog' | 'gallery') => {
-        
         return await uploadImage(file, category);
+    };
+
+    const getAspectFromPreference = (preference: CropPreference): number | undefined => {
+        switch (preference) {
+            case '16:9':
+                return 16 / 9;
+            case '4:3':
+                return 4 / 3;
+            case '1:1':
+                return 1;
+            case 'free':
+            case 'full':
+            default:
+                return undefined;
+        }
+    };
+
+    const wrapDescriptionSelection = (before: string, after = before, placeholder = '') => {
+        const textarea = blogDescriptionRef.current;
+        if (!textarea) return;
+
+        const { selectionStart, selectionEnd, value } = textarea;
+        const selectedText = value.slice(selectionStart, selectionEnd) || placeholder;
+        const updated = value.slice(0, selectionStart) + before + selectedText + after + value.slice(selectionEnd);
+
+        setBlogDesc(updated);
+
+        window.requestAnimationFrame(() => {
+            const start = selectionStart + before.length;
+            const end = start + selectedText.length;
+            textarea.focus();
+            textarea.setSelectionRange(start, end);
+        });
+    };
+
+    const insertLink = () => {
+        const textarea = blogDescriptionRef.current;
+        if (!textarea) return;
+
+        const url = window.prompt('Enter link URL', 'https://');
+        if (!url) return;
+
+        const { selectionStart, selectionEnd, value } = textarea;
+        const selectedText = value.slice(selectionStart, selectionEnd) || 'link text';
+        const formatted = `<a href="${url}" target="_blank" rel="noopener noreferrer">${selectedText}</a>`;
+        const updated = value.slice(0, selectionStart) + formatted + value.slice(selectionEnd);
+
+        setBlogDesc(updated);
+
+        window.requestAnimationFrame(() => {
+            const cursor = selectionStart + formatted.length;
+            textarea.focus();
+            textarea.setSelectionRange(cursor, cursor);
+        });
     };
 
     const resetBlogForm = () => {
@@ -119,6 +176,7 @@ export const MediaManagerDashboard = () => {
         setBlogDate('');
         setBlogUrl('');
         setBlogPlatform('');
+        setBlogCropPreference('16:9');
         setEditingBlogPost(null);
     };
 
@@ -472,7 +530,52 @@ export const MediaManagerDashboard = () => {
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="description">Full Description</Label>
-                                                <Textarea id="description" value={blogDesc} onChange={e => setBlogDesc(e.target.value)} rows={5} required />
+                                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                                    <Button type="button" variant="outline" size="sm" onClick={() => wrapDescriptionSelection('<strong>', '</strong>', 'Bold text')}>
+                                                        <Bold className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button type="button" variant="outline" size="sm" onClick={() => wrapDescriptionSelection('<em>', '</em>', 'Italic text')}>
+                                                        <Italic className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button type="button" variant="outline" size="sm" onClick={() => wrapDescriptionSelection('<h2>', '</h2>', 'Heading text')}>
+                                                        H2
+                                                    </Button>
+                                                    <Button type="button" variant="outline" size="sm" onClick={() => wrapDescriptionSelection('<ul><li>', '</li></ul>', 'List item')}>
+                                                        <List className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button type="button" variant="outline" size="sm" onClick={insertLink}>
+                                                        <Link className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                                <Textarea
+                                                    id="description"
+                                                    ref={blogDescriptionRef}
+                                                    value={blogDesc}
+                                                    onChange={e => setBlogDesc(e.target.value)}
+                                                    rows={5}
+                                                    required
+                                                />
+                                                <p className="text-xs text-slate-500">
+                                                    Use simple HTML tags for formatting: <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;a href="..."&gt;</code>.
+                                                </p>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="cropPreference">Image Crop Style</Label>
+                                                <select
+                                                    id="cropPreference"
+                                                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    value={blogCropPreference}
+                                                    onChange={e => setBlogCropPreference(e.target.value as CropPreference)}
+                                                >
+                                                    <option value="16:9">16:9 crop</option>
+                                                    <option value="4:3">4:3 crop</option>
+                                                    <option value="1:1">1:1 crop</option>
+                                                    <option value="free">Freeform crop</option>
+                                                    <option value="full">Use full image</option>
+                                                </select>
+                                                <p className="text-xs text-slate-500">
+                                                    Choose a crop ratio before selecting an image, or keep the full image un-cropped.
+                                                </p>
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="blogImage">Cover Image (Optional)</Label>
@@ -483,17 +586,22 @@ export const MediaManagerDashboard = () => {
                                                     onChange={e => {
                                                         const file = e.target.files?.[0];
                                                         if (file) {
-                                                            setFileToCrop({
-                                                                file,
-                                                                aspect: 16 / 9,
-                                                                onComplete: (cropped) => setBlogImage(cropped)
-                                                            });
+                                                            const aspect = getAspectFromPreference(blogCropPreference);
+                                                            if (blogCropPreference === 'full') {
+                                                                setBlogImage(file);
+                                                            } else {
+                                                                setFileToCrop({
+                                                                    file,
+                                                                    aspect,
+                                                                    onComplete: (cropped) => setBlogImage(cropped)
+                                                                });
+                                                            }
                                                         }
                                                     }} 
                                                 />
                                                 {blogImage && (
                                                     <div className="mt-2 text-sm text-green-600">
-                                                        Cropped image ready: {blogImage.name}
+                                                        Image ready to upload: {blogImage.name}
                                                     </div>
                                                 )}
                                             </div>

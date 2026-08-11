@@ -159,7 +159,7 @@ export default function BlogPostDetail() {
               </div>
 
               <div className="grid gap-8 lg:grid-cols-[1fr_260px]">
-                <div className="prose prose-slate max-w-none text-slate-700 prose-headings:font-semibold prose-headings:text-slate-900 prose-p:text-lg prose-li:text-lg prose-strong:text-slate-900 prose-a:text-sky-600 prose-a:underline prose-a:no-underline hover:prose-a:underline">
+<div className="prose prose-slate max-w-none text-slate-700 prose-headings:font-semibold prose-headings:text-slate-900 prose-p:text-lg prose-li:text-lg prose-strong:text-slate-900 prose-a:text-sky-600 prose-a:underline prose-a:no-underline hover:prose-a:underline whitespace-pre-wrap">
                   <div dangerouslySetInnerHTML={{ __html: post.description || post.shortDescription || '' }} />
                 </div>
 

@@ -94,6 +94,15 @@ const BlogPostsComponent = () => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
+  const stripHtml = (text: string) => {
+    return text.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  };
+
+  const getPreviewText = (post: BlogPost) => {
+    const raw = post.shortDescription || post.description || '';
+    return stripHtml(raw);
+  };
+
   const PostCard = ({ post, isCompact = false }: { post: BlogPost; isCompact?: boolean }) => (
     <Link to={`/blog/${post.id || post._id}`} className={`block border-b border-gray-200 ${isCompact ? 'py-4' : 'py-6'} hover:bg-gray-50 transition-colors`}>
       <div className="flex gap-4">
@@ -106,8 +115,8 @@ const BlogPostsComponent = () => {
             {post.title}
           </h3>
           
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-            {post.description}
+          <p className="text-gray-600 text-sm mb-3 line-clamp-2 whitespace-pre-line break-words">
+            {getPreviewText(post)}
           </p>
           
           <div className="flex items-center gap-4 text-sm text-gray-500">

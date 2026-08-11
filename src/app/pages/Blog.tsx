@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Filter, Loader2, Facebook, Instagram, Youtube, Music } from 'lucide-react';
 import { getBlogPosts, BlogPost } from '../services/api';
+import { Link } from 'react-router-dom';
 import { Pagination } from '../components/Pagination';
 
 const ITEMS_PER_PAGE = 10;
@@ -94,7 +95,7 @@ const BlogPostsComponent = () => {
   };
 
   const PostCard = ({ post, isCompact = false }: { post: BlogPost; isCompact?: boolean }) => (
-    <div className={`border-b border-gray-200 ${isCompact ? 'py-4' : 'py-6'} hover:bg-gray-50 transition-colors`}>
+    <Link to={`/blog/${post.id || post._id}`} className={`block border-b border-gray-200 ${isCompact ? 'py-4' : 'py-6'} hover:bg-gray-50 transition-colors`}>
       <div className="flex gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
@@ -127,7 +128,7 @@ const BlogPostsComponent = () => {
           </div>
         )}
       </div>
-    </div>
+    </Link>
   );
 
   if (loading) {
@@ -225,7 +226,7 @@ const BlogPostsComponent = () => {
               <>
                 {filteredPosts.length > 0 ? (
                   paginate(filteredPosts, currentPage).map(post => (
-                    <PostCard key={post.id} post={post} />
+                    <PostCard key={post.id || post._id} post={post} />
                   ))
                 ) : (
                   <div className="text-center py-12 text-gray-500">
@@ -251,7 +252,7 @@ const BlogPostsComponent = () => {
             <h2 className="text-xl font-bold mb-4">Latest Posts</h2>
             <div className="space-y-1">
               {latestPosts.map(post => (
-                <div key={post.id} className="border-b border-gray-100 pb-4 mb-4">
+                <Link key={post.id || post._id} to={`/blog/${post.id || post._id}`} className="block border-b border-gray-100 pb-4 mb-4 hover:bg-gray-50 rounded">
                   <div className="flex items-start gap-2 mb-2">
                     <div className="w-8 h-8 bg-yellow-100 rounded flex items-center justify-center flex-shrink-0">
                       <Calendar size={16} className="text-yellow-600" />
@@ -264,7 +265,7 @@ const BlogPostsComponent = () => {
                       <p className="text-xs text-gray-500">{formatDate( post.timestamp ? new Date(post.timestamp) : new Date(0))}</p>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

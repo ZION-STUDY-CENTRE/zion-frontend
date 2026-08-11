@@ -20,6 +20,7 @@ import { InstructorDashboard } from "./pages/dashboard/InstructorDashboard";
 import { MediaManagerDashboard } from "./pages/dashboard/MediaManagerDashboard";
 import { GalleryPage } from "./pages/GalleryPage";
 import BlogPostsComponent from "./pages/Blog";
+import BlogPostDetail from "./pages/BlogPostDetail";
 import { StudentDashboard } from "./pages/dashboard/StudentDashboard";
 import { FuturesPage } from "./pages/FuturesPage";
 import { VerifyEmailPage } from "./pages/VerifyEmailPage";
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="/futures" element={<FuturesPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/blog" element={<BlogPostsComponent />} />
+            <Route path="/blog/:id" element={<BlogPostDetail />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/programs/technology" element={<ProgramsPage />} />

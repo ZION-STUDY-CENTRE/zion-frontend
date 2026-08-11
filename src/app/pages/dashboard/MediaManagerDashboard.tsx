@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { createBlogPost, createGalleryItem, uploadImage, getPrograms, Program, getBlogPosts, getGalleryItems, deleteBlogPost, deleteGalleryItem, updateBlogPost, updateGalleryItem, BlogPost, GalleryItem, getTestimonials, createTestimonial, deleteTestimonial, Testimonial } from '../../services/api';
+import { createBlogPost, createGalleryItem, uploadImage, getPrograms, Program, getBlogPosts, getGalleryItems, deleteBlogPost, deleteGalleryItem, updateBlogPost, updateGalleryItem, BlogPost, GalleryItem, getTestimonials, createTestimonial, updateTestimonial, deleteTestimonial, Testimonial } from '../../services/api';
 import { Loader2, Upload, Plus, Image as ImageIcon, FileText, Trash2, Search, LogOut, Star, Clock } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -102,6 +102,7 @@ export const MediaManagerDashboard = () => {
     const [testimonialRating, setTestimonialRating] = useState('5');
     const [testimonialText, setTestimonialText] = useState('');
     const [testimonialImage, setTestimonialImage] = useState<File | null>(null);
+    const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
 
     const handleImageUpload = async (file: File, category: 'blog' | 'gallery') => {
         
@@ -269,17 +270,33 @@ export const MediaManagerDashboard = () => {
             if (testimonialImage) {
                 imageUrl = await handleImageUpload(testimonialImage, 'blog');
             }
+            if (editingTestimonial) {
+                const updateData: Partial<Testimonial> = {
+                    name: testimonialName,
+                    course: testimonialCourse,
+                    rating: parseInt(testimonialRating),
+                    text: testimonialText,
+                };
+                if (imageUrl) updateData.image = imageUrl;
 
-            await createTestimonial({
-                name: testimonialName,
-                course: testimonialCourse,
-                rating: parseInt(testimonialRating),
-                text: testimonialText,
-                image: imageUrl
-            });
+                await updateTestimonial(editingTestimonial._id, updateData);
+                setMessage({ type: 'success', text: 'Testimonial updated successfully!' });
+                showSuccess('Success!', 'Testimonial updated successfully!');
+                // Reset edit state
+                setEditingTestimonial(null);
+            } else {
+                await createTestimonial({
+                    name: testimonialName,
+                    course: testimonialCourse,
+                    rating: parseInt(testimonialRating),
+                    text: testimonialText,
+                    image: imageUrl
+                });
 
-            setMessage({ type: 'success', text: 'Testimonial created successfully!' });
-            showSuccess('Success!', 'Testimonial created successfully!');
+                setMessage({ type: 'success', text: 'Testimonial created successfully!' });
+                showSuccess('Success!', 'Testimonial created successfully!');
+            }
+
             // Reset form
             setTestimonialName('');
             setTestimonialCourse('');
@@ -777,10 +794,24 @@ export const MediaManagerDashboard = () => {
                                         </div>
                                     )}
 
-                                    <Button type="submit" className="w-full" disabled={uploading}>
-                                        {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                                        {uploading ? 'Creating...' : 'Add Testimonial'}
-                                    </Button>
+                                    <div className="flex gap-2">
+                                        <Button type="submit" className="flex-1" disabled={uploading}>
+                                            {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+                                            {uploading ? (editingTestimonial ? 'Updating...' : 'Processing...') : (editingTestimonial ? 'Update Testimonial' : 'Add Testimonial')}
+                                        </Button>
+                                        {editingTestimonial && (
+                                            <Button type="button" variant="outline" onClick={() => {
+                                                setEditingTestimonial(null);
+                                                setTestimonialName('');
+                                                setTestimonialCourse('');
+                                                setTestimonialRating('5');
+                                                setTestimonialText('');
+                                                setTestimonialImage(null);
+                                            }}>
+                                                Cancel
+                                            </Button>
+                                        )}
+                                    </div>
                                 </form>
                             </CardContent>
                         </Card>
@@ -817,9 +848,25 @@ export const MediaManagerDashboard = () => {
                                                     <p className="text-sm text-gray-700 italic">"{testimonial.text}"</p>
                                                 </div>
                                             </div>
-                                            <Button variant="destructive" size="sm" onClick={() => handleDeleteTestimonial(testimonial._id)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <div className="flex gap-2">
+                                                <Button
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setEditingTestimonial(testimonial);
+                                                        setTestimonialName(testimonial.name);
+                                                        setTestimonialCourse(testimonial.course);
+                                                        setTestimonialRating(String(testimonial.rating));
+                                                        setTestimonialText(testimonial.text);
+                                                        setTestimonialImage(null);
+                                                    }}
+                                                >
+                                                    Edit
+                                                </Button>
+                                                <Button variant="destructive" size="sm" onClick={() => handleDeleteTestimonial(testimonial._id)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </Card>
                                 ))}

@@ -63,10 +63,6 @@ declare global {
 }
 
 const getApiBaseUrl = () => {
-    if (import.meta.env.VITE_API_URL) {
-        return import.meta.env.VITE_API_URL.replace(/\/$/, '');
-    }
-
     if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
         return '/api';
     }
@@ -176,6 +172,14 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
     throw new Error('Failed to fetch blog posts');
   }
   return response.json();
+};
+
+export const getBlogPost = async (id: string): Promise<BlogPost> => {
+        const response = await fetch(`${API_URL}/content/blog/${id}`);
+        if (!response.ok) {
+                throw new Error('Failed to fetch blog post');
+        }
+        return response.json();
 };
 
 export const getGalleryItems = async (): Promise<GalleryItem[]> => {

@@ -3,6 +3,48 @@ import { Search, X, BookOpen, GraduationCap, Award, ArrowRight, Image as ImageIc
 import { useNavigate, Link } from 'react-router-dom';
 import { getPrograms, getGalleryItems, Program, GalleryItem } from '../services/api';
 
+const normalizeText = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+const levenshteinDistance = (a: string, b: string): number => {
+  const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+
+  for (let i = 0; i <= a.length; i += 1) matrix[i][0] = i;
+  for (let j = 0; j <= b.length; j += 1) matrix[0][j] = j;
+
+  for (let i = 1; i <= a.length; i += 1) {
+    for (let j = 1; j <= b.length; j += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+
+  return matrix[a.length][b.length];
+};
+
+const fuzzyMatches = (query: string, text: string): boolean => {
+  const normalizedQuery = normalizeText(query).replace(/\s+/g, '');
+  const normalizedText = normalizeText(text).replace(/\s+/g, '');
+
+  if (!normalizedQuery || !normalizedText) {
+    return false;
+  }
+
+  if (normalizedText.includes(normalizedQuery)) {
+    return true;
+  }
+
+  const threshold = Math.max(1, Math.floor(normalizedText.length * 0.25));
+  return levenshteinDistance(normalizedQuery, normalizedText) <= threshold;
+};
+
 // Only keep static pages here. Courses and Gallery items will be fetched.
 const staticSearchData = [
   { title: "Technology & Computer Academy", type: "Category", path: "/programs/technology", icon: BookOpen },
@@ -46,7 +88,7 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
         const programItems: SearchItem[] = programsData.map((program: Program) => ({
           title: program.title,
           type: "Course",
-          path: `/programs/${program.code || program._id}`,
+          path: `/course/${program.code || program._id}`,
           icon: BookOpen
         }));
 
@@ -68,9 +110,7 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
 
   useEffect(() => {
     if (searchQuery.trim()) {
-      const filtered = allItems.filter(item => 
-        item.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const filtered = allItems.filter(item => fuzzyMatches(searchQuery, item.title));
       setResults(filtered);
       setShowDropdown(true);
     } else {
@@ -151,24 +191,30 @@ export const SearchCourse: React.FC<SearchCourseProps> = ({ onClose }) => {
           </form>
 
           {/* Dropdown Results */}
-          {showDropdown && results.length > 0 && (
+          {showDropdown && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-2xl overflow-hidden max-h-[60vh] overflow-y-auto z-30">
               <div className="py-2">
-                {results.map((item, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleSelect(item)}
-                    className="w-full px-6 py-4 flex items-center gap-4 hover:bg-blue-50 transition-colors text-left border-b border-gray-100 last:border-0"
-                  >
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 shrink-0">
-                      <item.icon size={20} />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 text-lg">{item.title}</h4>
-                      <p className="text-sm text-gray-500">{item.type}</p>
-                    </div>
-                  </button>
-                ))}
+                {results.length > 0 ? (
+                  results.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSelect(item)}
+                      className="w-full px-6 py-4 flex items-center gap-4 hover:bg-blue-50 transition-colors text-left border-b border-gray-100 last:border-0"
+                    >
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 shrink-0">
+                        <item.icon size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 text-lg">{item.title}</h4>
+                        <p className="text-sm text-gray-500">{item.type}</p>
+                      </div>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-6 py-6 text-center text-gray-600">
+                    No results found for "{searchQuery}". Try a different spelling or keyword.
+                  </div>
+                )}
               </div>
             </div>
           )}

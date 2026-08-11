@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getBlogPost, BlogPost } from '../services/api';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Facebook, Instagram, Linkedin, Youtube, Twitter, Share2, Link as LinkIcon } from 'lucide-react';
 
 export default function BlogPostDetail() {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -20,6 +21,28 @@ export default function BlogPostDetail() {
       })
       .finally(() => setLoading(false));
   }, [id]);
+
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const encodedUrl = encodeURIComponent(pageUrl);
+  const encodedTitle = encodeURIComponent(post?.title || '');
+  const encodedSummary = encodeURIComponent(post?.shortDescription || post?.description?.slice(0, 120) || '');
+  const facebookShare = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedTitle}`;
+  const linkedInShare = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+  const twitterShare = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
+  const pinterestShare = `https://pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodeURIComponent(post?.image || '')}&description=${encodedSummary}`;
+  const instagramShare = `https://www.instagram.com/`;
+  const youtubeShare = `https://www.youtube.com/upload`;
+
+  const handleCopyLink = async () => {
+    if (!pageUrl) return;
+    try {
+      await navigator.clipboard.writeText(pageUrl);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2200);
+    } catch (err) {
+      console.error('Copy failed', err);
+    }
+  };
 
   if (loading) {
     return (
@@ -79,38 +102,95 @@ export default function BlogPostDetail() {
               </div>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-[1fr_260px]">
-              <div className="prose prose-slate max-w-none text-slate-700 prose-headings:font-semibold prose-headings:text-slate-900 prose-p:text-lg prose-li:text-lg prose-strong:text-slate-900 prose-a:text-sky-600 prose-a:underline prose-a:no-underline hover:prose-a:underline">
-                <div dangerouslySetInnerHTML={{ __html: post.description || post.shortDescription || '' }} />
-              </div>
-
-              <aside className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-700 shadow-sm">
-                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Post details</p>
-                <div className="mt-6 space-y-4">
+            <div className="space-y-10">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Type</p>
-                    <p className="mt-1 text-base font-medium text-slate-900">{post.type.replace(/-/g, ' ')}</p>
+                    <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Share this article</p>
+                    <p className="mt-2 text-base font-semibold text-slate-900">Spread the story across your network</p>
                   </div>
-                  {post.platform && (
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Platform</p>
-                      <p className="mt-1 text-base font-medium text-slate-900">{post.platform}</p>
-                    </div>
-                  )}
-                  {post.url && (
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.24em] text-slate-400">External link</p>
-                      <a href={post.url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-sm font-medium text-sky-600 hover:text-sky-500">
-                        Visit source
-                      </a>
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Published</p>
-                    <p className="mt-1 text-base font-medium text-slate-900">{formattedDate}</p>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <a
+                      href={facebookShare}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#3b5998] text-white transition hover:scale-105"
+                      aria-label="Share on Facebook"
+                    >
+                      <Facebook size={18} />
+                    </a>
+                    <a
+                      href={twitterShare}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#1da1f2] text-white transition hover:scale-105"
+                      aria-label="Share on Twitter"
+                    >
+                      <Twitter size={18} />
+                    </a>
+                    <a
+                      href={linkedInShare}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#0077b5] text-white transition hover:scale-105"
+                      aria-label="Share on LinkedIn"
+                    >
+                      <Linkedin size={18} />
+                    </a>
+                    <a
+                      href={pinterestShare}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#bd081c] text-white transition hover:scale-105"
+                      aria-label="Share on Pinterest"
+                    >
+                      <Share2 size={18} />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={handleCopyLink}
+                      className="inline-flex h-11 items-center gap-2 rounded-full border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-100"
+                    >
+                      <LinkIcon size={16} />
+                      {copied ? 'Link copied' : 'Copy link'}
+                    </button>
                   </div>
                 </div>
-              </aside>
+              </div>
+
+              <div className="grid gap-8 lg:grid-cols-[1fr_260px]">
+                <div className="prose prose-slate max-w-none text-slate-700 prose-headings:font-semibold prose-headings:text-slate-900 prose-p:text-lg prose-li:text-lg prose-strong:text-slate-900 prose-a:text-sky-600 prose-a:underline prose-a:no-underline hover:prose-a:underline">
+                  <div dangerouslySetInnerHTML={{ __html: post.description || post.shortDescription || '' }} />
+                </div>
+
+                <aside className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-700 shadow-sm">
+                  <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Post details</p>
+                  <div className="mt-6 space-y-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Type</p>
+                      <p className="mt-1 text-base font-medium text-slate-900">{post.type.replace(/-/g, ' ')}</p>
+                    </div>
+                    {post.platform && (
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Platform</p>
+                        <p className="mt-1 text-base font-medium text-slate-900">{post.platform}</p>
+                      </div>
+                    )}
+                    {post.url && (
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.24em] text-slate-400">External link</p>
+                        <a href={post.url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-sm font-medium text-sky-600 hover:text-sky-500">
+                          Visit source
+                        </a>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Published</p>
+                      <p className="mt-1 text-base font-medium text-slate-900">{formattedDate}</p>
+                    </div>
+                  </div>
+                </aside>
+              </div>
             </div>
 
             <div className="flex items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5">

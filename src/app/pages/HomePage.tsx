@@ -393,7 +393,7 @@ export function HomePage() {
                           {course.title}
                         </h3>
                         <p className="text-gray-600 mb-6 flex-grow leading-relaxed hover:underline line-clamp-3">
-                          {course.shortDescription || course.description}
+                          {course.shortDescription || course.description || "Program details coming soon."}
                         </p>
                       </div>
                     </Link>

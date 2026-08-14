@@ -82,7 +82,7 @@ export function CourseDetailPage() {
               {course.title}
             </h1>
             <p className="text-xl md:text-2xl text-gray-200 max-w-2xl leading-relaxed">
-              {course.shortDescription || course.description}
+              {course.shortDescription || course.description || "Program details coming soon."}
             </p>
           </div>
         </div>
@@ -138,21 +138,6 @@ export function CourseDetailPage() {
                     </li>
                   ))}
                 </ul>
-              </div>
-            </section>
-
-            {/* Career Opportunities */}
-            <section>
-              <h2 className="text-3xl font-serif font-bold text-gray-900 mb-6">Career Opportunities</h2>
-              <p className="text-gray-600 mb-6">
-                Graduates of this program are well-equipped to pursue various roles in the industry, including:
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {course.careerOpportunities && course.careerOpportunities.map((career, index) => (
-                  <span key={index} className="bg-blue-50 text-blue-800 px-4 py-2 rounded-full font-medium text-sm">
-                    {career}
-                  </span>
-                ))}
               </div>
             </section>
 

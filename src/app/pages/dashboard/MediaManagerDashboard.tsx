@@ -88,6 +88,8 @@ export const MediaManagerDashboard = () => {
     const [blogDate, setBlogDate] = useState('');
     const [blogUrl, setBlogUrl] = useState('');
     const [blogPlatform, setBlogPlatform] = useState('');
+    const [linkText, setLinkText] = useState('');
+    const [linkUrl, setLinkUrl] = useState('');
     const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
     const [editingGalleryItem, setEditingGalleryItem] = useState<GalleryItem | null>(null);
     const [blogCropPreference, setBlogCropPreference] = useState<CropPreference>('16:9');
@@ -149,15 +151,22 @@ export const MediaManagerDashboard = () => {
         const textarea = blogDescriptionRef.current;
         if (!textarea) return;
 
-        const url = window.prompt('Enter link URL', 'https://');
-        if (!url) return;
+        const url = (linkUrl || '').trim();
+        const text = (linkText || '').trim();
+
+        if (!url) {
+            showWarning('Add a link URL', 'Please enter a website URL before adding a link.');
+            return;
+        }
 
         const { selectionStart, selectionEnd, value } = textarea;
-        const selectedText = value.slice(selectionStart, selectionEnd) || 'link text';
-        const formatted = `<a href="${url}" target="_blank" rel="noopener noreferrer">${selectedText}</a>`;
+        const selectedText = value.slice(selectionStart, selectionEnd) || text || 'Learn more';
+        const formatted = `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2563eb; text-decoration:underline;">${selectedText}</a>`;
         const updated = value.slice(0, selectionStart) + formatted + value.slice(selectionEnd);
 
         setBlogDesc(updated);
+        setLinkText('');
+        setLinkUrl('');
 
         window.requestAnimationFrame(() => {
             const cursor = selectionStart + formatted.length;
@@ -547,6 +556,23 @@ export const MediaManagerDashboard = () => {
                                                         <Link className="h-4 w-4" />
                                                     </Button>
                                                 </div>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr_auto] gap-2 mb-2">
+                                                    <Input
+                                                        value={linkText}
+                                                        onChange={(e) => setLinkText(e.target.value)}
+                                                        placeholder="Link text"
+                                                    />
+                                                    <Input
+                                                        value={linkUrl}
+                                                        onChange={(e) => setLinkUrl(e.target.value)}
+                                                        placeholder="https://example.com"
+                                                    />
+                                                    <Button type="button" variant="secondary" onClick={insertLink}>
+                                                        Add Link
+                                                    </Button>
+                                                </div>
+
                                                 <Textarea
                                                     id="description"
                                                     ref={blogDescriptionRef}
@@ -556,7 +582,7 @@ export const MediaManagerDashboard = () => {
                                                     required
                                                 />
                                                 <p className="text-xs text-slate-500">
-                                                    Use simple HTML tags for formatting: <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;a href="..."&gt;</code>.
+                                                    You can type normal text, bold it, or add a clickable blue link using the simple fields above. The system adds the link formatting for you.
                                                 </p>
                                             </div>
                                             <div className="space-y-2">

@@ -83,16 +83,16 @@ export function ProgramsPage() {
   const secondaryExams = programs.filter(course => course.category === "Secondary School");
 
   // Helper to map Program to CourseCard props
-  // The API already maps 'code' to 'id' for us
+  // Prefer the admin-entered short summary from the backend for list cards.
   const mapToCard = (course: Program) => ({
-    id: course.id || course.code, 
+    id: course.id || course.code,
     title: course.title,
     category: course.category,
-    description: course.description || course.shortDescription,
-    duration: course.keyStats.duration,
-    schedule: course.schedule || course.keyStats.studyMode,
+    description: course.shortDescription || course.description || "Program details coming soon.",
+    duration: course.keyStats?.duration || "",
+    schedule: course.schedule || course.keyStats?.studyMode || "",
     students: course.students,
-    imageUrl: course.imageUrl || course.heroImage
+    imageUrl: course.imageUrl || course.heroImage || ""
   });
 
   return (

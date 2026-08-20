@@ -107,8 +107,8 @@ export function PopUp() {
                         </div>
 
             {/* Content Section */}
-            <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center text-left bg-white">
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-serif">
+            <div className="md:w-1/2 h-70 md:h-100 p-8 md:p-12 flex flex-col justify-center text-left bg-white overflow-hidden">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-serif line-clamp-4">
                     {latestPost.title}
                 </h2>
             </div>

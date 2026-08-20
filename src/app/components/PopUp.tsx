@@ -108,28 +108,9 @@ export function PopUp() {
 
             {/* Content Section */}
             <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center text-left bg-white">
-                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4 w-fit">
-                    Latest
-                </span>
-                
-                                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 font-serif">
-                                        {latestPost && latestPost.title }
-                                </h2>
-                                {latestPost && latestPost.type === 'social-media-post' && latestPost.url && (
-                                    <a
-                                        href={latestPost.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 underline break-all mb-4 block"
-                                    >
-                                        {latestPost.url}
-                                    </a>
-                                )}
-                
-                <p className="text-gray-600 mb-8 leading-relaxed text-lg">
-                    {latestPost && latestPost.description }
-                </p>
-                
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-serif">
+                    {latestPost.title}
+                </h2>
             </div>
         </div>
     </div>

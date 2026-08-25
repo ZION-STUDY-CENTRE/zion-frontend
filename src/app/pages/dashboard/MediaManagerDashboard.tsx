@@ -673,9 +673,28 @@ export const MediaManagerDashboard = () => {
                                                         <h4 className="font-bold text-lg text-blue-900 mb-1">{post.title}</h4>
                                                         <a href={post.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">{post.url}</a>
                                                     </div>
-                                                    <Button variant="destructive" onClick={() => handleDeletePost(post._id)}>
-                                                        <Trash2 className="h-4 w-4 mr-1" /> Delete
-                                                    </Button>
+                                                    <div className="flex gap-2">
+                                                        <Button
+                                                            variant="secondary"
+                                                            onClick={() => {
+                                                                setEditingBlogPost(post);
+                                                                setBlogTitle(post.title);
+                                                                setBlogDesc(post.description || '');
+                                                                setBlogShortDesc(post.shortDescription || '');
+                                                                setBlogDept(post.department || '');
+                                                                setBlogType(post.type);
+                                                                setBlogDate(post.timestamp ? new Date(post.timestamp).toISOString().slice(0, 16) : '');
+                                                                setBlogUrl(post.url || '');
+                                                                setBlogPlatform(post.platform || '');
+                                                                setBlogImage(null);
+                                                            }}
+                                                        >
+                                                            Edit
+                                                        </Button>
+                                                        <Button variant="destructive" onClick={() => handleDeletePost(post._id)}>
+                                                            <Trash2 className="h-4 w-4 mr-1" /> Delete
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </Card>
                                         ))
@@ -708,9 +727,9 @@ export const MediaManagerDashboard = () => {
                                                         )}
                                                         
                                                         {/* Content */}
-                                                        <div className="flex-grow">
-                                                            <div className="flex items-start justify-between gap-3">
-                                                                <div className="flex-grow">
+                                                        <div className="flex-grow min-w-0">
+                                                            <div className="flex flex-col gap-3">
+                                                                <div className="min-w-0">
                                                                     <h4 className="font-bold text-lg text-gray-900 line-clamp-2">{post.title}</h4>
                                                                     <p className="text-sm text-gray-600 mt-1 line-clamp-2">{post.description}</p>
                                                                     
@@ -728,7 +747,7 @@ export const MediaManagerDashboard = () => {
                                                                     </div>
                                                                 </div>
                                                                 
-                                                                <div className="flex gap-2 mt-4">
+                                                                <div className="flex flex-wrap gap-2">
                                                                     <Button 
                                                                         variant="secondary" 
                                                                         size="sm"
